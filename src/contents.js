@@ -1,22 +1,30 @@
 var json = {
 	"playing": false,
 	"track": null,
-	"artwork": null
+	"artwork": null,
+	"favorite": false
 };
 
 window.onload = () => {
 	var ready = false;
 	setInterval(()=> {
 		ready = (document.getElementsByClassName("playControls__wrapper l-container l-fullwidth").length != 0);
-		if (ready) {
-			// send
-			json["playing"] = document.getElementsByClassName("playControl sc-ir playControls__control playControls__play").length != 0;
-			json["track"] = document.title.replace("▶ ", "").replace(" | Free Listening on SoundCloud", "");
-			json["artwork"] = document.getElementsByClassName("playbackSoundBadge")[0].children[0].children[0].children[0].style.backgroundImage.replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500.");
-
-			chrome.storage.sync.set(json, null);
+		var playing = document.getElementsByClassName("playControl sc-ir playControls__control playControls__play").length != 0,
+			track = document.title.replace("▶ ", "").replace(" | Free Listening on SoundCloud", ""),
+			artwork = document.getElementsByClassName("playbackSoundBadge")[0].children[0].children[0].children[0].style.backgroundImage.replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
+			fav = document.getElementsByClassName("sc-button-like playbackSoundBadge__like sc-button sc-button-small sc-button-icon sc-button-responsive")[0].title == "Unlike";
+		if (ready && json["track"] != track) {
+			json["playing"] = playing;
+			json["track"] = track;
+			json["artwork"] = artwork;
+			json["favorite"] = fav;
+			post();
 		}
 	}, 500);
+}
+
+function post() {
+	chrome.storage.sync.set(json, null);
 }
 
 chrome.runtime.onMessage.addListener((request, sender, callback) => {
@@ -24,20 +32,33 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 	switch(request.toLowerCase()) {
 		case "play":
 		case "pause": {
+			// console.log("toggle("+request+")");
 			document.getElementsByClassName("playControl sc-ir playControls__control playControls__play")[0].click();
+			json["playing"] = !json["playing"];
+			post();
 			break;
 		}
 		case "prev": {
+			// console.log("prev");
 			document.getElementsByClassName("skipControl sc-ir playControls__control playControls__prev skipControl__previous")[0].click();
 			break;
 		}
 		case "next": {
+			// console.log("next");
 			document.getElementsByClassName("skipControl sc-ir playControls__control playControls__next skipControl__next")[0].click();
 			break;
 		}
+		case "unfav":
+		case "fav": {
+			// console.log("fav");
+			document.getElementsByClassName("sc-button-like playbackSoundBadge__like sc-button sc-button-small sc-button-icon sc-button-responsive")[0].click();
+			json["favorite"] = document.getElementsByClassName("sc-button-like playbackSoundBadge__like sc-button sc-button-small sc-button-icon sc-button-responsive")[0].title == "Unlike";
+			post();
+			break;
+		}
 		default: {
+			// console.log("defall");
 			break;
 		}
 	}
-	sendResponse(true);
 });
