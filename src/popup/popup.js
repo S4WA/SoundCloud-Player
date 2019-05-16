@@ -34,7 +34,7 @@ function queue(request) {
 	if (!ready) return;
 	request = request.toLowerCase();
 	console.log("q: " + request);
-	chrome.tabs.query({ active: true, url: "*://soundcloud.com/*" }, (tab) => {
+	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (tab) => {
 		if (tab.length != 0) chrome.tabs.sendMessage(tab[0].id, request.toLowerCase(), null);
 	});
 }
