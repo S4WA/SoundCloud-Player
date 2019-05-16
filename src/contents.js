@@ -14,9 +14,15 @@ window.onload = () => {
 			artwork = document.getElementsByClassName("playbackSoundBadge")[0].children[0].children[0].children[0].style.backgroundImage.replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
 			fav = document.getElementsByClassName("sc-button-like playbackSoundBadge__like sc-button sc-button-small sc-button-icon sc-button-responsive")[0].title == "Unlike";
 		if (ready && json["track"] != track) {
-			json["playing"] = playing;
 			json["track"] = track;
 			json["artwork"] = artwork;
+			post();
+		}
+		if (json["playing"] != playing) {
+			json["playing"] = playing;
+			post();
+		}
+		if (json["favorite"] != fav) {
 			json["favorite"] = fav;
 			post();
 		}
