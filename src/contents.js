@@ -10,7 +10,7 @@ window.onload = () => {
 	setInterval(()=> {
 		ready = (document.getElementsByClassName("playControls__wrapper l-container l-fullwidth").length != 0);
 		var playing = document.getElementsByClassName("playControl sc-ir playControls__control playControls__play")[0].title == "Pause current" /* document.getElementsByClassName("playControl sc-ir playControls__control playControls__play").length != 0 */,
-			track = document.title.replace("▶ ", "").replace(" | Free Listening on SoundCloud", ""),
+			track = document.getElementsByClassName("playbackSoundBadge__title")[0].children[0].title + " By " + document.getElementsByClassName("playbackSoundBadge__lightLink sc-link-light sc-truncate")[0].title,
 			artwork = document.getElementsByClassName("playbackSoundBadge")[0].children[0].children[0].children[0].style.backgroundImage.replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
 			fav = document.getElementsByClassName("sc-button-like playbackSoundBadge__like sc-button sc-button-small sc-button-icon sc-button-responsive")[0].title == "Unlike";
 		if (ready && json["track"] != track) {
