@@ -2,7 +2,9 @@ var json = {
 	"playing": false,
 	"track": null,
 	"artwork": null,
-	"favorite": false
+	"favorite": false,
+	"shuffle": false,
+	"repeat": "none"
 };
 
 window.onload = () => {
@@ -59,6 +61,20 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 			// console.log("fav");
 			document.getElementsByClassName("sc-button-like playbackSoundBadge__like sc-button sc-button-small sc-button-icon sc-button-responsive")[0].click();
 			json["favorite"] = document.getElementsByClassName("sc-button-like playbackSoundBadge__like sc-button sc-button-small sc-button-icon sc-button-responsive")[0].title == "Unlike";
+			post();
+			break;
+		}
+		case "repeat": {
+			var btn = document.getElementsByClassName("repeatControl")[0];
+			btn.click();
+			json["repeat"] = btn.className.replace("repeatControl sc-ir m-", "").toLowerCase(); // none -> one -> all
+			post();
+			break;
+		}
+		case "shuffle": {
+			var btn = document.getElementsByClassName("shuffleControl")[0];
+			btn.click();
+			json["shuffle"] = btn.className.includes("m-shuffling");
 			post();
 			break;
 		}
