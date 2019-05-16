@@ -7,10 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	prevElem.addEventListener("click", () => { queue("prev"); });
 	nextElem.addEventListener("click", () => { queue("next"); });
 	favElem.addEventListener("click", () => { toggleFav(); });
+	trackElem.addEventListener("click", () => { openSCTab(); });
 });
 
 window.onload = () => {
-	setInterval(()=> {
+	setInterval(() => {
 		chrome.storage.sync.get(null, (items) => {
 			if (items["artwork"] != null && items["artwork"] != artworkElem.src) artworkElem.src = items["artwork"];
 			if (items["track"] != null && items["track"] != trackElem.innerText) trackElem.innerText = items["track"];
@@ -33,9 +34,17 @@ function init() {
 function queue(request) {
 	if (!ready) return;
 	request = request.toLowerCase();
-	console.log("q: " + request);
-	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (tab) => {
-		if (tab.length != 0) chrome.tabs.sendMessage(tab[0].id, request.toLowerCase(), null);
+	// console.log("q: " + request);
+	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
+		if (results.length != 0) chrome.tabs.sendMessage(results[0].id, request.toLowerCase(), null);
+	});
+}
+
+function openSCTab() {
+	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
+		if (results.length !== 0) {
+			chrome.tabs.update(results[0].id, { active : true }, (tab) => {});
+		}
 	});
 }
 

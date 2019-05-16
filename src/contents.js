@@ -34,7 +34,7 @@ function post() {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, callback) => {
-	console.log(request);
+	// console.log(request);
 	switch(request.toLowerCase()) {
 		case "play":
 		case "pause": {
