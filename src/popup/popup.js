@@ -39,6 +39,7 @@ function init() {
 		}
 	});
 
+	document.getElementById("version").innerText = "v" + chrome.runtime.getManifest().version;
 	artworkElem = document.getElementById("artwork");
 	trackElem = document.getElementById("track");
 	toggleElem = document.getElementById("toggle");
