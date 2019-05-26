@@ -20,6 +20,14 @@ hr {
 	margin-top: 0;
 }
 
-#artwork {
+#artwork, #volume {
 	cursor: pointer;
+}
+
+#time, #volume {
+	display: inline;
+}
+
+#close, #volume {
+	float: right;
 }

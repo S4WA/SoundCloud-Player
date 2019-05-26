@@ -1,51 +1,50 @@
 document.addEventListener("DOMContentLoaded", () => {
 	init();
-
-	$("#store").on("click", () => {
-		openURL("https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej");
-	});
-	$("#drip").on("click", () => {
-		openURL("https://twitter.com/AkibaKaede");
-	});
 });
 
 window.onload = () => {
-	setInterval(function() {
-		chrome.storage.sync.get(null, function(items) {
-			if (!ready) return;
-			if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != artworkElem.src) {
-				artworkElem.src = items["artwork"];
-			}
-			if (items["track"] != null && items["track"] != trackElem.innerText) {
-				trackElem.innerText = items["track"];
-			}
-			if (items["playing"] != null) {
-				toggleElem.value = !items["playing"] ? "Play" : "Pause";
-			}
-			if (items["favorite"] != null) {
-				favElem.value = !items["favorite"] ? "Fav" : "unFav";
-			}
-			if (items["shuffle"] != null) {
-				shuffleElem.value = items["shuffle"] ? "Shuffled" : "Shuffle";
-			}
-			if (items["repeat"] != null) {
-				repeatElem.value = items["repeat"] == "none" ? "Repeat" : "Repeat (" + items["repeat"] + ")";
-			}
-			if (items["time"] != null) {
-				var timeJson = items["time"];
-				if ($("#current").text() != timeJson["current"]) {
-					$("#current").text(timeJson["current"]);
-				}
-				if ($("#end").text() != timeJson["end"]) {
-					$("#end").text(timeJson["end"]);
-				}
-			}
-			json = items;
-		});
-	}, 500);
+	setInterval(updater(), 500);
 	ready = true;
 }
 
+function updater() {
+	chrome.storage.sync.get(null, function(items) {
+		if (!ready) return;
+		if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != artworkElem.src) {
+				artworkElem.src = items["artwork"];
+		}
+		if (items["track"] != null && items["track"] != trackElem.innerText) {
+			trackElem.innerText = items["track"];
+		}
+			if (items["playing"] != null) {
+			toggleElem.value = !items["playing"] ? "Play" : "Pause";
+		}
+			if (items["favorite"] != null) {
+			favElem.value = !items["favorite"] ? "Fav" : "unFav";
+		}
+			if (items["shuffle"] != null) {
+			shuffleElem.value = items["shuffle"] ? "Shuffled" : "Shuffle";
+		}
+		if (items["repeat"] != null) {
+			repeatElem.value = items["repeat"] == "none" ? "Repeat" : "Repeat (" + items["repeat"] + ")";
+		}
+		if (items["time"] != null) {
+			var timeJson = items["time"];
+			if ($("#current").text() != timeJson["current"]) {
+				$("#current").text(timeJson["current"]);
+			}
+			if ($("#end").text() != timeJson["end"]) {
+				$("#end").text(timeJson["end"]);
+			}
+		}
+		if (items["volume"] != null) {
+			$("#volume").text(items["volume"] + " %");
+		}
+		json = items;
+	});
+}
+
+// Initialize:
 function init() {
 	chrome.storage.sync.get(null, (items) => {
 		json = items;
@@ -55,13 +54,24 @@ function init() {
 			ready = false;
 			json["artwork"] = "";
 			json["track"] = "* Click to Open SoundCloud *";
+			json["time"] = null;
+			json["volume"] = 0;
+			
 			chrome.storage.sync.set(json, null);
+
+			$("#close").remove();
+			$("#second br:last-child").remove();
+			$("#controller").remove();
 		}
 	});
 
 	$("#version").text("v" + chrome.runtime.getManifest().version);
 	registerElements();
+	registerEvents();
+}
 
+function registerEvents() {
+	// controller
 	$(toggleElem).on("click", () => { toggle(); });
 	$(prevElem).on("click", () => { queue("prev"); });
 	$(nextElem).on("click", () => { queue("next"); });
@@ -70,9 +80,24 @@ function init() {
 	$(artworkElem).on("click", () => { openSCTab(); });
 	$(repeatElem).on("click", () => { repeat(); });
 	$(shuffleElem).on("click", () => { queue("shuffle"); });
+
+	// 
+	$("#store").on("click", () => {
+		openURL("https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej");
+	});
+	$("#drip").on("click", () => {
+		openURL("https://twitter.com/AkibaKaede");
+	});
+	$("#close").on("click", () => {
+		chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
+			if (results.length != 0) {
+				 chrome.tabs.remove(results[0].id, () => {});
+			}
+		});
+	});
 }
 
-// Utils
+// Utils:
 function queue(request) {
 	if (!ready) return;
 	request = request.toLowerCase();
@@ -88,6 +113,7 @@ function openSCTab() {
 		} else {
 			chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
 		}
+		window.close();
 	});
 }
 

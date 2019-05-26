@@ -8,7 +8,8 @@ window.onload = () => {
 			artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image").replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
 			fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike",
 			current = $(".playbackTimeline__timePassed span[aria-hidden]").text(),
-			end = $(".playbackTimeline__duration span[aria-hidden]").text();
+			end = $(".playbackTimeline__duration span[aria-hidden]").text(),
+			volume = Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100;
 
 		if (ready && json["track"] != track) {
 			json["track"] = track;
@@ -31,6 +32,11 @@ window.onload = () => {
 			json["time"]["end"] = end;
 			post();
 		}
+		if (json["volume"] != volume) {
+			json["volume"] = volume;
+			post();
+		}
+
 	}, 500);
 }
 
@@ -93,5 +99,6 @@ var json = {
 	"time": {
 		"current": null,
 		"end": null
-	}
+	},
+	"volume": 0
 };
