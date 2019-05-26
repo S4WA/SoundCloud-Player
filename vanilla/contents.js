@@ -1,0 +1,83 @@
+window.onload = () => {
+	var ready = false;
+	setInterval(() => {
+		ready = ($(".playControls__wrapper").length != 0);
+
+		var playing = $(".playControl")[0].title == "Pause current",
+			track = $("a.playbackSoundBadge__titleLink")[0].title + " By " + $("a.playbackSoundBadge__lightLink")[0].title,
+			artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image").replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
+			fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike";
+
+		if (ready && json["track"] != track) {
+			json["track"] = track;
+			json["artwork"] = artwork;
+			post();
+		}
+		if (json["playing"] != playing) {
+			json["playing"] = playing;
+			post();
+		}
+		if (json["favorite"] != fav) {
+			json["favorite"] = fav;
+			post();
+		}
+	}, 500);
+}
+
+function post() {
+	chrome.storage.sync.set(json, null);
+}
+
+chrome.runtime.onMessage.addListener((request, sender, callback) => {
+	// console.log(request);
+	switch(request.toLowerCase()) {
+		case "play":
+		case "pause": {
+			$(".playControl.sc-ir.playControls__control.playControls__play")[0].click();
+			json["playing"] = !json["playing"];
+			post();
+			break;
+		}
+		case "prev": {
+			$(".playControls__prev")[0].click();
+			break;
+		}
+		case "next": {
+			$(".playControls__next")[0].click();
+			break;
+		}
+		case "unfav":
+		case "fav": {
+			$(".playbackSoundBadge__like")[0].click();
+			json["favorite"] = $(".playbackSoundBadge__like")[0].title == "Unlike";
+			post();
+			break;
+		}
+		case "repeat": {
+			var btn = $(".repeatControl")[0];
+			btn.click();
+			json["repeat"] = btn.className.replace("repeatControl sc-ir m-", "").toLowerCase(); // none -> one -> all
+			post();
+			break;
+		}
+		case "shuffle": {
+			var btn = $(".shuffleControl")[0];
+			btn.click();
+			json["shuffle"] = btn.className.includes("m-shuffling");
+			post();
+			break;
+		}
+		default: {
+			break;
+		}
+	}
+});
+
+var json = {
+	"playing": false,
+	"track": null,
+	"artwork": null,
+	"favorite": false,
+	"shuffle": false,
+	"repeat": "none"
+};
