@@ -6,7 +6,9 @@
 			width: 250px;
 		}
 	</style>
+	<script src="../jquery-3.4.1.min.js"></script>
 	<script src="popup.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 	<div>
@@ -22,13 +24,19 @@
 		<br/>
 		<br/>
 		<img id="artwork" width="100%" src="../icon.png">
-		<a href="javascript:void(0);" id="track" title="open tab"></a>
+		<a id="track" title="Open SoundCloud tab" href="javascript:void(0);"></a>
 		<hr/>
 		<p>
-			<p>SoundCloud Player <span id="version"></span></p>
-			<a href="https://github.com/S4WA/soundcloud-player" target="_blank">Github</a>
-			| 
-			<a href="https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej" target="_blank">Chrome Store</a>
+			<p>
+				<a id="store" title="Go to chrome store" href="javascript:void(0);">
+					SoundCloud Player 
+					<span id="version"></span> 
+				</a>
+				by 
+				<a id="drip" title="follow me!" href="javascript:void(0)">
+					Drip
+				</a>
+			</p>
 		</p>
 	</div>
 </body>

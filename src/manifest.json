@@ -3,7 +3,7 @@
 	"name": "SoundCloud Player",
 	"short_name": "SC Player",
 	"description": "for soundcloud heavy users",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"homepage_url": "https://github.com/S4WA/soundcloud-player",
 	"permissions": [
 		"storage", "tabs"
@@ -11,7 +11,7 @@
 	"content_scripts": [ {
 		"all_frames": true,
 		"js": [
-			"contents.js"
+			"contents.js", "jquery-3.4.1.min.js"
 		],
 		"matches": [ "*://soundcloud.com/*" ],
 		"run_at": "document_end"
