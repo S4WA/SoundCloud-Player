@@ -6,9 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message["type"] != "update" || message["value"] == null) return;
     var items = message["value"];
-	if (!ready) return;
+    if (json == items) return;
+	// if (!ready) return;
 	if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != artworkElem.src) {
-			artworkElem.src = items["artwork"];
+		artworkElem.src = items["artwork"];
 	}
 	if (items["track"] != null && items["track"] != trackElem.innerText) {
 		trackElem.innerText = items["track"];

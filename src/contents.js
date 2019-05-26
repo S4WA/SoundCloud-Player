@@ -11,31 +11,14 @@ function update() {
 		end = $(".playbackTimeline__duration span[aria-hidden]").text(),
 		volume = Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100;
 
-	if (json["track"] != track) {
-		json["track"] = track;
-		json["artwork"] = artwork;
-		post();
-	}
-	if (json["playing"] != playing) {
-		json["playing"] = playing;
-		post();
-	}
-	if (json["favorite"] != fav) {
-		json["favorite"] = fav;
-		post();
-	}
-	if (json["time"]["current"] != current) {
-		json["time"]["current"] = current;
-		post();
-	}
-	if (json["time"]["end"] != end) {
-		json["time"]["end"] = end;
-		post();
-	}
-	if (json["volume"] != volume) {
-		json["volume"] = volume;
-		post();
-	}
+	json["track"] = track;
+	json["artwork"] = artwork;
+	json["playing"] = playing;
+	json["favorite"] = fav;
+	json["time"]["current"] = current;
+	json["time"]["end"] = end;
+	json["volume"] = volume;
+	post();
 }
 
 function post() {
