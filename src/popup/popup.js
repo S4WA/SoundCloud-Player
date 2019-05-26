@@ -1,61 +1,55 @@
 document.addEventListener("DOMContentLoaded", () => {
 	init();
-	update();
-	setInterval(() => { update() }, 500);
 	ready = true;
 });
 
-function update() {
-	chrome.storage.sync.get(null, function(items) {
-		if (!ready) return;
-		if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != artworkElem.src) {
-				artworkElem.src = items["artwork"];
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message["type"] != "update" || message["value"] == null) return;
+    var items = message["value"];
+	if (!ready) return;
+	if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != artworkElem.src) {
+			artworkElem.src = items["artwork"];
+	}
+	if (items["track"] != null && items["track"] != trackElem.innerText) {
+		trackElem.innerText = items["track"];
+	}
+	if (items["playing"] != null) {
+		toggleElem.value = !items["playing"] ? "Play" : "Pause";
+	}
+	if (items["favorite"] != null) {
+		favElem.value = !items["favorite"] ? "Fav" : "unFav";
+	}
+	if (items["shuffle"] != null) {
+		shuffleElem.value = items["shuffle"] ? "Shuffled" : "Shuffle";
+	}
+	if (items["repeat"] != null) {
+		repeatElem.value = "Repeat (" + items["repeat"] + ")";
+	}
+	if (items["time"] != null) {
+		var timeJson = items["time"];
+		if ($("#current").text() != timeJson["current"]) {
+			$("#current").text(timeJson["current"]);
 		}
-		if (items["track"] != null && items["track"] != trackElem.innerText) {
-			trackElem.innerText = items["track"];
+		if ($("#end").text() != timeJson["end"]) {
+			$("#end").text(timeJson["end"]);
 		}
-		if (items["playing"] != null) {
-			toggleElem.value = !items["playing"] ? "Play" : "Pause";
-		}
-		if (items["favorite"] != null) {
-			favElem.value = !items["favorite"] ? "Fav" : "unFav";
-		}
-		if (items["shuffle"] != null) {
-			shuffleElem.value = items["shuffle"] ? "Shuffled" : "Shuffle";
-		}
-		if (items["repeat"] != null) {
-			repeatElem.value = "Repeat (" + items["repeat"] + ")";
-		}
-		if (items["time"] != null) {
-			var timeJson = items["time"];
-			if ($("#current").text() != timeJson["current"]) {
-				$("#current").text(timeJson["current"]);
-			}
-			if ($("#end").text() != timeJson["end"]) {
-				$("#end").text(timeJson["end"]);
-			}
-		}
-		if (items["volume"] != null) {
-			$("#volume").text(items["volume"] + " %");
-		}
-		json = items;
-	});
-}
+	}
+	if (items["volume"] != null) {
+		$("#volume").text(items["volume"] + " %");
+	}
+	json = items;
+});
 
 // Initialize:
 function init() {
-	chrome.storage.sync.get(null, (items) => {
-		json = items;
-	});
 	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
 		if (results.length == 0) {
 			ready = false;
+			json = {};
 			json["artwork"] = "";
 			json["track"] = "* Click to Open SoundCloud *";
 			json["time"] = null;
 			json["volume"] = 0;
-			
-			chrome.storage.sync.set(json, null);
 
 			$("#close").remove();
 			$("#second br:last-child").remove();
@@ -97,11 +91,16 @@ function registerEvents() {
 }
 
 // Utils:
-function queue(request) {
+function queue(request, value) {
 	if (!ready) return;
 	request = request.toLowerCase();
 	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
-		if (results.length != 0) chrome.tabs.sendMessage(results[0].id, request.toLowerCase(), null);
+		if (results.length != 0) {
+			var jsonRequest = {}
+			jsonRequest["type"] = request;
+			if (!value) jsonRequest["value"] = value;
+			chrome.tabs.sendMessage(results[0].id, jsonRequest, null);
+		}
 	});
 }
 
@@ -112,7 +111,7 @@ function openSCTab() {
 		} else {
 			chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
 		}
-		window.close();
+		// window.close();
 	});
 }
 
@@ -129,7 +128,6 @@ function toggleFav() {
 function repeat() {
 	if (json["repeat"] == null || repeatElem == null) return;
 	queue("repeat");
-	update();
 	repeatElem.value = "Repeat (" + json["repeat"] + ")";
 }
 

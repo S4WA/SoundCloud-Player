@@ -1,5 +1,5 @@
 window.onload = () => {
-	setInterval(() => { update(); }, 500);
+	setInterval(() => { update(); }, 100);
 }
 
 function update() {
@@ -39,12 +39,16 @@ function update() {
 }
 
 function post() {
-	chrome.storage.sync.set(json, null);
+	var requestJson = {};
+	requestJson["type"] = "update";
+	requestJson["value"] = json;
+
+	chrome.runtime.sendMessage(requestJson);
 }
 
 chrome.runtime.onMessage.addListener((request, sender, callback) => {
 	// console.log(request);
-	switch(request.toLowerCase()) {
+	switch(request["type"].toLowerCase()) {
 		case "play":
 		case "pause": {
 			$(".playControl.sc-ir.playControls__control.playControls__play")[0].click();
