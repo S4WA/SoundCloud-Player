@@ -1,3 +1,3 @@
 # soundcloud-player
 Chrome Extension  
-![img](https://raw.githubusercontent.com/S4WA/soundcloud-player/master/img/0927.png)
+![img](https://raw.githubusercontent.com/S4WA/soundcloud-player/master/img/0527.png)
