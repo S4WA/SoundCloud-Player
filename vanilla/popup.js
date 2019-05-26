@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 window.onload = () => {
 	setInterval(function() {
 		chrome.storage.sync.get(null, function(items) {
-			if (items["artwork"] != null && items["artwork"] != artworkElem.src) {
+			if (!ready) return;
+			if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != artworkElem.src) {
 				artworkElem.src = items["artwork"];
 			}
 			if (items["track"] != null && items["track"] != trackElem.innerText) {
@@ -51,8 +52,9 @@ function init() {
 	});
 	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
 		if (results.length == 0) {
+			ready = false;
 			json["artwork"] = "";
-			json["track"] = "* none *";
+			json["track"] = "* Click to Open SoundCloud *";
 			chrome.storage.sync.set(json, null);
 		}
 	});
@@ -65,6 +67,7 @@ function init() {
 	$(nextElem).on("click", () => { queue("next"); });
 	$(favElem).on("click", () => { toggleFav(); });
 	$(trackElem).on("click", () => { openSCTab(); });
+	$(artworkElem).on("click", () => { openSCTab(); });
 	$(repeatElem).on("click", () => { repeat(); });
 	$(shuffleElem).on("click", () => { queue("shuffle"); });
 }
@@ -121,4 +124,4 @@ function registerElements() {
 	shuffleElem = $("#shuffle")[0];
 }
 
-var ready = false, json, artworkElem, trackElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem;
+var ready = false, json = {}, artworkElem, trackElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem;

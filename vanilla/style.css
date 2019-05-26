@@ -19,3 +19,7 @@ body div:not(:last-child) {
 hr {
 	margin-top: 0;
 }
+
+#artwork {
+	cursor: pointer;
+}
