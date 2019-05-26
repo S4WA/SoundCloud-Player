@@ -30,6 +30,15 @@ window.onload = () => {
 			if (items["repeat"] != null) {
 				repeatElem.value = items["repeat"] == "none" ? "Repeat" : "Repeat (" + items["repeat"] + ")";
 			}
+			if (items["time"] != null) {
+				var timeJson = items["time"];
+				if ($("#current").text() != timeJson["current"]) {
+					$("#current").text(timeJson["current"]);
+				}
+				if ($("#end").text() != timeJson["end"]) {
+					$("#end").text(timeJson["end"]);
+				}
+			}
 			json = items;
 		});
 	}, 500);

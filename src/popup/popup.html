@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <head>
 	<meta charset="UTF-8">
-	<style>
-		body {
-			width: 250px;
-		}
-	</style>
 	<script src="../jquery-3.4.1.min.js"></script>
 	<script src="popup.js"></script>
 	<link rel="stylesheet" type="text/css" href="style.css">
@@ -20,24 +15,38 @@
 		<input id="fav" type="button" value="Fav"></input>
 		<input id="repeat" type="button" value="Repeat"></input>
 		<input id="shuffle" type="button" value="Shuffle"></input>
+	</div>
 
-		<br/>
-		<br/>
+	<div>
 		<img id="artwork" width="100%" src="../icon.png">
 		<a id="track" title="Open SoundCloud tab" href="javascript:void(0);"></a>
-		<hr/>
-		<p>
-			<p>
-				<a id="store" title="Go to chrome store" href="javascript:void(0);">
-					SoundCloud Player 
-					<span id="version"></span> 
-				</a>
-				by 
-				<a id="drip" title="follow me!" href="javascript:void(0)">
-					Drip
-				</a>
-			</p>
-		</p>
+	</div>
+	<hr/>
+
+	<div>
+		<div id="time">
+			<span id="current">
+				--:--
+			</span>
+			/
+			<span id="end">
+				--:--
+			</span>
+		</div>
+	</div>
+	<hr/>
+
+	<div>
+		<span>
+			<a id="store" title="Go to chrome store" href="javascript:void(0);">
+				SoundCloud Player 
+				<span id="version"></span> 
+			</a>
+			by 
+			<a id="drip" title="follow me!" href="javascript:void(0)">
+				Drip
+			</a>
+		</span>
 	</div>
 </body>
 </html>

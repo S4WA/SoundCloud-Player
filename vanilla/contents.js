@@ -6,7 +6,9 @@ window.onload = () => {
 		var playing = $(".playControl")[0].title == "Pause current",
 			track = $("a.playbackSoundBadge__titleLink")[0].title + " By " + $("a.playbackSoundBadge__lightLink")[0].title,
 			artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image").replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
-			fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike";
+			fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike",
+			current = $(".playbackTimeline__timePassed span[aria-hidden]").text(),
+			end = $(".playbackTimeline__duration span[aria-hidden]").text();
 
 		if (ready && json["track"] != track) {
 			json["track"] = track;
@@ -19,6 +21,14 @@ window.onload = () => {
 		}
 		if (json["favorite"] != fav) {
 			json["favorite"] = fav;
+			post();
+		}
+		if (json["time"]["current"] != current) {
+			json["time"]["current"] = current;
+			post();
+		}
+		if (json["time"]["end"] != end) {
+			json["time"]["end"] = end;
 			post();
 		}
 	}, 500);
@@ -79,5 +89,9 @@ var json = {
 	"artwork": null,
 	"favorite": false,
 	"shuffle": false,
-	"repeat": "none"
+	"repeat": "none",
+	"time": {
+		"current": null,
+		"end": null
+	}
 };
