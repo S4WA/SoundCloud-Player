@@ -1,1 +1,33 @@
-body{width:250px;font-family:"Meiryo"}a{color:black;text-decoration:none}a:hover{color:#ff8c00}body div:not(:last-child){padding-bottom:7px}hr{margin-top:0}#artwork{cursor:pointer}
+body {
+	width: 250px;
+	font-family: "Meiryo";
+}
+
+a {
+	color: black;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #ff8c00;
+}
+
+body div:not(:last-child) {
+	padding-bottom: 7px;
+}
+
+hr {
+	margin-top: 0;
+}
+
+#artwork, #volume {
+	cursor: pointer;
+}
+
+#time, #volume {
+	display: inline;
+}
+
+#close, #volume {
+	float: right;
+}

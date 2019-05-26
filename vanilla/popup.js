@@ -97,8 +97,8 @@ function openURL(link) {
 
 function toggleFav() {
 	if (favElem == null) return;
-	var rString = favElem.value == "Fav" ? "unFav" : "Fav";
-	queue(favElem.value = rString);
+	var string = favElem.value == "Fav" ? "unFav" : "Fav";
+	queue(favElem.value = string);
 }
 
 function repeat() {
@@ -109,8 +109,8 @@ function repeat() {
 
 function toggle() {
 	if (toggleElem == null) return;
-	var rString = toggleElem.value == "Pause" ? "Play" : "Pause";
-	queue(toggleElem.value = rString);
+	var string = toggleElem.value == "Pause" ? "Play" : "Pause";
+	queue(toggleElem.value = string);
 }
 
 function registerElements() {

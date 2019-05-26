@@ -6,7 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<div>
+	<div id="controller">
 		<input id="prev" type="button" value="Prev"></input>
 		<input id="toggle" type="button" value="Play"></input>
 		<input id="next" type="button" value="Next"></input>
@@ -23,7 +23,7 @@
 	</div>
 	<hr/>
 
-	<div>
+	<div id="second">
 		<div id="time">
 			<span id="current">
 				--:--
@@ -33,6 +33,11 @@
 				--:--
 			</span>
 		</div>
+
+		<span id="volume" title="Current Volume(Can't Change in this popup)">0 %</span>
+		<br/>
+		<a id="close" title="Click to Close tab of SoundCloud" href="javascript:void(0)">Close</a>
+		<br/>
 	</div>
 	<hr/>
 
