@@ -3,11 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.onload = () => {
-	setInterval(updater(), 500);
+	update();
+	setInterval(() => { update() }, 500);
 	ready = true;
 }
 
-function updater() {
+function update() {
 	chrome.storage.sync.get(null, function(items) {
 		if (!ready) return;
 		if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != artworkElem.src) {
@@ -16,17 +17,17 @@ function updater() {
 		if (items["track"] != null && items["track"] != trackElem.innerText) {
 			trackElem.innerText = items["track"];
 		}
-			if (items["playing"] != null) {
+		if (items["playing"] != null) {
 			toggleElem.value = !items["playing"] ? "Play" : "Pause";
 		}
-			if (items["favorite"] != null) {
+		if (items["favorite"] != null) {
 			favElem.value = !items["favorite"] ? "Fav" : "unFav";
 		}
-			if (items["shuffle"] != null) {
+		if (items["shuffle"] != null) {
 			shuffleElem.value = items["shuffle"] ? "Shuffled" : "Shuffle";
 		}
 		if (items["repeat"] != null) {
-			repeatElem.value = items["repeat"] == "none" ? "Repeat" : "Repeat (" + items["repeat"] + ")";
+			repeatElem.value = "Repeat (" + items["repeat"] + ")";
 		}
 		if (items["time"] != null) {
 			var timeJson = items["time"];
@@ -128,9 +129,10 @@ function toggleFav() {
 }
 
 function repeat() {
-	if (repeatElem == null) return;
-	repeatElem.value = (json["repeat"] == null && json["repeat"] != "none" ? "Repeat" : "Repeat (" + json["repeat"] + ")");
+	if (json["repeat"] == null || repeatElem == null) return;
 	queue("repeat");
+	update();
+	repeatElem.value = "Repeat (" + json["repeat"] + ")";
 }
 
 function toggle() {

@@ -1,43 +1,41 @@
 window.onload = () => {
-	var ready = false;
-	setInterval(() => {
-		ready = ($(".playControls__wrapper").length != 0);
+	setInterval(() => { update(); }, 500);
+}
 
-		var playing = $(".playControl")[0].title == "Pause current",
-			track = $("a.playbackSoundBadge__titleLink")[0].title + " By " + $("a.playbackSoundBadge__lightLink")[0].title,
-			artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image").replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
-			fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike",
-			current = $(".playbackTimeline__timePassed span[aria-hidden]").text(),
-			end = $(".playbackTimeline__duration span[aria-hidden]").text(),
-			volume = Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100;
+function update() {
+	var playing = $(".playControl")[0].title == "Pause current",
+		track = $("a.playbackSoundBadge__titleLink")[0].title + " By " + $("a.playbackSoundBadge__lightLink")[0].title,
+		artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image").replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
+		fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike",
+		current = $(".playbackTimeline__timePassed span[aria-hidden]").text(),
+		end = $(".playbackTimeline__duration span[aria-hidden]").text(),
+		volume = Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100;
 
-		if (ready && json["track"] != track) {
-			json["track"] = track;
-			json["artwork"] = artwork;
-			post();
-		}
-		if (json["playing"] != playing) {
-			json["playing"] = playing;
-			post();
-		}
-		if (json["favorite"] != fav) {
-			json["favorite"] = fav;
-			post();
-		}
-		if (json["time"]["current"] != current) {
-			json["time"]["current"] = current;
-			post();
-		}
-		if (json["time"]["end"] != end) {
-			json["time"]["end"] = end;
-			post();
-		}
-		if (json["volume"] != volume) {
-			json["volume"] = volume;
-			post();
-		}
-
-	}, 500);
+	if (json["track"] != track) {
+		json["track"] = track;
+		json["artwork"] = artwork;
+		post();
+	}
+	if (json["playing"] != playing) {
+		json["playing"] = playing;
+		post();
+	}
+	if (json["favorite"] != fav) {
+		json["favorite"] = fav;
+		post();
+	}
+	if (json["time"]["current"] != current) {
+		json["time"]["current"] = current;
+		post();
+	}
+	if (json["time"]["end"] != end) {
+		json["time"]["end"] = end;
+		post();
+	}
+	if (json["volume"] != volume) {
+		json["volume"] = volume;
+		post();
+	}
 }
 
 function post() {
