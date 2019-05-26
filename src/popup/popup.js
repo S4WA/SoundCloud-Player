@@ -1,12 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
 	init();
-});
-
-window.onload = () => {
 	update();
 	setInterval(() => { update() }, 500);
 	ready = true;
-}
+});
 
 function update() {
 	chrome.storage.sync.get(null, function(items) {
@@ -63,6 +60,7 @@ function init() {
 			$("#close").remove();
 			$("#second br:last-child").remove();
 			$("#controller").remove();
+			$("hr:first-child").remove();
 		}
 	});
 

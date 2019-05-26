@@ -7,15 +7,18 @@
 </head>
 <body>
 	<div id="controller">
-		<input id="prev" type="button" value="Prev"></input>
-		<input id="toggle" type="button" value="Play"></input>
-		<input id="next" type="button" value="Next"></input>
-
-		<br/>
-		<input id="fav" type="button" value="Fav"></input>
-		<input id="repeat" type="button" value="Repeat"></input>
-		<input id="shuffle" type="button" value="Shuffle"></input>
+		<div class="left">
+			<button id="prev" title="Prev" value="Prev"></button>
+			<button id="toggle" title="Play/Pause" value="Play"></button>
+			<button id="next" title="Next" value="Next"></button>
+		</div>
+		<div class="right">
+			<button id="fav" title="Like/Unlike" value="Fav"></button>
+			<button id="repeat" title="Repeat" value="Repeat"></button>
+			<button id="shuffle" title="Shuffle" value="Shuffle"></button>
+		</div>
 	</div>
+	<hr/>
 
 	<div>
 		<img id="artwork" title="Open SoundCloud tab" width="100%" src="../icon.png">
