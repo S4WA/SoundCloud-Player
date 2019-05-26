@@ -42,7 +42,6 @@ function post() {
 	var requestJson = {};
 	requestJson["type"] = "update";
 	requestJson["value"] = json;
-
 	chrome.runtime.sendMessage(requestJson);
 }
 
