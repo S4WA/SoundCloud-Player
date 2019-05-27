@@ -8,11 +8,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     var items = message["value"];
     if (json == items) return;
 	// if (!ready) return;
-	if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != artworkElem.src) {
-		artworkElem.src = items["artwork"];
+	if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != $(artworkElem).css("background-image")) {
+		$(artworkElem).css("background-image", items["artwork"]);
 	}
-	if (items["track"] != null && items["track"] != trackElem.innerText) {
-		trackElem.innerText = items["track"];
+	if (items["track"] != null && items["track"] != $(trackElem).text()) {
+		$(trackElem).text(items["track"]);
 	}
 	if (items["playing"] != null) {
 		toggleElem.value = !items["playing"] ? "Play" : "Pause";
@@ -74,6 +74,15 @@ function registerEvents() {
 	$(artworkElem).on("click", () => { openSCTab(); });
 	$(repeatElem).on("click", () => { repeat(); });
 	$(shuffleElem).on("click", () => { queue("shuffle"); });
+
+	/*$(".marquee").hover(
+		() => {
+			$(".marquee").children().toggleClass("marquee-inner");
+		},
+		() => {
+			$(".marquee").children().toggleClass("marquee-inner");
+		}
+	);*/
 
 	// 
 	$("#store").on("click", () => {

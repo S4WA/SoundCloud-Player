@@ -1,5 +1,5 @@
-document.addEventListener("DOMContentLoaded",()=>{init();ready=!0});chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){if(message.type!="update"||message.value==null)return;var items=message.value;if(json==items)return;if((items.artwork!=null&&items.artwork!="")&&items.artwork!=artworkElem.src){artworkElem.src=items.artwork}
-if(items.track!=null&&items.track!=trackElem.innerText){trackElem.innerText=items.track}
+document.addEventListener("DOMContentLoaded",()=>{init();ready=!0});chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){if(message.type!="update"||message.value==null)return;var items=message.value;if(json==items)return;if((items.artwork!=null&&items.artwork!="")&&items.artwork!=$(artworkElem).css("background-image")){$(artworkElem).css("background-image",items.artwork)}
+if(items.track!=null&&items.track!=$(trackElem).text()){$(trackElem).text(items.track)}
 if(items.playing!=null){toggleElem.value=!items.playing?"Play":"Pause"}
 if(items.favorite!=null){favElem.value=!items.favorite?"Fav":"unFav"}
 if(items.shuffle!=null){shuffleElem.value=items.shuffle?"Shuffled":"Shuffle"}

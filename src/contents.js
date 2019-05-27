@@ -5,11 +5,13 @@ window.onload = () => {
 function update() {
 	var playing = $(".playControl")[0].title == "Pause current",
 		track = $("a.playbackSoundBadge__titleLink")[0].title + " By " + $("a.playbackSoundBadge__lightLink")[0].title,
-		artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image").replace("url(\"", "").replace("\")", "").replace("50x50.", "500x500."),
+		artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image"),
 		fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike",
 		current = $(".playbackTimeline__timePassed span[aria-hidden]").text(),
 		end = $(".playbackTimeline__duration span[aria-hidden]").text(),
 		volume = Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100;
+
+	if (artwork.includes("50x50.")) artwork = artwork.replace("50x50.", "500x500.");
 
 	json["track"] = track;
 	json["artwork"] = artwork;
