@@ -31,8 +31,6 @@ input[type="checkbox"] {
 	margin-right: 0;
 }
 
-
-
 /* Playlist */
 body .element {
 	height: 430px;
@@ -53,8 +51,6 @@ body div:not(:last-child):not(:first-child) {
 	padding-bottom: 6.5px;
 }
 
-
-
 /* Popup elements */
 #track {
 	content: "* Click to Open SoundCloud *";
@@ -74,8 +70,6 @@ body div:not(:last-child):not(:first-child) {
 #artwork, #volume {
 	cursor: pointer;
 }
-
-
 
 /* Share buttons */
 #time {
@@ -118,8 +112,6 @@ body div:not(:last-child):not(:first-child) {
 	size: 50%;
 }
 
-
-
 /* Utils */
 .floating .left, .floating .right {
 	display: inline-block;
@@ -128,8 +120,6 @@ body div:not(:last-child):not(:first-child) {
 .floating .right {
 	float: right;
 }
-
-
 
 /* Marquee */
 .marquee {
@@ -163,8 +153,6 @@ body div:not(:last-child):not(:first-child) {
 		transform: translate(-100%);
 	}
 }
-
-
 
 /* Controller Icons */
 #controller button {

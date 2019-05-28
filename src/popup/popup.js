@@ -264,7 +264,7 @@ function uriEncode(str) {
 
 var ready = false, json = {}, 
 	artworkElem, trackElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem,
-	hideList = ["#close", "#second br:last-child", "#controller", "hr:first"],
+	hideList = ["#close", "#second br:last-child", "#controller", "hr:first", "#share_btn"],
 	shareSettings = {
 		"share_with_time": false
 	};
