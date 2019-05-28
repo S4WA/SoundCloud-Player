@@ -72,28 +72,12 @@ body div:not(:last-child):not(:first-child) {
 }
 
 /* Share buttons */
-#time {
-	/*padding-bottom: 18px;*/
-}
 
 #share {
 	display: none;
 	float: left;
 	padding-bottom: 8px;
 }
-
-/*#share_btn {
-	width: 13px;
-	height: 13px;
-	cursor: pointer;
-	text-align: center;
-	position: relative;
-	display: inline-block;
-	background-size: 90% 90%;
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	background-image: url("../assets/share-alt-solid.svg");
-}*/
 
 #copy, #time_at {
 	display: inline;
