@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 		repeatElem.value = "Repeat (" + items["repeat"] + ")";
 	}
 	if (items["volume"] != null) {
-		$("#volume").text(items["volume"] + " %");
+		$("#volume").text(Math.floor(items["volume"]) + " %");
 	}
 	if (items["time"] != null) {
 		var timeJson = items["time"];
