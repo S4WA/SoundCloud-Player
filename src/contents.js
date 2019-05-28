@@ -6,6 +6,7 @@ function update() {
 	var playing = $(".playControl")[0].title == "Pause current",
 		track = $("a.playbackSoundBadge__titleLink")[0].title + " By " + $("a.playbackSoundBadge__lightLink")[0].title,
 		artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image"),
+		link = $(".playbackSoundBadge__titleLink.sc-truncate")[0].href,
 		fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike",
 		current = $(".playbackTimeline__timePassed span[aria-hidden]").text(),
 		end = $(".playbackTimeline__duration span[aria-hidden]").text(),
@@ -15,6 +16,7 @@ function update() {
 
 	json["track"] = track;
 	json["artwork"] = artwork;
+	json["link"] = link;
 	json["playing"] = playing;
 	json["favorite"] = fav;
 	json["time"]["current"] = current;
@@ -79,6 +81,7 @@ var json = {
 	"playing": false,
 	"track": null,
 	"artwork": null,
+	"link": null,
 	"favorite": false,
 	"shuffle": false,
 	"repeat": "none",

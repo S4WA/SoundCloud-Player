@@ -5,9 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message["type"] != "update" || message["value"] == null) return;
+    
     var items = message["value"];
     if (json == items) return;
-	// if (!ready) return;
+
+    // Update element texts
+	/* if (!ready) return; */
 	if ((items["artwork"] != null && items["artwork"] != "") && items["artwork"] != $(artworkElem).css("background-image")) {
 		$(artworkElem).css("background-image", items["artwork"]);
 	}
@@ -26,19 +29,30 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 	if (items["repeat"] != null) {
 		repeatElem.value = "Repeat (" + items["repeat"] + ")";
 	}
+	if (items["volume"] != null) {
+		$("#volume").text(items["volume"] + " %");
+	}
 	if (items["time"] != null) {
 		var timeJson = items["time"];
 		if ($("#current").text() != timeJson["current"]) {
 			$("#current").text(timeJson["current"]);
+			$("#share_current_time").val(timeJson["current"]);
 		}
 		if ($("#end").text() != timeJson["end"]) {
 			$("#end").text(timeJson["end"]);
 		}
 	}
-	if (items["volume"] != null) {
-		$("#volume").text(items["volume"] + " %");
-	}
+	$("#copy").val(items["link"] + (shareSettings["share_with_time"] ? "#t=" + items["time"]["current"] : ""));
+
+	// Update local json data
 	json = items;
+	
+	// Controller
+	if ($("#controller").is(":not(:visible)")) {
+		for (var i in hideList) {
+			$(hideList[i]).show();
+		}
+	}
 });
 
 // Initialize:
@@ -47,21 +61,31 @@ function init() {
 		if (results.length == 0) {
 			ready = false;
 			json = {};
-			json["artwork"] = "";
-			json["track"] = "* Click to Open SoundCloud *";
-			json["time"] = null;
-			json["volume"] = 0;
 
-			$("#close").remove();
-			$("#second br:last-child").remove();
-			$("#controller").remove();
-			$("hr:first-child").remove();
+			for (var i in hideList) {
+				$(hideList[i]).hide();
+			}
+		} else {
+			for (var i in hideList) {
+				$(hideList[i]).show();
+			}
 		}
 	});
 
 	$("#version").text("v" + chrome.runtime.getManifest().version);
 	registerElements();
 	registerEvents();
+}
+
+function registerElements() {
+	artworkElem = $("#artwork")[0];
+	trackElem = $("#track")[0];
+	toggleElem = $("#toggle")[0];
+	prevElem = $("#prev")[0];
+	nextElem = $("#next")[0];
+	favElem = $("#fav")[0];
+	repeatElem = $("#repeat")[0];
+	shuffleElem = $("#shuffle")[0];
 }
 
 function registerEvents() {
@@ -84,7 +108,7 @@ function registerEvents() {
 		}
 	);*/
 
-	// 
+	// Link buttons
 	$("#store").on("click", () => {
 		openURL("https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej");
 	});
@@ -95,9 +119,29 @@ function registerEvents() {
 		chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
 			if (results.length != 0) {
 				 chrome.tabs.remove(results[0].id, () => {});
+				 window.close();
 			}
 		});
 	});
+
+	// Share
+	$("#share_btn").on("click", () => {
+		var share = $("#share");
+		share.is(":visible") ? share.hide() : share.show();
+	});
+
+	$("#share_with_time").on("input", () => {
+		shareSettings["share_with_time"] = $("#share_with_time").prop("checked");
+	});
+	// Social
+	var socials = ["Twitter", "Facebook", "Tumblr", "Email"];
+	for (var i in socials) with({i:i}) {
+		var elem = $("#social ." + socials[i].toLowerCase());
+		elem.on("click", () => {
+			openURL(shareText(socials[i]));
+		});
+		elem.attr("title", "Click to Share this on " + socials[i])
+	}
 }
 
 // Utils:
@@ -109,7 +153,7 @@ function queue(request, value) {
 			var jsonRequest = {}
 			jsonRequest["type"] = request;
 			if (!value) jsonRequest["value"] = value;
-			chrome.tabs.sendMessage(results[0].id, jsonRequest, null);
+			return chrome.tabs.sendMessage(results[0].id, jsonRequest, null);
 		}
 	});
 }
@@ -120,8 +164,73 @@ function openSCTab() {
 			chrome.tabs.update(results[0].id, { active : true }, (tab) => {});
 		} else {
 			chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
+			window.close();
 		}
-		// window.close();
+	});
+}
+
+function shareText(social) {
+	switch(social.toLowerCase()) {
+		case "twitter": {
+			return shareLink(
+				"twitter",
+				$("#track").text() + " " + $("#copy").val()
+			);
+		}
+		case "facebook": {
+			return shareLink(
+				"facebook",
+				$("#copy").val()
+			);
+		}
+		case "tumblr": {
+			return shareLink(
+				"tumblr",
+				$("#track").text(),
+				$("#copy").val()
+			);
+		}
+		case "email": {
+			return shareLink(
+				"email",
+				$("#track").text(),
+				$("#copy").val()
+			);
+		}
+		default: {
+			return null;
+		}
+	}
+}
+
+function shareLink(social, text, url) {
+	text = fixedEncoder(text);
+	url = fixedEncoder(url);
+	switch(social.toLowerCase()) {
+		case "twitter": {
+			return "https://twitter.com/intent/tweet?text=" + text + "&hashtags=NowPlaying";
+		}
+		case "facebook": {
+			return "https://www.facebook.com/sharer/sharer.php?u=" + (!text ? url : text);
+		}
+		case "tumblr": {
+			return "https://www.tumblr.com/widgets/share/tool?canonicalUrl=" + url + 
+				"&posttype=audio" + 
+				"&tags=SoundCloud%2Cmusic%2CNowPlaying" + 
+				"&caption=" + text;
+		}
+		case "email": {
+			return "mailto:?subject=" + text + "&body=" + url;
+		}
+		default: {
+			return null;
+		}
+	}
+}
+
+function fixedEncoder(str) {
+	return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+		return '%' + c.charCodeAt(0).toString(16);
 	});
 }
 
@@ -147,15 +256,15 @@ function toggle() {
 	queue(toggleElem.value = string);
 }
 
-function registerElements() {
-	artworkElem = $("#artwork")[0];
-	trackElem = $("#track")[0];
-	toggleElem = $("#toggle")[0];
-	prevElem = $("#prev")[0];
-	nextElem = $("#next")[0];
-	favElem = $("#fav")[0];
-	repeatElem = $("#repeat")[0];
-	shuffleElem = $("#shuffle")[0];
+function uriEncode(str) {
+	return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+		return '%' + c.charCodeAt(0).toString(16);
+	});
 }
 
-var ready = false, json = {}, artworkElem, trackElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem;
+var ready = false, json = {}, 
+	artworkElem, trackElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem,
+	hideList = ["#close", "#second br:last-child", "#controller", "hr:first"],
+	shareSettings = {
+		"share_with_time": false
+	};

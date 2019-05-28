@@ -1,4 +1,5 @@
 body {
+	/*2: 450px;*/
 	width: 250px;
 	font-family: "Meiryo";
 }
@@ -12,16 +13,53 @@ a:hover {
 	color: #ff8c00;
 }
 
-body div:not(:last-child):not(:first-child) {
-	padding-bottom: 7px;
-}
-
 hr {
 	margin-top: 0;
 }
 
+input[type="text"] {
+	display: inline-block;
+	padding: 1px 2px;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+	transition: border-color .1s;
+}
+
+input[type="checkbox"] {
+	margin-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+
+
+/* Playlist */
+body .element {
+	height: 430px;
+	display: inline-block;
+}
+
+body .element.right {
+	width: 250px;
+	float: right;
+}
+
+body .element.left {
+	width: 200px;
+	float: left;
+}
+
+body div:not(:last-child):not(:first-child) {
+	padding-bottom: 6.5px;
+}
+
+
 
 /* Popup elements */
+#track {
+	content: "* Click to Open SoundCloud *";
+}
+
 #artwork {
 	width: 250px;
 	height: 250px;
@@ -30,27 +68,67 @@ hr {
 	background-size: cover;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
+	background-image: url(../icon.png);
 }
 
 #artwork, #volume {
 	cursor: pointer;
 }
 
-#time, #volume {
+
+
+/* Share buttons */
+#time {
+	/*padding-bottom: 18px;*/
+}
+
+#share {
+	display: none;
+	float: left;
+	padding-bottom: 8px;
+}
+
+/*#share_btn {
+	width: 13px;
+	height: 13px;
+	cursor: pointer;
+	text-align: center;
+	position: relative;
+	display: inline-block;
+	background-size: 90% 90%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-image: url("../assets/share-alt-solid.svg");
+}*/
+
+#copy, #time_at {
 	display: inline;
 }
 
-#close, #volume {
+#copy {
+	width: 70%;
+}
+
+#share_current_time {
+	width: 10%;
+}
+
+#social {
+	padding-top: 5px;
+	size: 50%;
+}
+
+
+
+/* Utils */
+.floating .left, .floating .right {
+	display: inline-block;
+}
+
+.floating .right {
 	float: right;
 }
 
-#controller .left, #controller .right {
-	display: inline;
-}
-
-#controller .right {
-	float: right;
-}
 
 
 /* Marquee */
@@ -85,6 +163,7 @@ hr {
 		transform: translate(-100%);
 	}
 }
+
 
 
 /* Controller Icons */
@@ -150,4 +229,36 @@ hr {
 
 #repeat[value="Repeat (all)"] {
 	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZmlsbD0iI2Y1MCIgZD0iTTEyIDhIOWE0IDQgMCAxIDAgMCA4aDZhNCA0IDAgMCAwIDIuMTA0LTcuNDAzbDEuNzctMS4xOC4wMi4wMThBNiA2IDAgMCAxIDE1IDE4SDlBNiA2IDAgMSAxIDkgNmgzVjRsNCAzLTQgM1Y4eiIvPjwvc3ZnPgo=);
+}
+
+/* Social Icons */
+#social button {
+	border: none;
+	width: 25px;
+	height: 25px;
+	background-size: 25px 25px;
+	margin: 0 2px 0 0;
+	cursor: pointer;
+	display: inline-block;
+	background-repeat: no-repeat;
+}
+
+#social button:focus {
+	outline: 0;
+}
+
+#social .twitter {
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c2gtdHdpdHRlci0zMjwvdGl0bGU+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBmaWxsPSIjMURBMUYyIiBkPSJNMCAzMmgzMlYwSDB6Ii8+PHBhdGggZD0iTTI1LjQ0OSA4LjI5M2E4LjE4IDguMTggMCAwIDEtMi42MDcuOThBNC4xNDMgNC4xNDMgMCAwIDAgMTkuODQ3IDhjLTIuMjY1IDAtNC4xMDIgMS44MDctNC4xMDIgNC4wNCAwIC4zMTMuMDM2LjYyNy4xMDUuOTJhMTEuNzIgMTEuNzIgMCAwIDEtOC40NTgtNC4yMiAzLjk2MSAzLjk2MSAwIDAgMC0uNTU2IDIuMDMzYzAgMS40LjcyNiAyLjYzNCAxLjgyNyAzLjM2YTQuMTYgNC4xNiAwIDAgMS0xLjg1OS0uNTA2di4wNTNjMCAxLjk1MyAxLjQxNSAzLjU4NyAzLjI5MiAzLjk2YTQuMTM3IDQuMTM3IDAgMCAxLTEuODU0LjA2NyA0LjEgNC4xIDAgMCAwIDMuODMzIDIuODA2IDguMzM4IDguMzM4IDAgMCAxLTUuMDk3IDEuNzI3Yy0uMzMyIDAtLjY1Ny0uMDItLjk4LS4wNTNBMTEuNzUyIDExLjc1MiAwIDAgMCAxMi4yOSAyNGM3LjU0OCAwIDExLjY3NS02LjE1MyAxMS42NzUtMTEuNDkzIDAtLjE3NC0uMDAzLS4zNDctLjAxMS0uNTJhOC4yODcgOC4yODcgMCAwIDAgMi4wNDctMi4wOTQgOC4yMiA4LjIyIDAgMCAxLTIuMzU3LjYzNCA0LjAyOCA0LjAyOCAwIDAgMCAxLjgwNS0yLjIzNCIgZmlsbD0iI0ZGRiIvPjwvZz48L3N2Zz4=);
+}
+
+#social .facebook {
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c2gtZmFjZWJvb2stMzI8L3RpdGxlPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZmlsbD0iIzNCNTk5OCIgZD0iTTAgMzJoMzJWMEgweiIvPjxwYXRoIGQ9Ik0xOCAyNlYxNmgyLjk2OWwuMzY0LTRoLTMuMTc4di0xLjZjMC0uNzguNTE5LS45Ni44ODQtLjk2aDIuMjQzVjYuMDEzTDE4LjE5MiA2Yy0zLjQzIDAtNC4yMDkgMi41NTMtNC4yMDkgNC4xOTNWMTJIMTJ2NGgydjEwaDR6IiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==);
+}
+
+#social .tumblr {
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c2gtdHVtYnItMzI8L3RpdGxlPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZmlsbD0iIzM1NDY1QyIgZD0iTTAgMzJoMzJWMEgweiIvPjxwYXRoIGQ9Ik0xMi44NzMgMjMuMzA3Yy4xOC40OC41MDcuOTMzLjk4NyAxLjM2YTQuOTIgNC45MiAwIDAgMCAxLjcxMy45ODZjLjY3NC4yMzQgMS4xODcuMzQ3IDIuMDYuMzQ3Ljc3NCAwIDEuNDg3LS4wOCAyLjE0Ny0uMjQ3LjY2Ny0uMTYgMS40MDctLjQ0IDIuMjItLjg0NnYtMy4xNTRjLS45Ni42Ni0xLjkyLjk4Ny0yLjg4Ny45ODdhMi43MjggMi43MjggMCAwIDEtMS40NTMtLjM5M2MtLjMxMy0uMi0uNjA3LS41NC0uNzI3LS44NjctLjExMy0uMzI3LS4xLS45OTMtLjEtMi4xNTN2LTUuMTM0aDQuNDE0di0zLjU2NmgtNC40MTRWNmgtMi43MmMtLjEyIDEuMDMzLS4zNDYgMS44OC0uNjY2IDIuNTQ3YTUuNTEzIDUuNTEzIDAgMCAxLTEuMjk0IDEuNzJjLS41MzMuNDczLTEuNC44NC0yLjE1MyAxLjA5M3YyLjgzM2gyLjU5M3Y3LjAxNGMwIC45MTMuMDk0IDEuNjEzLjI4IDIuMSIgZmlsbD0iI0ZGRiIvPjwvZz48L3N2Zz4=);
+}
+
+#social .email {
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c2gtZW1haWwtMzI8L3RpdGxlPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZmlsbD0iIzMzMyIgZD0iTTAgMGgzMnYzMkgweiIvPjxwYXRoIGQ9Ik0yNC45OTEgNi43OTRsLTIuNzE0IDE2LjI4N2EuNjY4LjY2OCAwIDAgMS0uMzQuNDc3LjY1LjY1IDAgMCAxLS41ODMuMDMxbC00LjgwMy0xLjk2MS0yLjU2NiAzLjEyOGEuNjI0LjYyNCAwIDAgMS0uNTIuMjQ0LjU3My41NzMgMCAwIDEtLjIzMy0uMDQzLjY2NS42NjUgMCAwIDEtLjMyMy0uMjQ5Yy0uMDgxLS4xMTcgMC0uMjIzIDAtLjM2NXYtMy44ODhsOS4wNC0xMS4wNjMtMTEuMDM1IDkuNjI1LTQuNDg5LTEuNTM1Yy0uMjYxLS4wOTktLjQwMy0uMjkzLS40MjQtLjU4M2EuNjMuNjMgMCAwIDEgLjM0LS42MjZMMjMuOTgzIDYuMDk0YS42NDkuNjQ5IDAgMCAxIC4zNC0uMDk1Yy4xNCAwIC41MzItLjA1NS42NDUuMDIyLjIzMy4xNy4wNjUuNDkuMDIyLjc3M3oiIGZpbGw9IiNGRkYiLz48L2c+PC9zdmc+);
 }
