@@ -10,7 +10,8 @@ function update() {
 		fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike",
 		current = $(".playbackTimeline__timePassed span[aria-hidden]").text(),
 		end = $(".playbackTimeline__duration span[aria-hidden]").text(),
-		volume = Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100;
+		volume = Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100,
+		mute = $(".volume")[0].className.includes("muted");
 
 	if (artwork.includes("50x50.")) artwork = artwork.replace("50x50.", "500x500.");
 
@@ -22,6 +23,7 @@ function update() {
 	json["time"]["current"] = current;
 	json["time"]["end"] = end;
 	json["volume"] = volume;
+	json["mute"] = mute;
 	post();
 }
 
@@ -71,6 +73,13 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 			post();
 			break;
 		}
+		case "mute":
+		case "unmute": {
+			$(".volume button[type='button']")[0].click();
+			json["mute"] = $(".volume")[0].className.includes("muted");
+			post();
+			break;
+		}
 		default: {
 			break;
 		}
@@ -89,5 +98,6 @@ var json = {
 		"current": null,
 		"end": null
 	},
-	"volume": 0
+	"volume": 0,
+	"mute": false
 };

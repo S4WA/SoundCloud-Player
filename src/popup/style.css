@@ -17,6 +17,10 @@ hr {
 	margin-top: 0;
 }
 
+hr:last-child {
+	margin-bottom: 0;
+}
+
 input[type="text"] {
 	display: inline-block;
 	padding: 1px 2px;
@@ -71,12 +75,16 @@ body div:not(:last-child):not(:first-child) {
 	cursor: pointer;
 }
 
+#volume, #close {
+	float: right;
+}
+
 /* Share buttons */
 
 #share {
 	display: none;
 	float: left;
-	padding-bottom: 8px;
+	/*padding-bottom: 8px;*/
 }
 
 #copy, #time_at {
@@ -138,17 +146,49 @@ body div:not(:last-child):not(:first-child) {
 	}
 }
 
+/* Second Elements Icon */
+/*.box {
+	border: 1px solid #a5a5a5;
+	border-radius: 3px;
+	position: relative;
+}*/
+
+#second .icon {
+	width: 13px;
+	height: 13px;
+	cursor: pointer;
+	display: inline-block;
+	background-repeat: no-repeat;
+	background-position: center center;
+	transform: translateY(15%);
+}
+
+#volume-icon {
+	background-size: 16px 16px;
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZmlsbD0iIzMzMyIgZD0iTTQgOWg0LjAwMkwxMiA1djE0Yy0yLjQ0Ni0yLjY2Ny0zLjc3OC00LTMuOTk4LTRINFY5em0xMCA0YTEgMSAwIDAgMCAwLTJWOWEzIDMgMCAwIDEgMCA2di0yem0wIDRhNSA1IDAgMCAwIDAtMTBWNWE3IDcgMCAwIDEgMCAxNHYtMnoiLz48L3N2Zz4K);
+}
+
+#volume-icon.muted {
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZmlsbD0iIzMzMyIgZD0iTTE4IDEwLjU4NGwtMi4yOTMtMi4yOTEtMS40MTQgMS40MTQgMi4yOTMgMi4yOTEtMi4yOTEgMi4yOTEgMS40MTQgMS40MTUgMi4yOTItMi4yOTIgMi4yOTQgMi4yOTIgMS40MTQtMS40MTUtMi4yOTMtMi4yOTEgMi4yOTEtMi4yOS0xLjQxNC0xLjQxNS0yLjI5MiAyLjI5MXpNNCA5aDQuMDAyTDEyIDV2MTRjLTIuNDQ2LTIuNjY3LTMuNzc4LTQtMy45OTgtNEg0Vjl6Ii8+PC9zdmc+Cg==);
+}
+
+#share_icon {
+	background-size: 13px 13px;
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c2hhcmU8L3RpdGxlPjxnIGZpbGw9IiMyMjIiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEyIDNDOC4wMzIgMyA3IDQuOCA3IDcuOGMxLjY0Mi0zIDQuMTU3LTIuNzk1IDUtMi43OTVWM3ptMC0ydjZsMy0zLTMtM3oiLz48cGF0aCBkPSJNMTQgN3Y0YTIgMiAwIDAgMS0yLjAwOSAySDQuMDFBMi4wMDYgMi4wMDYgMCAwIDEgMiAxMVY1YTIgMiAwIDAgMSAyLjAwOS0yaDMuMTlhNS45MzMgNS45MzMgMCAwIDAtMS4zODMgMkg0djZoOFY5bDItMnptLTMtMmgtLjA0bC4wNC0uMDFWNXoiLz48L2c+PC9zdmc+);
+}
+
 /* Controller Icons */
 #controller button {
-	width: 24px;
-	height: 24px;
 	border: 0;
 	font: 0/0 a;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
 	text-shadow: none;
 	color: transparent;
+	text-shadow: none;
 	background-color: transparent;
 	background-position: center center;
-	cursor: pointer;
 }
 
 #controller button:focus {
@@ -205,14 +245,15 @@ body div:not(:last-child):not(:first-child) {
 
 /* Social Icons */
 #social button {
-	border: none;
 	width: 25px;
 	height: 25px;
-	background-size: 25px 25px;
 	margin: 0 2px 0 0;
+	background-size: 25px 25px;
+	border: none;
 	cursor: pointer;
 	display: inline-block;
 	background-repeat: no-repeat;
+	background-position: center center;
 }
 
 #social button:focus {
@@ -233,4 +274,10 @@ body div:not(:last-child):not(:first-child) {
 
 #social .email {
 	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c2gtZW1haWwtMzI8L3RpdGxlPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZmlsbD0iIzMzMyIgZD0iTTAgMGgzMnYzMkgweiIvPjxwYXRoIGQ9Ik0yNC45OTEgNi43OTRsLTIuNzE0IDE2LjI4N2EuNjY4LjY2OCAwIDAgMS0uMzQuNDc3LjY1LjY1IDAgMCAxLS41ODMuMDMxbC00LjgwMy0xLjk2MS0yLjU2NiAzLjEyOGEuNjI0LjYyNCAwIDAgMS0uNTIuMjQ0LjU3My41NzMgMCAwIDEtLjIzMy0uMDQzLjY2NS42NjUgMCAwIDEtLjMyMy0uMjQ5Yy0uMDgxLS4xMTcgMC0uMjIzIDAtLjM2NXYtMy44ODhsOS4wNC0xMS4wNjMtMTEuMDM1IDkuNjI1LTQuNDg5LTEuNTM1Yy0uMjYxLS4wOTktLjQwMy0uMjkzLS40MjQtLjU4M2EuNjMuNjMgMCAwIDEgLjM0LS42MjZMMjMuOTgzIDYuMDk0YS42NDkuNjQ5IDAgMCAxIC4zNC0uMDk1Yy4xNCAwIC41MzItLjA1NS42NDUuMDIyLjIzMy4xNy4wNjUuNDkuMDIyLjc3M3oiIGZpbGw9IiNGRkYiLz48L2c+PC9zdmc+);
+}
+
+#social .clipboard {
+	background-color: black;
+	background-size: 60% 60%;
+	background-image: url("../assets/copy-solid.svg");
 }

@@ -34,43 +34,55 @@
 	<hr/>
 
 	<div id="second" class="floating">
-		<div id="time" class="left">
-			<span id="current">
-				--:--
-			</span>
-			/
-			<span id="end">
-				--:--
-			</span>
+		<div class="left">
+			<div id="time">
+				<span id="current">
+					--:--
+				</span>
+				/
+				<span id="end">
+					--:--
+				</span>
+			</div>
 
 			<div>
-				<a id="share_btn" href="javascript:void(0)">Share</a>
+				<a id="share_btn" class="box" href="javascript:void(0)">
+					<span id="share_icon" class="icon"></span>
+					Share
+				</a>
 			</div>
 			<!-- <div id="share_btn" title="Click to show Share buttons!">
 			</div> -->
 		</div>
 		<div class="right">
-			<span id="volume" title="Current Volume(Can't Change in this popup)">0 %</span>
-			<br/>
+			<div class="box">
+				<span id="volume-icon" class="icon" title="Mute/Unmute"></span>
+				<span id="volume" title="Current Volume">0 %</span>
+			</div>
 			<a id="close" title="Click to Close tab of SoundCloud" href="javascript:void(0)">Close</a>
 		</div>
-		<div id="share">
-			<hr/>
-			<input id="copy" type="text" disabled>
-			<div id="time_at">
-				<input id="share_with_time" type="checkbox">
-				<span>at</span>
-				<input id="share_current_time" type="text">
-			</div>
-			<div id="social">
+	</div>
+	<hr/>
+	<div id="share">
+		<input id="copy" type="text" disabled>
+		<div id="time_at">
+			<input id="share_with_time" type="checkbox">
+			<span>at</span>
+			<input id="share_current_time" type="text">
+		</div>
+		<div id="social" class="floating">
+			<div class="left">
 				<button class="twitter"></button>
 				<button class="facebook"></button>
 				<button class="tumblr"></button>
 				<button class="email"></button>
 			</div>
+			<div class="right">
+				<button class="clipboard" title="Copy"></button>
+			</div>
 		</div>
+		<hr/>
 	</div>
-	<hr/>
 
 	<div>
 		<span>
