@@ -80,6 +80,20 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 			post();
 			break;
 		}
+		case "playlist": {
+			$(".playbackSoundBadge__queueCircle")[0].click();
+			var array = [], list = $(".queue__itemWrapper");
+			for (var i in list) {
+				data = {};
+				data["artist"] = $(list[i]).find(".queueItemView__meta .queueItemView__username").text();
+				data["track"] = $(list[i]).find(".queueItemView__title .sc-link-dark").text();
+				data["artwork"] = $(list[i]).find(".sc-artwork.image__full").css("background-image");
+				array.push(data);
+			}
+			json["playlist"] = array;
+			post();
+			break;
+		}
 		default: {
 			break;
 		}
@@ -99,5 +113,6 @@ var json = {
 		"end": null
 	},
 	"volume": 0,
-	"mute": false
+	"mute": false,
+	"playlist": []
 };

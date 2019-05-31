@@ -153,7 +153,7 @@ body div:not(:last-child):not(:first-child) {
 	position: relative;
 }*/
 
-#second .icon {
+.icon {
 	width: 13px;
 	height: 13px;
 	cursor: pointer;
@@ -280,4 +280,9 @@ body div:not(:last-child):not(:first-child) {
 	background-color: black;
 	background-size: 60% 60%;
 	background-image: url("../assets/copy-solid.svg");
+}
+
+#playlist_btn {
+	background-size: 80% 80%;
+	background-image: url("../assets/list-solid.svg");
 }

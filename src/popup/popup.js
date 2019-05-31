@@ -66,6 +66,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 		}
 	}
 
+	if (items["playlist"] != null && items["playlist"] != json["playlist"]) {
+		console.log(items["playlist"])
+	}
+
 
 	$("#copy").val(items["link"] + (shareSettings["share_with_time"] ? "#t=" + items["time"]["current"] : "") );
 
@@ -125,6 +129,7 @@ function registerEvents() {
 	$(shuffleElem).on("click", () => { queue("shuffle"); });
 
 	$("#volume-icon").on("click", () => { queue("mute"); });
+	$("#playlist_btn").on("click", () => { queue("playlist"); });
 
 	/*$(".marquee").hover(
 		() => {
