@@ -82,16 +82,20 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 		}
 		case "playlist": {
 			$(".playbackSoundBadge__queueCircle")[0].click();
-			var array = [], list = $(".queue__itemWrapper");
+			var array = [], list = $(".queueItemView.m-active");
 			for (var i in list) {
 				data = {};
 				data["artist"] = $(list[i]).find(".queueItemView__meta .queueItemView__username").text();
 				data["track"] = $(list[i]).find(".queueItemView__title .sc-link-dark").text();
 				data["artwork"] = $(list[i]).find(".sc-artwork.image__full").css("background-image");
-				array.push(data);
+				if (data["artist"] != "" && data["track"] != "") {
+					array.push(data);
+				}
 			}
-			json["playlist"] = array;
-			post();
+			if (json["playlist"] != array) {
+				json["playlist"] = array;
+				post();
+			}
 			break;
 		}
 		default: {
