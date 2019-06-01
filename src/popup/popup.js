@@ -67,7 +67,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 	}
 
 	if (items["playlist"] != null && items["playlist"] != json["playlist"]) {
-		console.log(items["playlist"])
+		// console.log(items["playlist"])
 	}
 
 
