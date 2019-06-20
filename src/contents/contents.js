@@ -3,15 +3,8 @@ window.onload = () => {
 }
 
 function update() {
-	var playing = $(".playControl")[0].title == "Pause current",
-		track = $("a.playbackSoundBadge__titleLink")[0].title + " By " + $("a.playbackSoundBadge__lightLink")[0].title,
-		artwork = $(".playbackSoundBadge span.sc-artwork").css("background-image"),
-		link = $(".playbackSoundBadge__titleLink.sc-truncate")[0].href,
-		fav = $(".playControls__soundBadge .sc-button-like")[0].title == "Unlike",
-		current = $(".playbackTimeline__timePassed span[aria-hidden]").text(),
-		end = $(".playbackTimeline__duration span[aria-hidden]").text(),
-		volume = Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100,
-		mute = $(".volume")[0].className.includes("muted");
+	var playing = isPlaying(), track = getTrack(), artwork = getArtwork(), link = getLink(),
+		fav = isLiked(), current = getCurrentTime(), end = getEndTime(), volume = getVolume(), mute = isMuted();
 
 	if (artwork.includes("50x50.")) artwork = artwork.replace("50x50.", "500x500.");
 
@@ -24,6 +17,7 @@ function update() {
 	json["time"]["end"] = end;
 	json["volume"] = volume;
 	json["mute"] = mute;
+
 	post();
 }
 
@@ -52,6 +46,8 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 			$(".playControls__next")[0].click();
 			break;
 		}
+
+		// 
 		case "unfav":
 		case "fav": {
 			$(".playbackSoundBadge__like")[0].click();
@@ -80,24 +76,24 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 			post();
 			break;
 		}
-		case "playlist": {
-			$(".playbackSoundBadge__queueCircle")[0].click();
-			var array = [], list = $(".queueItemView.m-active");
-			for (var i in list) {
-				data = {};
-				data["artist"] = $(list[i]).find(".queueItemView__meta .queueItemView__username").text();
-				data["track"] = $(list[i]).find(".queueItemView__title .sc-link-dark").text();
-				data["artwork"] = $(list[i]).find(".sc-artwork.image__full").css("background-image");
-				if (data["artist"] != "" && data["track"] != "") {
-					array.push(data);
-				}
-			}
-			if (json["playlist"] != array) {
-				json["playlist"] = array;
-				post();
-			}
-			break;
-		}
+		// case "playlist": {
+		// 	$(".playbackSoundBadge__queueCircle")[0].click();
+		// 	var array = [], list = $(".queueItemView.m-active");
+		// 	for (var i in list) {
+		// 		data = {};
+		// 		data["artist"] = $(list[i]).find(".queueItemView__meta .queueItemView__username").text();
+		// 		data["track"] = $(list[i]).find(".queueItemView__title .sc-link-dark").text();
+		// 		data["artwork"] = $(list[i]).find(".sc-artwork.image__full").css("background-image");
+		// 		if (data["artist"] != "" && data["track"] != "") {
+		// 			array.push(data);
+		// 		}
+		// 	}
+		// 	if (json["playlist"] != array) {
+		// 		json["playlist"] = array;
+		// 		post();
+		// 	}
+		// 	break;
+		// }
 		default: {
 			break;
 		}
@@ -117,6 +113,6 @@ var json = {
 		"end": null
 	},
 	"volume": 0,
-	"mute": false,
-	"playlist": []
+	"mute": false
+	// , "playlist": []
 };
