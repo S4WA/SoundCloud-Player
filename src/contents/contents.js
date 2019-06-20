@@ -54,7 +54,6 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 			$(".playControls__next")[0].click();
 			break;
 		}
-
 		// 
 		case "unfav":
 		case "fav": {
