@@ -22,13 +22,17 @@ function update() {
 }
 
 function post() {
+	if (reload) return;
+
 	try {
 		var requestJson = {};
 		requestJson["type"] = "update";
 		requestJson["value"] = json;
 		chrome.runtime.sendMessage(requestJson);
 	} catch(err) {
-		window.location.href = window.location;
+		location.reload();
+		reload = true;
+		// 拡張機能がリロードされた時 contents.jsも合わせてリロードする
 	}
 }
 
@@ -119,4 +123,4 @@ var json = {
 	"volume": 0,
 	"mute": false
 	// , "playlist": []
-};
+}, reload = false;
