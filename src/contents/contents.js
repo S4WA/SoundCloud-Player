@@ -22,10 +22,14 @@ function update() {
 }
 
 function post() {
-	var requestJson = {};
-	requestJson["type"] = "update";
-	requestJson["value"] = json;
-	chrome.runtime.sendMessage(requestJson);
+	try {
+		var requestJson = {};
+		requestJson["type"] = "update";
+		requestJson["value"] = json;
+		chrome.runtime.sendMessage(requestJson);
+	} catch(err) {
+		window.location.href = window.location;
+	}
 }
 
 chrome.runtime.onMessage.addListener((request, sender, callback) => {

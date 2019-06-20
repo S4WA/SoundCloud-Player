@@ -19,7 +19,7 @@ function getLink() {
 
 function isLiked() {
 	var cls = ".playControls__soundBadge .sc-button-like";
-	return $(cls).length != 0 ? $(cls)[0].title == "Unlike";
+	return $(cls).length != 0 ? $(cls)[0].title == "Unlike" : false;
 }
 
 function getCurrentTime() {
