@@ -6,7 +6,7 @@ function update() {
 	var playing = isPlaying(), track = getTrack(), artwork = getArtwork(), link = getLink(),
 		fav = isLiked(), current = getCurrentTime(), end = getEndTime(), volume = getVolume(), mute = isMuted();
 
-	if (artwork.includes("50x50.")) artwork = artwork.replace("50x50.", "500x500.");
+	if (artwork != null && artwork.includes("50x50.")) artwork = artwork.replace("50x50.", "500x500.");
 
 	json["track"] = track;
 	json["artwork"] = artwork;
