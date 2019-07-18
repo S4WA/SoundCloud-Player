@@ -104,6 +104,16 @@ function init() {
 	$("#version").text("v" + chrome.runtime.getManifest().version);
 	registerElements();
 	registerEvents();
+
+	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
+		if (results["length"] >= 2) {
+			$("body").append( $("<hr>"), $("</hr>") )
+
+			text = $("<span>").text("*WARNING* Don't open tab for soundcloud more than two.")
+			$("body").append( text )
+			console.log("oaweoa")
+		}
+	});
 }
 
 function registerElements() {
@@ -168,14 +178,15 @@ function registerEvents() {
 	});
 
 	// Social
-	var socials = ["Twitter", "Facebook", "Tumblr", "Email"];
-	for (var i in socials) with({i:i}) {
-		var elem = $("#social ." + socials[i].toLowerCase());
+	var socials = ["twitter", "facebook", "tumblr", "email"];
+	for (var i in socials) with ({i:i}) {
+		var elem = $( "#social ." + socials[i] );
 		elem.on("click", () => {
-			openURL(shareLink(socials[i]));
+			openURL( shareLink(socials[i]) );
 		});
 		elem.attr("title", "Click to Share this on " + socials[i])
 	}
+
 	$("#social .clipboard").on("click", () => {
 		copyToClipboard($("#track").text() + " " + $("#copy").val());
 	})
@@ -213,7 +224,7 @@ function fixedEncoder(str) {
 }
 
 function openURL(link) {
-	chrome.tabs.create({ url: link}, (tab) => {});
+	chrome.tabs.create({ url: link }, (tab) => {});
 }
 
 function toggleFav() {
@@ -235,14 +246,20 @@ function toggle() {
 }
 
 function copyToClipboard(text) {
-	var input = $("<input>")
-	input.style.position = "fixed";
-	input.style.opacity = 0;
-	input.value = text;
+	var input = $("<input>"), style = {
+		"position": "fixed",
+		"opacity": 0
+	};
+
+	input.css(style);
+	input.val(text);
+
 	$("body").append(input);
+
 	input.select();
 	document.execCommand("Copy");
-	$("body").remove(input);
+
+	input.remove();
 };
 
 // Share link
