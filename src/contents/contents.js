@@ -1,5 +1,9 @@
 window.onload = () => {
-	setInterval(() => { update(); }, 100);
+	chrome.runtime.sendMessage({ text: "isfirst" }, isFirst => {
+		if (isFirst) {
+			setInterval(() => { update(); }, 100);
+		}
+	});
 }
 
 function update() {
@@ -29,7 +33,7 @@ function post() {
 		requestJson["type"] = "update";
 		requestJson["value"] = json;
 		chrome.runtime.sendMessage(requestJson);
-	} catch(err) {
+	} catch (err) {
 		location.reload();
 		reload = true;
 		// 拡張機能がリロードされた時 contents.jsも合わせてリロードする

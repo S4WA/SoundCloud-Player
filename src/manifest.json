@@ -25,6 +25,11 @@
 		"default_popup": "popup/popup.html",
 		"default_icon": "icon.png"
 	},
+	"background": {
+		"scripts": [
+			"background.js"
+		]
+	},
 	"icons": {
 		"16": "icon.png",
 		"48": "icon.png",

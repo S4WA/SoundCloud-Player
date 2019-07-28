@@ -107,11 +107,13 @@ function init() {
 
 	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
 		if (results["length"] >= 2) {
-			$("body").append( $("<hr>"), $("</hr>") )
-
-			text = $("<span>").text("*WARNING* Don't open tab for soundcloud more than two.")
-			$("body").append( text )
-			console.log("oaweoa")
+			$("body").append( 
+				$("<hr>"),
+				$("</hr>"),
+				$("<b>").text("*WARNING* Don't open tab for soundcloud more than 2."),
+				$("<br>"),
+				$("<span>").text("Data is never catch from Other than the first tab!")
+			)
 		}
 	});
 }
