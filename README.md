@@ -1,5 +1,5 @@
 # soundcloud-player
 Chrome Extension  
-![image](https://raw.githubusercontent.com/S4WA/soundcloud-player/master/img/0527.png)  
+![image](https://github.com/S4WA/soundcloud-player/blob/master/img/0728.png?raw=true)  
 
 書き直してえ
