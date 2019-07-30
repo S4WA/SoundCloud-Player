@@ -1,9 +1,9 @@
 window.onload = () => {
-	chrome.runtime.sendMessage({ text: "isfirst" }, isFirst => {
-		if (isFirst) {
-			setInterval(() => { update(); }, 100);
-		}
-	});
+	setInterval(() => {
+		chrome.runtime.sendMessage({ text: "isfirst" }, isFirst => {
+			if (isFirst) update();
+		});
+	}, 100);
 }
 
 function update() {
