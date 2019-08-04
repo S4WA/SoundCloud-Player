@@ -1,8 +1,22 @@
 window.onload = () => {
+	$.ajax({
+		url: "http://localhost:8000/",
+		type: "post",
+		data: {},
+		complete: function(xhr, responseText, thrownError) {
+			local_available = (xhr.status == "200");
+		}
+	});
+
 	setInterval(() => {
-		chrome.runtime.sendMessage({ text: "isfirst" }, isFirst => {
-			if (isFirst) update();
-		});
+		try {
+			chrome.runtime.sendMessage({ text: "isfirst" }, isFirst => {
+				if (isFirst) update();
+			});
+		} catch (err) {
+			location.reload();
+			reload = true;
+		}
 	}, 100);
 }
 
@@ -33,11 +47,30 @@ function post() {
 		requestJson["type"] = "update";
 		requestJson["value"] = json;
 		chrome.runtime.sendMessage(requestJson);
+		if (local_available) post_local();
 	} catch (err) {
 		location.reload();
 		reload = true;
 		// 拡張機能がリロードされた時 contents.jsも合わせてリロードする
 	}
+}
+
+function post_local() {
+	$.ajax({
+		url: "http://localhost:8000/",
+		type: "post",
+		data: {
+			"artist": getArtist(),
+			"title": getTitle(),
+			"playing": isPlaying()
+		}
+	})
+	// .done( (data) => {
+	// 	console.log("done:", data)
+	// } )
+	// .fail( (data) => {
+	// 	console.log("fail:", data)
+	// } )
 }
 
 chrome.runtime.onMessage.addListener((request, sender, callback) => {
@@ -126,4 +159,4 @@ var json = {
 	"volume": 0,
 	"mute": false
 	// , "playlist": []
-}, reload = false;
+}, reload = false, local_available = false;

@@ -4,8 +4,16 @@ function isPlaying() {
 }
 
 function getTrack() {
-	var cls = "a.playbackSoundBadge__titleLink", cls2 = "a.playbackSoundBadge__lightLink";
-	return $(cls).length != 0 ? ( $(cls)[0].title + " By " + $(cls2)[0].title ) : null;
+	var cls = "a.playbackSoundBadge__titleLink";
+	return $(cls).length != 0 ? ( getTitle() + " By " + getArtist() ) : null;
+}
+
+function getTitle() {
+	return $("a.playbackSoundBadge__titleLink")[0].title;
+}
+
+function getArtist() {
+	return $("a.playbackSoundBadge__lightLink")[0].title;
 }
 
 function getArtwork() {
