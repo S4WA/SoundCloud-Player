@@ -1,10 +1,10 @@
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 	if (msg.text == null) return;
-    switch(msg.text.toLowerCase()) {
-    	case "isfirst": {
-    		result = sender.tab.id == last.id
+	switch(msg.text.toLowerCase()) {
+		case "isfirst": {
+			result = sender.tab.id == last.id
 			sendResponse(result);
-	        break;
+			break;
 		}
 	}
 });
