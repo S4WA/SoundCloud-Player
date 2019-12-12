@@ -58,6 +58,7 @@ function registerEvents() {
 	$(artworkElem).on("click", () => { openSCTab(); });
 	$(repeatElem).on("click", () => { repeat(); });
 	$(shuffleElem).on("click", () => { queue("shuffle"); });
+	$("#title").on("click", () => { return false; });
 
 	registerOnClicks();
 }
@@ -131,6 +132,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 
 	$("#copy").val(items["link"] + (shareSettings["share_with_time"] ? "#t=" + items["time"]["current"] : "") );
+
+	$("#title")[0].href = items["link"];
 
 	// Update local json data
 	json = items;

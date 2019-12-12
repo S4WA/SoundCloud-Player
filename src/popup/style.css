@@ -208,3 +208,10 @@ body div:not(:last-child):not(:first-child) {
 	background-size: 80% 80%;
 	background-image: url("../assets/list-solid.svg");
 }
+
+#discord {
+	width: 20px;
+	height: 20px;
+	transform: translateY(-4%);
+	background-image: url("../assets/Discord-Logo-Black.svg");
+}

@@ -14,7 +14,14 @@ function queue(request, value) {
 function openSCTab() {
 	chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
 		if (results.length !== 0) {
-			chrome.tabs.update(results[0].id, { active : true }, (tab) => {});
+			chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
+				console.log(results[0].id == tab[0].id);
+				if (results[0].id == tab[0].id) {
+					queue("open");
+				} else {
+					chrome.tabs.update(results[0].id, { active : true }, () => {});
+				}
+			})
 		} else {
 			chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
 			window.close();

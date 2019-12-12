@@ -6,6 +6,9 @@ function registerOnClicks() {
 	$("#store").on("click", () => {
 		openURL("https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej");
 	});
+	$("#discord").on("click", () => {
+		openURL("https://discord.gg/R9R6fdm");
+	});
 	$("#drip").on("click", () => {
 		openURL("https://twitter.com/AkibaKaede");
 	});

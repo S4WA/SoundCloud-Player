@@ -92,6 +92,10 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 			post();
 			break;
 		}
+		case "open": {
+			$(".playbackSoundBadge__titleLink.sc-truncate")[0].click();
+			break;
+		}
 		// case "playlist": {
 		// 	$(".playbackSoundBadge__queueCircle")[0].click();
 		// 	var array = [], list = $(".queueItemView.m-active");
