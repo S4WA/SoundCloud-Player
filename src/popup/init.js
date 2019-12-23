@@ -33,13 +33,13 @@ function registerOnClicks() {
 	});
 
 	// Social
-	var socials = ["twitter", "facebook", "tumblr", "email"];
+	var socials = ["Twitter", "Facebook", "Tumblr", "Email"];
 	for (var i in socials) with ({i:i}) {
-		var elem = $( "#social ." + socials[i] );
+		var elem = $( "#social ." + socials[i].toLowerCase() );
 		elem.on("click", () => {
 			openURL( shareLink(socials[i]) );
 		});
-		elem.attr("title", "Click to Share this on " + socials[i])
+		elem.attr("title", "Share on " + socials[i])
 	}
 
 	$("#social .clipboard").on("click", () => {
