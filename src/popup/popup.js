@@ -31,7 +31,7 @@ function init() {
 				$("<b>").text("*WARNING* "),
 				$("<span>").text("Don't open tab for soundcloud more than 2."),
 				$("<br>"),
-				$("<span>").text("Data is never catch from Other than the first tab!")
+				$("<span>").text("Track is never show except first tab!")
 			)
 		}
 	});
