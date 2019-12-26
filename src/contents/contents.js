@@ -5,8 +5,11 @@ window.onload = () => {
 				if (isFirst) update();
 			});
 		} catch (err) {
-			location.reload();
-			reload = true;
+			// 拡張機能がリロードされた時 contents.jsも合わせてリロードする
+			if (!reload) {
+				location.reload();
+				reload = true;
+			}
 		}
 	}, 100);
 }
@@ -33,16 +36,10 @@ function update() {
 function post() {
 	if (reload) return;
 
-	try {
-		var requestJson = {};
-		requestJson["type"] = "update";
-		requestJson["value"] = json;
-		chrome.runtime.sendMessage(requestJson);
-	} catch (err) {
-		location.reload();
-		reload = true;
-		// 拡張機能がリロードされた時 contents.jsも合わせてリロードする
-	}
+	var requestJson = {};
+	requestJson["type"] = "update";
+	requestJson["value"] = json;
+	chrome.runtime.sendMessage(requestJson);
 }
 
 chrome.runtime.onMessage.addListener((request, sender, callback) => {

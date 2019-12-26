@@ -7,7 +7,7 @@
 	<script src="../jquery-3.4.1.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<link rel="stylesheet" type="text/css" href="https://akiba.cloud/soundcloud-player/icons.css">
+	<link rel="stylesheet" type="text/css" href="icons.css">
 </head>
 <body>
 	<!-- <div class="element left">
@@ -17,20 +17,20 @@
 	</div> -->
 	<div id="controller" class="floating">
 		<div class="left">
-			<button id="prev" title="Prev" value="Prev"></button>
-			<button id="toggle" title="Play/Pause" value="Play"></button>
-			<button id="next" title="Next" value="Next"></button>
+			<button id="prev" class="clickable" title="Prev" value="Prev"></button>
+			<button id="toggle" class="clickable" title="Play/Pause" value="Play"></button>
+			<button id="next" class="clickable" title="Next" value="Next"></button>
 		</div>
 		<div class="right">
-			<button id="fav" title="Like/Unlike" value="Fav"></button>
-			<button id="shuffle" title="Shuffle" value="Shuffle"></button>
-			<button id="repeat" title="Repeat" value="Repeat"></button>
+			<button id="fav" class="clickable" title="Like/Unlike" value="Fav"></button>
+			<button id="shuffle" class="clickable" title="Shuffle" value="Shuffle"></button>
+			<button id="repeat" class="clickable" title="Repeat" value="Repeat"></button>
 		</div>
 	</div>
 	<hr/>
 
 	<div>
-		<div id="artwork" title="Open SoundCloud Tab"></div>
+		<div id="artwork" title="Open SoundCloud Tab" class="clickable"></div>
 		<a id="title" title="Open SoundCloud Tab" href=""> <!-- class="marquee" -->
 			<span id="track"></span> <!-- class="marquee-inner" -->
 		</a>
@@ -62,32 +62,32 @@
 		<div class="right">
 			<!-- <div class="box">
 				<span id="volume-icon" class="icon" title="Mute/Unmute"></span>
-				<span id="volume" title="Current Volume">0 %</span>
+				<span id="volume" title="Current Volume" class="clickable">0 %</span>
 			</div>
 			<a id="close" title="Click to Close tab of SoundCloud" href="javascript:void(0)">Close</a> -->
 			<a id="share_btn" class="box" href="javascript:void(0)">
-				<span id="share_icon" class="icon"></span>
+				<span id="share_icon" class="icon clickable"></span>
 				Share
 			</a>
 		</div>
 	</div>
 	<hr/>
 	<div id="share">
-		<input id="copy" type="text" disabled>
+		<textarea id="copy" readonly spellcheck="false"></textarea> <!-- disabled -->
 		<div id="time_at">
 			<input id="share_with_time" type="checkbox">
 			<span>at</span>
-			<input id="share_current_time" type="text">
+			<input id="share_current_time" type="text" disabled>
 		</div>
 		<div id="social" class="floating">
 			<div class="left">
-				<button class="twitter"></button>
-				<button class="facebook"></button>
-				<button class="tumblr"></button>
-				<button class="email"></button>
+				<button class="twitter clickable"></button>
+				<button class="facebook clickable"></button>
+				<button class="tumblr clickable"></button>
+				<button class="email clickable"></button>
 			</div>
 			<div class="right">
-				<button class="clipboard" title="Copy"></button>
+				<button class="clipboard clickable" title="Copy"></button>
 			</div>
 		</div>
 		<hr/>
@@ -105,7 +105,7 @@
 			</a> -->
 		</span>
 		<span class="right">
-			<a id="discord" class="icon" href="#" title="Join our Discord!"></a>
+			<a id="discord" class="icon clickable" href="#" title="Join our Discord!"></a>
 		</span>
 	</div>
 </body>

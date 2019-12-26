@@ -133,7 +133,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 	$("#copy").val(items["link"] + (shareSettings["share_with_time"] ? "#t=" + items["time"]["current"] : "") );
 
+	if (shareSettings["share_with_time"] && 
+		items["time"]["current"] != json["time"]["current"] && 
+		$("#copy")[0].selectionStart != null && 
+		$(document.activeElement)[0] == $("#copy")[0]) {
+			$("#copy").select();
+	}
+
+
 	$("#title")[0].href = items["link"];
+
 
 	// Update local json data
 	json = items;

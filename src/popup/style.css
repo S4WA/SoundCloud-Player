@@ -35,6 +35,10 @@ input[type="checkbox"] {
 	margin-right: 0;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
 /* Playlist */
 body .element {
 	height: 430px;
@@ -71,10 +75,6 @@ body div:not(:last-child):not(:first-child) {
 	background-image: url(../icon.png);
 }
 
-#artwork, #volume {
-	cursor: pointer;
-}
-
 #volume, #close {
 	float: right;
 }
@@ -93,6 +93,7 @@ body div:not(:last-child):not(:first-child) {
 
 #copy {
 	width: 70%;
+	resize: none;
 }
 
 #share_current_time {
@@ -156,7 +157,6 @@ body div:not(:last-child):not(:first-child) {
 .icon {
 	width: 13px;
 	height: 13px;
-	cursor: pointer;
 	display: inline-block;
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -169,7 +169,6 @@ body div:not(:last-child):not(:first-child) {
 	font: 0/0 a;
 	width: 24px;
 	height: 24px;
-	cursor: pointer;
 	text-shadow: none;
 	color: transparent;
 	text-shadow: none;
@@ -188,7 +187,6 @@ body div:not(:last-child):not(:first-child) {
 	margin: 0 2px 0 0;
 	background-size: 25px 25px;
 	border: none;
-	cursor: pointer;
 	display: inline-block;
 	background-repeat: no-repeat;
 	background-position: center center;

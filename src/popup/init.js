@@ -46,6 +46,10 @@ function registerOnClicks() {
 		copyToClipboard($("#track").text() + " " + $("#copy").val());
 	})
 
+	$("#copy").focus(() => {
+		$("#copy").select();
+	})
+
 	/*$(".marquee").hover(
 		() => {
 			$(".marquee").children().toggleClass("marquee-inner");

@@ -58,10 +58,11 @@ function toggle() {
 }
 
 function copyToClipboard(text) {
-	var input = $("<input>"), style = {
-		"position": "fixed",
-		"opacity": 0
-	};
+	var input = $("<input>"), 
+		style = {
+			"position": "fixed",
+			"opacity": 0
+		};
 
 	input.css(style);
 	input.val(text);
