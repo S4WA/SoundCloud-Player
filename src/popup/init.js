@@ -1,61 +1,27 @@
-function registerOnClicks() {
-	$("#volume-icon").on("click", () => { queue("mute"); });
-	$("#playlist_btn").on("click", () => { queue("playlist"); });
-
-	// Link buttons
-	$("#store").on("click", () => {
-		openURL("https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej");
-	});
-	$("#discord").on("click", () => {
-		openURL("https://discord.gg/R9R6fdm");
-	});
-	$("#drip").on("click", () => {
-		openURL("https://twitter.com/AkibaKaede");
-	});
-	$("#close").on("click", () => {
-		chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
-			if (results.length != 0) {
-				 chrome.tabs.remove(results[0].id, () => {});
-				 window.close();
-			}
-		});
-	});
-
-	// Share
-	$("#share_btn").on("click", () => {
-		var share = $("#share");
-		// share.is(":visible") ? share.slideUp() : share.slideDown();
-		share.is(":visible") ? share.hide() : share.show();
-	});
-
-	$("#share_with_time").on("input", () => {
-		shareSettings["share_with_time"] = $("#share_with_time").prop("checked");
-	});
-
-	// Social
-	var socials = ["Twitter", "Facebook", "Tumblr", "Email"];
-	for (var i in socials) with ({i:i}) {
-		var elem = $( "#social ." + socials[i].toLowerCase() );
-		elem.on("click", () => {
-			openURL( shareLink(socials[i]) );
-		});
-		elem.attr("title", "Share on " + socials[i])
+document.addEventListener("DOMContentLoaded", () => {
+	for (key in settings) {
+		if (localStorage.getItem(key) == null) {
+			let value = typeof settings[key] == "string" ? settings[key] : JSON.stringify(settings[key]);
+			localStorage.setItem(key, value);
+		} else {
+			let item = localStorage.getItem(key);
+			console.log(key, item);
+			settings[key] = (key != "email" ? item : JSON.parse(item));
+		}
 	}
 
-	$("#social .clipboard").on("click", () => {
-		copyToClipboard($("#track").text() + " " + $("#copy").val());
-	})
+	changeColor(settings["themecolor"]);
+});
 
-	$("#copy").focus(() => {
-		$("#copy").select();
-	})
-
-	/*$(".marquee").hover(
-		() => {
-			$(".marquee").children().toggleClass("marquee-inner");
-		},
-		() => {
-			$(".marquee").children().toggleClass("marquee-inner");
-		}
-	);*/
+var settings = {
+	"trackdisplay": "%title% by %artist%",
+	"themecolor": "ff8c00",
+	"twitter": "%title% By %artist% %url%",
+	"facebook": "%url%",
+	"tumblr": "%title% By %artist%",
+	"email": {
+		"subject": "%title% By %artist%",
+		"body": "%url%"
+	},
+	"copy": "%title% By %artist% %url%"
 }

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="../jquery-3.4.1.min.js"></script>
+    <script src="../jscolor.js"></script>
+    <script src="utils.js"></script>
+    <script src="init.js"></script>
+    <script src="settings.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="settings.css">
+</head>
+<body>
+    <div class="floating">
+        <div class="right">
+            <a id="goback" class="clickable" title="Go back to track menu" href="#">
+                <span id="exit" class="icon"></span>Back
+            </a>
+        </div>
+    </div>
+    <div class="dropdown" closed="true">
+        <div class="dd-parent">
+            <span class="icon"></span>Displays
+        </div>
+        <hr>
+        <div class="dd-child">
+            <div>
+                <span>Track Display:</span>
+                <textarea id="trackdisplay"></textarea>
+            </div>
+            <div>
+                <span>Theme Color:</span>
+                <input id="themecolor" class="jscolor">
+            </div>
+        </div>
+    </div>
+    <div class="dropdown" closed="true">
+        <div class="dd-parent">
+            <span class="icon"></span>Share Templates
+        </div>
+        <hr>
+        <div class="dd-child">
+            <div>
+                <span>Twitter:</span>
+                <textarea id="twitter"></textarea>
+            </div>
+            <div>
+                <span>Facebook:</span>
+                <textarea id="facebook"></textarea>
+            </div>
+            <div>
+                <span>Tumbr:</span>
+                <textarea id="tumblr"></textarea>
+            </div>
+            <div>
+                <span>Email:</span>
+                <br>
+                <span>- Subject</span>
+                <textarea id="email_subject"></textarea>
+                <br>
+                <span>- Body</span>
+                <textarea id="email_body"></textarea>
+            </div>
+            <div>
+                <span>Copy:</span>
+                <textarea id="copy"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="dropdown" closed="true">
+        <div class="dd-parent">
+            <span class="icon"></span>Updates
+        </div>
+        <hr>
+        <div class="dd-child">
+            <span>Added</span>
+            <ul>
+                <li>
+                    Settings
+                </li>
+            </ul>
+            <!-- <span>Removed</span>
+            <ul>
+                <li>
+                    
+                </li>
+            </ul> -->
+            <!-- <span>Changed</span>
+            <ul>
+                <li>
+                    
+                </li>
+            </ul> -->
+        </div>
+    </div>
+    <div class="dropdown" closed="false">
+        <div class="dd-parent">
+            <span class="icon"></span>Helps
+        </div>
+        <hr>
+        <div class="dd-child">
+            <ul>
+                <li>
+                    Formats
+                    <table>
+                        <tr>
+                            <th>Type</th>
+                            <th>Token</th>
+                            <th>Displays</th>
+                        </tr>
+                        <tr>
+                            <th>Title</th>
+                            <td>%title%</td>
+                            <td>Song Title</td>
+                        </tr>
+                        <tr>
+                            <th>Artist</th>
+                            <td>%artist%</td>
+                            <td>Artist Name</td>
+                        </tr>
+                        <tr>
+                            <th>Link</th>
+                            <td>%url%</td>
+                            <td>URL</td>
+                        </tr>
+                    </table>
+                </li>
+                <li>
+                    Settings automatically saved when value has changed.
+                </li>
+            </ul>
+            <hr>
+        </div>
+    </div>
+    <div class="floating">
+        <div class="left">
+            <span>
+                <a id="github" class="clickable" href="#">
+                    Source Code
+                </a>
+            </span>
+            <!-- <span>|</span>
+            <span>
+                <a id="discord" class="clickable" href="#" title="Join our Discord!">
+                    Discord
+                </a>
+            </span> -->
+        </div>
+        <div class="right">
+            <!-- <a id="export" class="clickable">
+                <span id="export_icon" class="icon"></span>Export
+            </a> -->
+        </div>
+    </div>
+</body>
+</html>

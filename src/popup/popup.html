@@ -7,7 +7,7 @@
 	<script src="../jquery-3.4.1.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<link rel="stylesheet" type="text/css" href="icons.css">
+    <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
 <body>
 	<!-- <div class="element left">
@@ -65,9 +65,8 @@
 				<span id="volume" title="Current Volume" class="clickable">0 %</span>
 			</div>
 			<a id="close" title="Click to Close tab of SoundCloud" href="javascript:void(0)">Close</a> -->
-			<a id="share_btn" class="box" href="javascript:void(0)">
-				<span id="share_icon" class="icon clickable"></span>
-				Share
+			<a id="share_btn" class="box clickable">
+				<span id="share_icon" class="icon"></span>Share
 			</a>
 		</div>
 	</div>
@@ -95,7 +94,7 @@
 
 	<div class="floating">
 		<span class="left">
-			<a id="store" title="Go to Chrome Store" href="#">
+			<a id="store" class="clickable" title="Go to Chrome Store">
 				SoundCloud Player 
 				<span id="version"></span>
 			</a>
@@ -105,7 +104,9 @@
 			</a> -->
 		</span>
 		<span class="right">
-			<a id="discord" class="icon clickable" href="#" title="Join our Discord!"></a>
+			<a id="settings" title="Open Settings" class="clickable">
+				<span id="settings_icon" class="icon"></span>Settings
+			</a>
 		</span>
 	</div>
 </body>

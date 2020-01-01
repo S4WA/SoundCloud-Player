@@ -1,0 +1,61 @@
+/* Dropdown */
+.dropdown .dd-child textarea, .dropdown .dd-child input {
+    margin: 0px;
+    height: 28px;
+    width: 245px;
+    resize: none;
+}
+
+.dropdown .dd-parent .icon {
+    background-size: 80% 80%;
+}
+
+.dropdown[closed="true"] .dd-parent .icon {
+	background-image: url("../assets/caret-right.svg");
+}
+
+.dropdown[closed="false"] .dd-parent .icon {
+	background-image: url("../assets/caret-down.svg");
+}
+
+/* Settings */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table th, table td {
+    padding: 4px 0;
+    text-align: center;
+}
+
+table tr:nth-child(odd) {
+    background-color: #ddd
+}
+
+table tr:last-child {
+    border-bottom: solid 2.5px #ddd;
+}
+
+/* Others */
+ul {
+    padding-left: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+li:last-child {
+    margin-bottom: 8px;
+}
+
+#exit {
+	background-size: 80% 80%;
+	background-image: url("../assets/chevron-left.svg");
+}
+
+#export_icon {
+    background-size: 80% 80%;
+    background-image: url("../assets/file-export.svg");
+}

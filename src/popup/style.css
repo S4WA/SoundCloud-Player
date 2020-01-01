@@ -4,13 +4,17 @@ body {
 	font-family: "Meiryo";
 }
 
+:root {
+  --theme-color: #ff8c00;
+}
+
 a {
 	color: black;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #ff8c00;
+	color: var(--theme-color);
 }
 
 hr {
@@ -39,70 +43,8 @@ input[type="checkbox"] {
 	cursor: pointer;
 }
 
-/* Playlist */
-body .element {
-	height: 430px;
-	display: inline-block;
-}
-
-body .element.right {
-	width: 250px;
-	float: right;
-}
-
-body .element.left {
-	width: 200px;
-	float: left;
-}
-
-body div:not(:last-child):not(:first-child) {
-	padding-bottom: 6.5px;
-}
-
-/* Popup elements */
-#track {
-	content: "* Click to Open SoundCloud *";
-}
-
-#artwork {
-	width: 250px;
-	height: 250px;
-	text-align: center;
-	position: relative;
-	background-size: cover;
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	background-image: url(../icon.png);
-}
-
-#volume, #close {
-	float: right;
-}
-
-/* Share buttons */
-
-#share {
-	display: none;
-	float: left;
-	/*padding-bottom: 8px;*/
-}
-
-#copy, #time_at {
-	display: inline;
-}
-
-#copy {
-	width: 70%;
-	resize: none;
-}
-
-#share_current_time {
-	width: 10%;
-}
-
-#social {
-	padding-top: 5px;
-	size: 50%;
+.clickable:hover {
+	color: var(--theme-color);
 }
 
 /* Utils */
@@ -154,6 +96,7 @@ body div:not(:last-child):not(:first-child) {
 	position: relative;
 }*/
 
+/* Icons */
 .icon {
 	width: 13px;
 	height: 13px;
@@ -161,55 +104,4 @@ body div:not(:last-child):not(:first-child) {
 	background-repeat: no-repeat;
 	background-position: center center;
 	transform: translateY(15%);
-}
-
-/* Controller Icons */
-#controller button {
-	border: 0;
-	font: 0/0 a;
-	width: 24px;
-	height: 24px;
-	text-shadow: none;
-	color: transparent;
-	text-shadow: none;
-	background-color: transparent;
-	background-position: center center;
-}
-
-#controller button:focus {
-	outline: 0;
-}
-
-/* Social Icons */
-#social button {
-	width: 25px;
-	height: 25px;
-	margin: 0 2px 0 0;
-	background-size: 25px 25px;
-	border: none;
-	display: inline-block;
-	background-repeat: no-repeat;
-	background-position: center center;
-}
-
-#social button:focus {
-	outline: 0;
-}
-
-#social .clipboard {
-	background-color: black;
-	background-size: 60% 60%;
-	background-image: url("../assets/copy-solid.svg");
-}
-
-#playlist_btn {
-	background-size: 80% 80%;
-	background-image: url("../assets/list-solid.svg");
-}
-
-#discord {
-	width: 20px;
-	height: 20px;
-	transform: translateY(-4%);
-	background-image: url("../assets/Discord-Logo-Black.svg");
 }
