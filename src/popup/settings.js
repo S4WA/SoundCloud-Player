@@ -43,14 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // - Theme Color
     if (localStorage.getItem("themecolor") != null) {
         let val = localStorage.getItem("themecolor");
-        
         $("#themecolor").val(val);
-        
-        $("#themecolor").focus();
-        $("#themecolor").blur();
-        
         $(":root").css("--theme-color", "#" + val);
     }
+
+    $("#themecolor").parents(".dropdown").on("click", function() {
+        if ($(this).attr("closed") == "false") {
+            $("#themecolor").focus();
+            $("#themecolor").blur();
+        }
+    })
     $("#themecolor").on("change", function() {
         changeColor($(this).val());
     });
