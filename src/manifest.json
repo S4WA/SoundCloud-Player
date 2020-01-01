@@ -3,7 +3,7 @@
 	"name": "SoundCloud Player",
 	"short_name": "SC Player",
 	"description": "Popup Player",
-	"version": "1.2.3",
+	"version": "1.2.4",
 	"homepage_url": "https://github.com/S4WA/soundcloud-player",
 	"permissions": [
 		"tabs",
