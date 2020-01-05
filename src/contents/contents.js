@@ -15,22 +15,21 @@ window.onload = () => {
 }
 
 function update() {
-	var playing = isPlaying(), track = getTrack(), title = getTitle(), artist = getArtist(), artwork = getArtwork(), link = getLink(),
-		fav = isLiked(), current = getCurrentTime(), end = getEndTime(), volume = getVolume(), mute = isMuted();
-
+	let artwork = getArtwork();
 	if (artwork != null && artwork.includes("50x50.")) artwork = artwork.replace("50x50.", "500x500.");
 
-	json["track"] = track;
-	json["title"] = title;
-	json["artist"] = artist;
+	json["title"] = getTitle();
+	json["artist"] = getArtist();
 	json["artwork"] = artwork;
-	json["link"] = link;
-	json["playing"] = playing;
-	json["favorite"] = fav;
-	json["time"]["current"] = current;
-	json["time"]["end"] = end;
-	json["volume"] = volume;
-	json["mute"] = mute;
+	json["link"] = getLink();
+	json["playing"] = isPlaying();
+	json["favorite"] = isLiked();
+	json["time"]["current"] = getCurrentTime();
+	json["time"]["end"] = getEndTime();
+	json["volume"] = getVolume();
+	json["mute"] = isMuted();
+	json["repeat"] = getRepeatMode();
+	json["shuffle"] = isShuffling();
 
 	post();
 }
@@ -65,22 +64,23 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 		// 
 		case "unfav":
 		case "fav": {
-			$(".playbackSoundBadge__like")[0].click();
-			json["favorite"] = $(".playbackSoundBadge__like")[0].title == "Unlike";
+			let btn = $(".playbackSoundBadge__like")[0];
+			btn.click();
+			json["favorite"] = btn.title == "Unlike";
 			post();
 			break;
 		}
 		case "repeat": {
-			var btn = $(".repeatControl")[0];
+			let btn = $(".repeatControl")[0];
 			btn.click();
-			json["repeat"] = btn.className.replace("repeatControl sc-ir m-", "").toLowerCase(); // none -> one -> all
+			json["repeat"] = getRepeatMode(); // none -> one -> all
 			post();
 			break;
 		}
 		case "shuffle": {
-			var btn = $(".shuffleControl")[0];
+			let btn = $(".shuffleControl")[0];
 			btn.click();
-			json["shuffle"] = btn.className.includes("m-shuffling");
+			json["shuffle"] = isShuffling();
 			post();
 			break;
 		}
@@ -121,7 +121,6 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
 
 var json = {
 	"playing": false,
-	"track": null,
 	"artwork": null,
 	"link": null,
 	"favorite": false,

@@ -104,11 +104,11 @@ body div:not(:last-child):not(:first-child) {
 	background-image: url("../assets/audio/prev.svg");
 }
 
-#toggle[value="Pause"] {
+#toggle[playing="true"] {
 	background-image: url("../assets/audio/pause.svg");
 }
 
-#toggle[value="Play"] {
+#toggle[playing="false"], #toggle[playing=""] {
 	background-image: url("../assets/audio/play.svg");
 }
 
@@ -116,45 +116,41 @@ body div:not(:last-child):not(:first-child) {
 	background-image: url("../assets/audio/next.svg");
 }
 
-#fav {
-	background-size: 20px 20px;
-}
-
-#fav[value="unFav"] {
+#fav[favorite="true"] {
 	background-color: var(--theme-color);
 
 	-webkit-mask: url("../assets/audio/unFav.svg") no-repeat center center;
 	-webkit-mask-size: cover;
 }
 
-#fav[value="Fav"] {
+#fav[favorite="false"], #fav[favorite=""] {
 	background-image: url("../assets/audio/fav.svg");
 	background-size: cover;
 }
 
-#shuffle[value="Shuffle"] {
-	background-image: url("../assets/audio/shuffle.svg");
-}
-
-#shuffle[value="Shuffled"] {
+#shuffle[shuffle="true"] {
 	background-color: var(--theme-color);
 
 	-webkit-mask: url("../assets/audio/shuffled.svg") no-repeat center center;
 	-webkit-mask-size: cover;
 }
 
-#repeat[value="Repeat"], #repeat[value="Repeat (none)"] {
+#shuffle[shuffle="false"], #shuffle[shuffle=""] {
+	background-image: url("../assets/audio/shuffle.svg");
+}
+
+#repeat[mode=""], #repeat[mode="none"] {
 	background-image: url("../assets/audio/repeat.svg");
 }
 
-#repeat[value="Repeat (one)"] {
+#repeat[mode="one"] {
 	background-color: var(--theme-color);
 
 	-webkit-mask: url("../assets/audio/repeat_one.svg") no-repeat center center;
 	-webkit-mask-size: cover;
 }
 
-#repeat[value="Repeat (all)"] {
+#repeat[mode="all"] {
 	background-color: var(--theme-color);
 
 	-webkit-mask: url("../assets/audio/repeat_all.svg") no-repeat center center;

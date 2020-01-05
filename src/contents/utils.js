@@ -3,11 +3,6 @@ function isPlaying() {
 	return $(cls).length != 0 ? $(cls)[0].title == "Pause current" : false;
 }
 
-function getTrack() {
-	var cls = "a.playbackSoundBadge__titleLink";
-	return $(cls).length != 0 ? ( getTitle() + " By " + getArtist() ) : null;
-}
-
 function getTitle() {
 	return $("a.playbackSoundBadge__titleLink")[0].title;
 }
@@ -45,4 +40,12 @@ function getVolume() {
 function isMuted() {
 	var cls = ".volume";
 	return $(cls).length != 0 ? $(cls)[0].className.includes("muted") : false;
+}
+
+function getRepeatMode() {
+	return $(".repeatControl")[0].className.replace("repeatControl sc-ir m-", "").toLowerCase();
+}
+
+function isShuffling() {
+	return $(".shuffleControl")[0].className.includes("m-shuffling");
 }

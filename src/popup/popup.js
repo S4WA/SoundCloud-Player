@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 	init();
 	ready = true;
+
+	console.log($(toggleElem).attr("playing"), $(repeatElem).attr("mode"), $(shuffleElem).attr("shuffle"))
 });
 
 // Initialize:
@@ -126,20 +128,20 @@ function registerEvents() {
 
 function toggleFav() {
 	if (favElem == null) return;
-	var string = favElem.value == "Fav" ? "unFav" : "Fav";
-	queue(favElem.value = string);
+	let value = Bool( $(favElem).attr("favorite") );
+	queue( value ? "unFav" : "Fav" );
 }
 
 function repeat() {
 	if (json["repeat"] == null || repeatElem == null) return;
 	queue("repeat");
-	repeatElem.value = "Repeat (" + json["repeat"] + ")";
+	$(repeatElem).attr( "mode", json["repeat"] );
 }
 
 function toggle() {
 	if (toggleElem == null) return;
-	var string = toggleElem.value == "Pause" ? "Play" : "Pause";
-	queue(toggleElem.value = string);
+	let value = Bool( $(toggleElem).attr("playing") );
+	queue(value ? "Pause" : "Play");
 }
 
 // Share link
@@ -206,22 +208,22 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 	
 	// play/pause
 	if (items["playing"] != json["playing"]) {
-		$(toggleElem).val( !items["playing"] ? "Play" : "Pause" );
+		$(toggleElem).attr( "playing", items["playing"] );
 	}
 	
 	// fav/unfav
 	if (items["favorite"] != json["favorite"]) {
-		$(favElem).val( !items["favorite"] ? "Fav" : "unFav" );
+		$(favElem).attr( "favorite", items["favorite"] );
 	}
 	
 	// shuffle
 	if (items["shuffle"] != json["shuffle"]) {
-		$(shuffleElem).val( items["shuffle"] ? "Shuffled" : "Shuffle" );
+		$(shuffleElem).attr( "shuffle", items["shuffle"] );
 	}
 	
 	// repeat
 	if (items["repeat"] != json["repeat"]) {
-		$(repeatElem).val( "Repeat (" + items["repeat"] + ")" );
+		$(repeatElem).attr( "mode", items["repeat"] );
 	}
 	
 	// volume
@@ -253,12 +255,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 	// share
 	$("#copy").val(items["link"] + (shareSettings["share_with_time"] ? "#t=" + items["time"]["current"] : "") );
 
-	if (shareSettings["share_with_time"] && 
+	let selectable = shareSettings["share_with_time"] && 
 		items["time"]["current"] != json["time"]["current"] && 
 		$("#copy")[0].selectionStart != null && 
-		$(document.activeElement)[0] == $("#copy")[0]) {
-			$("#copy").select();
-	}
+		$(document.activeElement)[0] == $("#copy")[0];
+	if (selectable) $("#copy").select();
 
 	// title link
 	$("#title")[0].href = items["link"];

@@ -94,13 +94,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     $("#email_subject").on("input", function() {
         let data = JSON.parse(localStorage.getItem("email"));
-        console.log($(this).val());
+        // console.log($(this).val());
         data["subject"] = $(this).val();
         localStorage.setItem("email", JSON.stringify(data));
     })
     $("#email_body").on("input", function() {
         let data = JSON.parse(localStorage.getItem("email"));
-        console.log($(this).val());
+        // console.log($(this).val());
         data["body"] = $(this).val();
         localStorage.setItem("email", JSON.stringify(data));
     })

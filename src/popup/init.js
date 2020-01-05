@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			localStorage.setItem(key, value);
 		} else {
 			let item = localStorage.getItem(key);
-			console.log(key, item);
+			// console.log(key, item);
 			settings[key] = (key != "email" ? item : JSON.parse(item));
 		}
 	}
