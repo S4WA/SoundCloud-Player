@@ -1,113 +1,113 @@
 <!DOCTYPE html>
 <head>
-	<meta charset="UTF-8">
-	<script src="init.js"></script>
-	<script src="popup.js"></script>
-	<script src="utils.js"></script>
-	<script src="../jquery-3.4.1.min.js"></script>
+  <meta charset="UTF-8">
+  <script src="../jquery-3.4.1.min.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
 <body>
-	<!-- <div class="element left">
-		
-	</div> -->
-	<!-- <div class="element right">
-	</div> -->
-	<div id="controller" class="floating">
-		<div class="left">
-			<button id="prev" class="clickable" title="Prev"></button>
-			<button id="toggle" class="clickable" title="Play/Pause" playing=""></button>
-			<button id="next" class="clickable" title="Next"></button>
-		</div>
-		<div class="right">
-			<button id="fav" class="clickable" title="Like/Unlike" favorite=""></button>
-			<button id="shuffle" class="clickable" title="Shuffle" shuffle=""></button>
-			<button id="repeat" class="clickable" title="Repeat" mode=""></button>
-		</div>
-	</div>
-	<hr/>
+  <!-- <div class="element left">
+    
+  </div> -->
+  <!-- <div class="element right">
+  </div> -->
+  <div id="controller" class="floating">
+    <div class="left">
+      <button id="prev" class="clickable" title="Prev"></button>
+      <button id="toggle" class="clickable" title="Play/Pause" playing=""></button>
+      <button id="next" class="clickable" title="Next"></button>
+    </div>
+    <div class="right">
+      <button id="fav" class="clickable" title="Like/Unlike" favorite=""></button>
+      <button id="shuffle" class="clickable" title="Shuffle" shuffle=""></button>
+      <button id="repeat" class="clickable" title="Repeat" mode=""></button>
+    </div>
+  </div>
+  <hr/>
 
-	<div>
-		<div id="artwork" title="Open SoundCloud Tab" class="clickable"></div>
-		<a id="title" title="Open SoundCloud Tab" href=""> <!-- class="marquee" -->
-			<span id="track"></span> <!-- class="marquee-inner" -->
-		</a>
-	</div>
-	<hr/>
+  <div>
+    <div id="artwork" title="Open SoundCloud Tab" class="clickable"></div>
+    <a id="title" title="Open SoundCloud Tab" href=""> <!-- class="marquee" -->
+      <span id="track"></span> <!-- class="marquee-inner" -->
+    </a>
+  </div>
+  <hr/>
 
-	<div id="second" class="floating">
-		<div class="left">
-			<div id="time">
-				<!-- <span id="playlist_btn" class="icon"></span> -->
-				<span id="current">
-					--:--
-				</span>
-				/
-				<span id="end">
-					--:--
-				</span>
-			</div>
+  <div id="second" class="floating">
+    <div class="left">
+      <div id="time">
+        <!-- <span id="playlist_btn" class="icon"></span> -->
+        <span id="current">
+          --:--
+        </span>
+        /
+        <span id="end">
+          --:--
+        </span>
+      </div>
 
-			<div>
-				<!-- <a id="share_btn" class="box" href="javascript:void(0)">
-					<span id="share_icon" class="icon"></span>
-					Share
-				</a> -->
-			</div>
-			<!-- <div id="share_btn" title="Click to show Share buttons!">
-			</div> -->
-		</div>
-		<div class="right">
-			<!-- <div class="box">
-				<span id="volume-icon" class="icon" title="Mute/Unmute"></span>
-				<span id="volume" title="Current Volume" class="clickable">0 %</span>
-			</div>
-			<a id="close" title="Click to Close tab of SoundCloud" href="javascript:void(0)">Close</a> -->
-			<a id="share_btn" class="box clickable">
-				<span id="share_icon" class="icon"></span>Share
-			</a>
-		</div>
-	</div>
-	<hr/>
-	<div id="share">
-		<textarea id="copy" readonly spellcheck="false"></textarea> <!-- disabled -->
-		<div id="time_at">
-			<input id="share_with_time" type="checkbox">
-			<span>at</span>
-			<input id="share_current_time" type="text" disabled>
-		</div>
-		<div id="social" class="floating">
-			<div class="left">
-				<button class="twitter clickable"></button>
-				<button class="facebook clickable"></button>
-				<button class="tumblr clickable"></button>
-				<button class="email clickable"></button>
-			</div>
-			<div class="right">
-				<button class="clipboard clickable" title="Copy"></button>
-			</div>
-		</div>
-		<hr/>
-	</div>
+      <div>
+        <!-- <a id="share_btn" class="box" href="javascript:void(0)">
+          <span id="share_icon" class="icon"></span>
+          Share
+        </a> -->
+      </div>
+      <!-- <div id="share_btn" title="Click to show Share buttons!">
+      </div> -->
+    </div>
+    <div class="right">
+      <!-- <div class="box">
+        <span id="volume-icon" class="icon" title="Mute/Unmute"></span>
+        <span id="volume" title="Current Volume" class="clickable">0 %</span>
+      </div>
+      <a id="close" title="Click to Close tab of SoundCloud" href="javascript:void(0)">Close</a> -->
+      <a id="share_btn" class="box clickable">
+        <span id="share_icon" class="icon"></span>Share
+      </a>
+    </div>
+  </div>
+  <hr/>
+  <div id="share">
+    <textarea id="copy" readonly spellcheck="false"></textarea> <!-- disabled -->
+    <div id="time_at">
+      <input id="share_with_time" type="checkbox">
+      <span>at</span>
+      <input id="share_current_time" type="text" disabled>
+    </div>
+    <div id="social" class="floating">
+      <div class="left">
+        <button class="twitter clickable"></button>
+        <button class="facebook clickable"></button>
+        <button class="tumblr clickable"></button>
+        <button class="email clickable"></button>
+      </div>
+      <div class="right">
+        <button class="clipboard clickable" title="Copy"></button>
+      </div>
+    </div>
+    <hr/>
+  </div>
 
-	<div class="floating">
-		<span class="left">
-			<a id="store" class="clickable" title="Go to Chrome Store">
-				SoundCloud Player 
-				<span id="version"></span>
-			</a>
-			<!-- by 
-			<a id="drip" title="follow me!" href="javascript:void(0)">
-				Drip
-			</a> -->
-		</span>
-		<span class="right">
-			<a id="settings" title="Open Settings" class="clickable">
-				<span id="settings_icon" class="icon"></span>Settings
-			</a>
-		</span>
-	</div>
+  <div class="floating">
+    <span class="left">
+      <a id="store" class="clickable" title="Go to Chrome Store">
+        SoundCloud Player 
+        <span id="version"></span>
+      </a>
+      <!-- by 
+      <a id="drip" title="follow me!" href="javascript:void(0)">
+        Drip
+      </a> -->
+    </span>
+    <span class="right">
+      <a id="settings" title="Open Settings" class="clickable">
+        <span id="settings_icon" class="icon"></span>Settings
+      </a>
+    </span>
+  </div>
+  <script src="init.js"></script>
+  <script src="popup.js"></script>
+  <script src="utils.js"></script>
 </body>
 </html>
