@@ -17,6 +17,10 @@ a:hover {
   color: var(--theme-color);
 }
 
+#track {
+  word-break: break-all;
+}
+
 hr {
   margin-top: 0;
 }

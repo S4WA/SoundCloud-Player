@@ -18,7 +18,13 @@ function openSCTab() {
         if (results[0].id == tab[0].id) {
           queue("open");
         } else {
-          chrome.tabs.update(results[0].id, { active : true }, () => {});
+          chrome.tabs.update(results[0].id, { active : true }, () => {
+            if (results[0].windowId != tab[0].windowId) {
+              chrome.windows.update(results[0].windowId, { focused : true }, () => {
+                window.close();
+              });
+            }
+          });
         }
       })
     } else {
