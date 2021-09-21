@@ -10,12 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  changeColor(settings["themecolor"]);
+  updateThemeColor();
+  updateFont();
 });
 
 var settings = {
   "trackdisplay": "%title% by %artist%",
-  "themecolor": "ff8c00",
+  "themecolor": "#f50",
   "twitter": "%title% By %artist% %url%",
   "facebook": "%url%",
   "tumblr": "%title% By %artist%",
@@ -23,5 +24,6 @@ var settings = {
     "subject": "%title% By %artist%",
     "body": "%url%"
   },
-  "copy": "%title% By %artist% %url%"
+  "copy": "%title% By %artist% %url%",
+  "font": "Meiryo"
 }

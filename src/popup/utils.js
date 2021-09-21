@@ -76,8 +76,22 @@ function isJson(string) {
 }
 
 // Settings
-function changeColor(color) {
-  settings["themecolor"] = color;
-  localStorage.setItem("themecolor", color);
-  $(':root').css("--theme-color", "#" + color);
+function updateThemeColor(color) {
+  if (!color) {
+    color = localStorage.getItem("themecolor");
+  }
+  if (color != localStorage.getItem("themecolor")){
+    localStorage.setItem("themecolor", color);
+  }
+  $(':root').css("--theme-color", color);
+}
+
+function updateFont(font) {
+  if (!font) {
+    font = localStorage.getItem("font");
+  } else if (font != localStorage.getItem("font")){
+    localStorage.setItem("font", font);
+  }
+  // $("*").css("font-family", font);
+  $(":root").css("--custom-font", font);
 }

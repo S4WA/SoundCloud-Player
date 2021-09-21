@@ -6,7 +6,6 @@
   <script src="utils.js"></script>
   <script src="init.js"></script>
   <script src="settings.js"></script>
-  <script src="../jscolor.js"></script>
 
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="stylesheet" type="text/css" href="settings.css">
@@ -14,7 +13,7 @@
 <body>
   <div class="floating">
     <div class="right">
-      <a id="goback" class="clickable" title="Go back to track menu" href="#">
+      <a class="clickable" title="Go back to track menu" href="popup.html">
         <span id="exit" class="icon"></span>Back
       </a>
     </div>
@@ -31,13 +30,25 @@
       </div>
       <div>
         <span>Theme Color:</span>
-        <input id="themecolor" class="jscolor">
+        <input id="themecolor" type="color">
+      </div>
+      <div>
+        <span>Font:</span>
+        <ul>
+          <li>
+            <span>Current Font: </span><b id="font"></b>
+          </li>
+          <li>
+            <span>Font List</span>
+            <select id="fontlist" style="font-family: Arial;"></select>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
   <div class="dropdown" closed="true">
     <div class="dd-parent">
-      <span class="icon"></span>Share Templates
+      <span class="icon"></span>Templates
     </div>
     <hr>
     <div class="dd-child">
@@ -66,61 +77,56 @@
         <span>Copy:</span>
         <textarea id="copy"></textarea>
       </div>
-    </div>
-  </div>
-  <div class="dropdown" closed="true">
-    <div class="dd-parent">
-      <span class="icon"></span>Updates
-    </div>
-    <hr>
-    <div class="dd-child">
-      <span>Changed</span>
-      <ul>
-        <li>
-          Track display's word breaks
-        </li>
-        <li>
-          Active the window(if it has soundcloud tab) when clicked popup artwork by other window.
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="dropdown" closed="false">
-    <div class="dd-parent">
-      <span class="icon"></span>Helps
-    </div>
-    <hr>
-    <div class="dd-child">
-      <ul>
-        <li>
+
+      <span>
           Formats
           <table>
             <tr>
-              <th>Type</th>
-              <th>Token</th>
-              <th>Displays</th>
-            </tr>
-            <tr>
               <th>Title</th>
               <td>%title%</td>
-              <td>Song Title</td>
             </tr>
             <tr>
               <th>Artist</th>
               <td>%artist%</td>
-              <td>Artist Name</td>
             </tr>
             <tr>
               <th>Link</th>
               <td>%url%</td>
-              <td>URL</td>
             </tr>
           </table>
-        </li>
-        <li>
-          Settings automatically saved when value has changed.
-        </li>
+      </span>
+      <span>
+          Settings automatically saved when the value has changed.
+      </span>
+    </div>
+  </div>
+  <div class="dropdown" closed="true">
+    <div class="dd-parent">
+      <span class="icon"></span>What's new?
+    </div>
+    <hr>
+    <div class="dd-child">
+      Added
+      <ul>
+        <li>Custom Font</li>
       </ul>
+      Changed
+      <ul>
+        <li>Theme Color</li>
+      </ul>
+    </div>
+  </div>
+  <div class="dropdown" closed="true">
+    <div class="dd-parent">
+      <span class="icon"></span>Contact
+    </div>
+    <hr>
+    <div class="dd-child">
+      <span>
+        <a id="contact-twitter" class="clickable" href="#">
+          Contact (Twitter)
+        </a>
+      </span>
       <hr>
     </div>
   </div>

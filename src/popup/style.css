@@ -1,11 +1,16 @@
 body {
   /*2: 450px;*/
   width: 250px;
-  font-family: "Meiryo";
+}
+
+* {
+  font-family: var(--custom-font);
+  font-size: 12px;
 }
 
 :root {
-  --theme-color: #ff8c00;
+  --theme-color: #f50;
+  --custom-font: "Meiryo";
 }
 
 a {

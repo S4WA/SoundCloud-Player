@@ -30,10 +30,7 @@ function init() {
     if (results["length"] >= 2) {
       $("body").append( 
         $("<hr></hr>"),
-        $("<b>").text("*WARNING* "),
-        $("<span>").text("Don't open tab for soundcloud more than 2."),
-        $("<br>"),
-        $("<span>").text("Track is never show except first tab!")
+        $("<span>").text("We can't show multiple tracks. Sorry:(")
       )
     }
   });
@@ -110,10 +107,6 @@ function registerEvents() {
 
   $("#copy").focus(() => {
     $("#copy").select();
-  })
-
-  $("#settings").on("click", () => {
-    location.href = "settings.html";
   })
 
   /*$(".marquee").hover(
@@ -228,7 +221,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   
   // volume
   if (items["volume"] != json["volume"]) {
-    $("#volume").text( Math.floor(items["volume"]) + " %" );
+    $("#current-volume").text( Math.floor(items["volume"]) + " %" );
   }
   
   // mute/unmute
