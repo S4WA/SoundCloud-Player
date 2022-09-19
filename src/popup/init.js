@@ -12,11 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateThemeColor();
   updateFont();
+  updateBGcolor();
+
+  if (isPopout()) {
+    $("#P").css("display", "none");
+  }
 });
 
 var settings = {
   "trackdisplay": "%title% by %artist%",
-  "themecolor": "#f50",
+  "themecolor": "#FF5500",
+  "bgcolor": "#3F3F3F",
   "twitter": "%title% By %artist% %url%",
   "facebook": "%url%",
   "tumblr": "%title% By %artist%",

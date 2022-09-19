@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // macOS
       'American Typewriter', 'Andale Mono', 'Arial', 'Arial Black', 'Arial Narrow', 'Arial Rounded MT Bold', 'Arial Unicode MS', 'Avenir', 'Avenir Next', 'Avenir Next Condensed', 'Baskerville', 'Big Caslon', 'Bodoni 72', 'Bodoni 72 Oldstyle', 'Bodoni 72 Smallcaps', 'Bradley Hand', 'Brush Script MT', 'Chalkboard', 'Chalkboard SE', 'Chalkduster', 'Charter', 'Cochin', 'Comic Sans MS', 'Copperplate', 'Courier', 'Courier New', 'Didot', 'DIN Alternate', 'DIN Condensed', 'Futura', 'Geneva', 'Georgia', 'Gill Sans', 'Helvetica', 'Helvetica Neue', 'Herculanum', 'Hoefler Text', 'Impact', 'Lucida Grande', 'Luminari', 'Marker Felt', 'Menlo', 'Microsoft Sans Serif', 'Monaco', 'Noteworthy', 'Optima', 'Palatino', 'Papyrus', 'Phosphate', 'Rockwell', 'Savoye LET', 'SignPainter', 'Skia', 'Snell Roundhand', 'Tahoma', 'Times', 'Times New Roman', 'Trattatello', 'Trebuchet MS', 'Verdana', 'Zapfino',
       // Font Familiy
-      'Times', 'Times New Roman', 'Georgia', 'serif', 'Verdana', 'Arial', 'Helvetica', 'sans-serif', 'cursive', 'fantasy', 'emoji', 'math', 'fangsong'
+      'Times', 'Times New Roman', 'Georgia', 'serif', 'Verdana', 'Arial', 'Helvetica', 'sans-serif', 'cursive', 'fantasy', 'emoji', 'math', 'fangsong', 'Meiryo'
     ].sort());
 
     (async() => {
@@ -77,18 +77,33 @@ document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("themecolor") != null) {
     $("#themecolor").val( localStorage.getItem("themecolor") );
     updateThemeColor();
+  } else {
+    setTimeout(function() {
+      $("#themecolor").val( $(':root').css("--theme-color") );
+    }, 100);
   }
-
-  $("#themecolor").parents(".dropdown").on("click", function() {
-    if ($(this).attr("closed") == "false") {
-      // $("#themecolor").focus();
-      // $("#trackdisplay").focus();
-      // $("#trackdisplay").blur();
-    }
-  })
+  // $("#themecolor").parents(".dropdown").on("click", function() {
+  //   if ($(this).attr("closed") == "false") {
+  //     $("#themecolor").focus();
+  //     $("#trackdisplay").focus();
+  //     $("#trackdisplay").blur();
+  //   }
+  // })
   $("#themecolor").on("change", function() {
-    
     updateThemeColor($(this).val());
+  });
+
+  // - Background
+  if (localStorage.getItem("bgcolor") != null) {
+    $("#bgcolor").val( localStorage.getItem("bgcolor") );
+    updateBGcolor();
+  } else {
+    setTimeout(function() {
+      $("#bgcolor").val( $(':root').css("--bg-color") );
+    }, 100);
+  }
+  $("#bgcolor").on("change", function() {
+    updateBGcolor($(this).val());
   });
 
   // Share Templates
@@ -157,7 +172,24 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#github").on("click", () => {
     openURL("https://github.com/S4WA/soundcloud-player");
   });
-  $("#contact-twitter").on("click", () => {
+  $("#feedback").on("click", () => {
+    openURL("https://forms.gle/oG2DvmK7HXhq8q8ZA");
+  });
+  $("#c-twitter").on("click", () => {
     openURL("https://twitter.com/evildaimyoh");
   });
+
+  // Dark Mode
+  if (localStorage.getItem("darkmode") != null) {
+    dark = (localStorage.getItem("darkmode") === "true");
+  }
+  darkmode(dark);
+  $("#toggle_darkmode").on("click", () => { toggleDarkmode(); });
+
+  // No Duplicate Popout
+  if (isPopout()) {
+    $("#back").attr("href", "popup.html?p=1")
+  }
 });
+
+var dark = false;

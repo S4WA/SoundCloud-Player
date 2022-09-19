@@ -1,4 +1,5 @@
 window.onload = () => {
+  console.log("[SoundCloud Player] Hi.")
   setInterval(() => {
     try {
       chrome.runtime.sendMessage({ text: "isfirst" }, isFirst => {
@@ -36,8 +37,9 @@ function update() {
 
 function post() {
   if (reload) return;
+  // if (chrome.extension.getViews().length == 0) return;
 
-  var requestJson = {};
+  let requestJson = {};
   requestJson["type"] = "update";
   requestJson["value"] = json;
   chrome.runtime.sendMessage(requestJson);
@@ -96,28 +98,45 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
       break;
     }
     // case "playlist": {
-    //   $(".playbackSoundBadge__queueCircle")[0].click();
-    //   var array = [], list = $(".queueItemView.m-active");
-    //   for (var i in list) {
-    //     data = {};
-    //     data["artist"] = $(list[i]).find(".queueItemView__meta .queueItemView__username").text();
-    //     data["track"] = $(list[i]).find(".queueItemView__title .sc-link-dark").text();
-    //     data["artwork"] = $(list[i]).find(".sc-artwork.image__full").css("background-image");
-    //     if (data["artist"] != "" && data["track"] != "") {
-    //       array.push(data);
-    //     }
-    //   }
-    //   if (json["playlist"] != array) {
-    //     json["playlist"] = array;
-    //     post();
-    //   }
+    //   var array = [];
+    //   $(".queue__itemsContainer .queueItemView__username").each(function( index ) {
+    //     array[index] = {};
+    //     array[index]["artist"] = $(this).text();
+    //     array[index]["track"] = $(this).find(".queueItemView__title").text();
+    //     array[index]["artwork"] = $(this).find(".image__full").css("background-image");
+    //   });
+    //   $(".queue__itemsContainer .queueItemView__title").each(function( index ) {
+    //     array[index]["track"] = $(this).text();
+    //     array[index]["artwork"] = $(this).find(".image__full").css("background-image");
+    //   });
+    //   $(".queue__itemsContainer .image__full").each(function( index ) {
+    //     array[index]["artwork"] = $(this).css("background-image");
+    //   });
+    //   chrome.runtime.sendMessage(array);
     //   break;
+    // }
+
+    // case "playlist-old": {
+      // $(".queue__itemsContainer").each(function( index ) {
+      //     array[index] = {};
+      //     array[index]["artist"] = $(this).find(".queueItemView__username").text();
+      //     array[index]["track"] = $(this).find(".queueItemView__title").text();
+      //     array[index]["artwork"] = $(this).find(".image__full").css("background-image");
+      //     console.log(array[index]);
+      // });
     // }
     default: {
       break;
     }
   }
+  // if you put 'return true;' here, it bugs out. artwork, title and other data wont show up on popup.
+  // return true;
 });
+
+// function strDel(str, index, chr) {
+//   if (index > str.length - 1) return str;
+//   return str.substr(0, index) + chr + str.substr(index + 1);
+// }
 
 var json = {
   "playing": false,

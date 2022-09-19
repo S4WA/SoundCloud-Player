@@ -9,7 +9,7 @@
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
-<body>
+<body dark="">
   <!-- <div class="element left">
     
   </div> -->
@@ -67,12 +67,22 @@
   </div>
   <hr/>
   <div id="share">
-    <textarea id="copy" readonly spellcheck="false"></textarea> <!-- disabled -->
-    <div id="time_at">
-      <input id="share_with_time" type="checkbox">
-      <span>at</span>
-      <input id="share_current_time" type="text" disabled>
+    <div id="thelink" class="floating">
+      <div class="left">
+        <textarea id="copy" readonly spellcheck="false"></textarea> <!-- disabled -->
+      </div>
+      <div class="right">
+        <div>
+          <input id="share_with_time" type="checkbox">
+          <span>at</span>
+        </div>
+        <div>
+          <input id="share_current_time" type="text" style="" disabled>
+        </div>
+      </div>
     </div>
+
+
     <div id="social" class="floating">
       <div class="left">
         <button class="twitter clickable"></button>
@@ -89,6 +99,9 @@
 
   <div class="floating">
     <span class="left">
+      <a title="Toggle Darkmode" class="clickable">
+        <span id="toggle_darkmode" class="icon" dark=""></span>
+      </a>
       <a id="store" class="clickable" title="Go to Chrome Store">
         SoundCloud Player 
         <span id="version"></span>
@@ -99,8 +112,11 @@
       </a> -->
     </span>
     <span class="right">
-      <a title="Open Settings" class="clickable" href="settings.html">
+      <a title="Open Settings" id="settings" class="clickable" href="settings.html">
         <span id="settings_icon" class="icon"></span>Settings
+      </a>
+      <a id="P" class="clickable">
+        <span id="popout_icon" class="icon"></span>
       </a>
     </span>
   </div>

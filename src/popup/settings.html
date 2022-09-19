@@ -10,12 +10,25 @@
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="stylesheet" type="text/css" href="settings.css">
 </head>
-<body>
+<body dark="">
   <div class="floating">
     <div class="right">
-      <a class="clickable" title="Go back to track menu" href="popup.html">
+      <a id="back" class="clickable" title="Go back to track menu" href="popup.html">
         <span id="exit" class="icon"></span>Back
       </a>
+    </div>
+  </div>
+  <div class="dropdown" closed="true">
+    <div class="dd-parent">
+      <span class="icon"></span>About
+    </div>
+    <hr>
+    <div class="dd-child">
+      <span>
+        SoundCloud Player By Sawa.<br><br>
+        Settings will automatically saved when the value has changed.
+      </span>
+      <hr>
     </div>
   </div>
   <div class="dropdown" closed="true">
@@ -29,8 +42,12 @@
         <textarea id="trackdisplay"></textarea>
       </div>
       <div>
-        <span>Theme Color:</span>
+        <span>Theme Color:<br>(Default: #FF5500)</span>
         <input id="themecolor" type="color">
+      </div>
+      <div>
+        <span>Background Color for Dark Mode:<br>(Default: #3F3F3F)</span>
+        <input id="bgcolor" type="color" style="background-color: #FFF;">
       </div>
       <div>
         <span>Font:</span>
@@ -44,6 +61,7 @@
           </li>
         </ul>
       </div>
+      <hr>
     </div>
   </div>
   <div class="dropdown" closed="true">
@@ -95,9 +113,7 @@
             </tr>
           </table>
       </span>
-      <span>
-          Settings automatically saved when the value has changed.
-      </span>
+      <hr>
     </div>
   </div>
   <div class="dropdown" closed="true">
@@ -108,12 +124,17 @@
     <div class="dd-child">
       Added
       <ul>
-        <li>Custom Font</li>
+        <li>Dark Mode</li>
+        <li>Meiryo Font</li>
+        <li>Popout (Beta)</li>
       </ul>
       Changed
       <ul>
-        <li>Theme Color</li>
+        <li>Few small things</li>
       </ul>
+
+      <span style="color: gray;">Thank you guys for the great ideas :)</span>
+      <hr>
     </div>
   </div>
   <div class="dropdown" closed="true">
@@ -123,8 +144,8 @@
     <hr>
     <div class="dd-child">
       <span>
-        <a id="contact-twitter" class="clickable" href="#">
-          Contact (Twitter)
+        <a id="c-twitter" class="clickable" href="#">
+          Twitter
         </a>
       </span>
       <hr>
@@ -133,12 +154,18 @@
   <div class="floating">
     <div class="left">
       <span>
+        <a title="Toggle Darkmode" class="clickable">
+          <span id="toggle_darkmode" class="icon" dark=""></span>
+        </a>
+        <a id="feedback" class="clickable" href="#">Feedback</a>
+      </span>
+      <span>|</span>
+      <span>
         <a id="github" class="clickable" href="#">
           Source Code
         </a>
       </span>
-      <!-- <span>|</span>
-      <span>
+      <!-- <span>
         <a id="discord" class="clickable" href="#" title="Join our Discord!">
           Discord
         </a>

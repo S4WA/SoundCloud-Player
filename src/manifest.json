@@ -1,10 +1,10 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "SoundCloud Player",
   "short_name": "SC Player",
   "description": "Popup Player",
-  "version": "1.2.8",
-  "homepage_url": "https://github.com/S4WA/soundcloud-player",
+  "version": "1.2.9",
+  "homepage_url": "https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej",
   "permissions": [
     "tabs",
     "clipboardRead"
@@ -21,14 +21,12 @@
     ],
     "run_at": "document_end"
   } ],
-  "browser_action": {
+  "action": {
     "default_popup": "popup/popup.html",
     "default_icon": "icon.png"
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "service_worker": "background.js"
   },
   "icons": {
     "16": "icon.png",

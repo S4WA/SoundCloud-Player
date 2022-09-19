@@ -9,7 +9,8 @@ body {
 }
 
 :root {
-  --theme-color: #f50;
+  --theme-color:#FF5500;
+  --bg-color:#3F3F3F;
   --custom-font: "Meiryo";
 }
 
@@ -18,7 +19,7 @@ a {
   text-decoration: none;
 }
 
-a:hover {
+a:hover, body[dark="true"] a:hover span {
   color: var(--theme-color);
 }
 
@@ -113,4 +114,14 @@ input[type="checkbox"] {
   background-repeat: no-repeat;
   background-position: center center;
   transform: translateY(15%);
+}
+
+#toggle_darkmode[dark="true"] {
+  background-color: var(--theme-color);
+  -webkit-mask: url("../assets/solid-moon.svg");
+  -webkit-mask-size: cover;
+}
+
+#toggle_darkmode[dark="false"], #toggle_darkmode[dark=""] {
+  background-image: url("../assets/regular-moon.svg");
 }

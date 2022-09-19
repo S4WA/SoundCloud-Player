@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   init();
   ready = true;
-
-  console.log($(toggleElem).attr("playing"), $(repeatElem).attr("mode"), $(shuffleElem).attr("shuffle"))
 });
 
 // Initialize:
@@ -53,6 +51,13 @@ function registerElements() {
 }
 
 function registerEvents() {
+  // Dark Mode
+  if (localStorage.getItem("darkmode") != null) {
+    dark = (localStorage.getItem("darkmode") === "true");
+  }
+  darkmode(dark);
+  $("#toggle_darkmode").on("click", () => { toggleDarkmode(); });
+
   // Audio
   $(toggleElem).on("click", () => { toggle(); });
   $(prevElem).on("click", () => { queue("prev"); });
@@ -66,6 +71,12 @@ function registerEvents() {
 
   $("#volume-icon").on("click", () => { queue("mute"); });
   $("#playlist_btn").on("click", () => { queue("playlist"); });
+
+  $("#P").on("click", () => {
+    popup("popup/popup.html?p=1", "a");
+    // $("#P").css("display", "none");
+    window.close();
+  });
 
   // Link buttons
   $("#store").on("click", () => {
@@ -108,6 +119,12 @@ function registerEvents() {
   $("#copy").focus(() => {
     $("#copy").select();
   })
+
+  
+  // No Duplicate Popout
+  if (isPopout()) {
+    $("#settings").attr("href", "settings.html?p=1")
+  }
 
   /*$(".marquee").hover(
     () => {
@@ -156,7 +173,7 @@ function replaceText(text, json) {
   return text.replace("%title%", json["title"]).replace("%artist%", json["artist"]).replace("%url%", json["link"]);
 }
 
-var ready = false, json = {}, 
+var ready = false, json = {}, dark = false,
   artworkElem, trackElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem,
   hideList = ["#close", "#second br:last-child", "#controller", "hr:first", "#share_btn"],
   shareSettings = {
@@ -181,12 +198,12 @@ var ready = false, json = {},
 
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if (message["type"] != "update" || message["value"] == null) return;
-    
-    var items = message["value"];
-    if (json == items) return;
+  if (message["type"] != "update" || message["value"] == null) return false;
 
-    // Update element texts
+  var items = message["value"];
+  if (json == items) return false;
+
+  // Update element texts
   /* if (!ready) return; */
 
   // artwork
@@ -268,4 +285,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       $(hideList[i]).show();
     }
   }
+
+  return true;
 });

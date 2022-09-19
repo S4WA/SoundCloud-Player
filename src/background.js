@@ -1,5 +1,5 @@
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.text == null) return;
+  if (msg.text == null) return false;
   switch(msg.text.toLowerCase()) {
     case "isfirst": {
       result = sender.tab.id == last.id
@@ -7,6 +7,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       break;
     }
   }
+  return true;
 });
 
 setInterval(() => {

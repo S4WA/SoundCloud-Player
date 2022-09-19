@@ -14,6 +14,11 @@ body .element.left {
   float: left;
 }
 
+body[dark="true"], body[dark="true"] input, body[dark="true"] span, body[dark="true"] a {
+  background-color: var(--bg-color);
+  color: white;
+}
+
 /* Popup elements */
 #track {
   content: "* Click to Open SoundCloud *";
@@ -42,17 +47,21 @@ body .element.left {
   /*padding-bottom: 8px;*/
 }
 
-#copy, #time_at {
-  display: inline;
+#thelink .left {
+  width: 70%;
+}
+
+#thelink .right {
+  width: 30%;
 }
 
 #copy {
-  width: 70%;
+  width: 90%;
   resize: none;
 }
 
 #share_current_time {
-  width: 10%;
+  width: 90%;
 }
 
 #social {
@@ -82,7 +91,7 @@ body .element.left {
   width: 25px;
   height: 25px;
   margin: 0 2px 0 0;
-  background-size: 25px 25px;
+  background-size: cover;
   border: none;
   display: inline-block;
   background-repeat: no-repeat;
@@ -119,7 +128,7 @@ body div:not(:last-child):not(:first-child) {
 #fav[favorite="true"] {
   background-color: var(--theme-color);
 
-  -webkit-mask: url("../assets/audio/unFav.svg") no-repeat center center;
+  -webkit-mask: url("../assets/audio/unFav.svg");
   -webkit-mask-size: cover;
 }
 
@@ -131,7 +140,7 @@ body div:not(:last-child):not(:first-child) {
 #shuffle[shuffle="true"] {
   background-color: var(--theme-color);
 
-  -webkit-mask: url("../assets/audio/shuffled.svg") no-repeat center center;
+  -webkit-mask: url("../assets/audio/shuffled.svg");
   -webkit-mask-size: cover;
 }
 
@@ -146,19 +155,18 @@ body div:not(:last-child):not(:first-child) {
 #repeat[mode="one"] {
   background-color: var(--theme-color);
 
-  -webkit-mask: url("../assets/audio/repeat_one.svg") no-repeat center center;
+  -webkit-mask: url("../assets/audio/repeat_one.svg");
   -webkit-mask-size: cover;
 }
 
 #repeat[mode="all"] {
   background-color: var(--theme-color);
 
-  -webkit-mask: url("../assets/audio/repeat_all.svg") no-repeat center center;
+  -webkit-mask: url("../assets/audio/repeat_all.svg");
   -webkit-mask-size: cover;
 }
 
 #volume-icon {
-  background-size: 16px 16px;
   background-image: url("../assets/audio/volume.svg");
 }
 
@@ -167,9 +175,12 @@ body div:not(:last-child):not(:first-child) {
 }
 
 /* Share */
-#share_icon {
-  background-size: 13px 13px;
+body[dark="false"] #share_icon {
   background-image: url("../assets/share/share.svg");
+}
+
+body[dark="true"] #share_icon {
+  background-image: url("../assets/share/share_dark.svg");
 }
 
 #social .twitter {
@@ -189,18 +200,45 @@ body div:not(:last-child):not(:first-child) {
 }
 
 #social .clipboard {
-  background-color: black;
   background-size: 60% 60%;
   background-image: url("../assets/share/copy-solid.svg");
 }
 
+/* When light mode */
+body[dark="false"] #social .clipboard {
+  filter: invert(1);
+}
+
+/* When dark mode */
+body[dark="true"] #social .clipboard {
+  fill: var(--bg-color);
+  background-color: white;
+}
+
+body[dark="true"] #controller button:not([favorite="true"]):not([shuffle="true"]):not([mode="one"]):not([mode="all"]) {
+  filter: invert(1);
+}
+
+
 /* Others */
+.icon {
+  background-size: cover;
+}
+
 #playlist_btn {
   background-size: 80% 80%;
   background-image: url("../assets/list-solid.svg");
 }
 
 #settings_icon {
-  background-size: 80% 80%;
   background-image: url("../assets/cog.svg");
+}
+
+#popout_icon {
+  background-image: url("../assets/popout.svg");
+}
+
+body[dark="true"] #settings_icon, body[dark="true"] #popout_icon {
+  background-color: transparent;
+  filter: invert(1);
 }
