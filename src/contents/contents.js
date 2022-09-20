@@ -43,6 +43,8 @@ function post() {
   requestJson["type"] = "update";
   requestJson["value"] = json;
   chrome.runtime.sendMessage(requestJson);
+
+  // delete json; // Do you think it's wrong?
 }
 
 chrome.runtime.onMessage.addListener((request, sender, callback) => {
@@ -95,6 +97,14 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
     }
     case "open": {
       $(".playbackSoundBadge__titleLink.sc-truncate")[0].click();
+      break;
+    }
+    case "down": {
+      volumeDown();
+      break;
+    }
+    case "up": {
+      volumeUp();
       break;
     }
     // case "playlist": {

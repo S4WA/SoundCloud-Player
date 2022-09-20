@@ -11,7 +11,7 @@ body {
 :root {
   --theme-color:#FF5500;
   --bg-color:#3F3F3F;
-  --custom-font: "Meiryo";
+  --custom-font: 'Meiryo';
 }
 
 a {
@@ -19,7 +19,7 @@ a {
   text-decoration: none;
 }
 
-a:hover, body[dark="true"] a:hover span {
+a:hover, body[dark='true'] a:hover span {
   color: var(--theme-color);
 }
 
@@ -35,7 +35,7 @@ hr:last-child {
   margin-bottom: 0;
 }
 
-input[type="text"] {
+input[type='text'] {
   display: inline-block;
   padding: 1px 2px;
   border-radius: 4px;
@@ -43,7 +43,7 @@ input[type="text"] {
   transition: border-color .1s;
 }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   margin-bottom: 0;
   margin-left: 0;
   margin-right: 0;
@@ -73,7 +73,7 @@ input[type="checkbox"] {
 }
 
 .marquee::after {
-  content: "";
+  content: '';
   white-space: nowrap;
   display: inline-block;
 }
@@ -116,12 +116,21 @@ input[type="checkbox"] {
   transform: translateY(15%);
 }
 
-#toggle_darkmode[dark="true"] {
+#toggle_darkmode[dark='true'] {
   background-color: var(--theme-color);
-  -webkit-mask: url("../assets/solid-moon.svg");
+  -webkit-mask: url('../assets/solid-moon.svg');
   -webkit-mask-size: cover;
 }
 
-#toggle_darkmode[dark="false"], #toggle_darkmode[dark=""] {
-  background-image: url("../assets/regular-moon.svg");
+#toggle_darkmode[dark='false'], #toggle_darkmode[dark=''] {
+  background-image: url('../assets/regular-moon.svg');
+}
+
+
+body[dark='false'] .gray, body[dark=''] .gray {
+  color: gray;
+}
+
+body[dark='true'] .gray {
+  color: #bbbbbb;
 }

@@ -1,48 +1,48 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   // Childs
-  $(".dropdown").each(function(i) {
-    if ( $(this).attr("closed") != null ) {
-      if ( Bool( $(this).attr("closed") ) ) {
-        $(this).children(".dd-child").hide();
+  $('.dropdown').each(function(i) {
+    if ( $(this).attr('closed') != null ) {
+      if ( Bool( $(this).attr('closed') ) ) {
+        $(this).children('.dd-child').hide();
       } 
     } else {
-      $(this).attr("closed", "true");
-      $(this).children(".dd-child").hide();
+      $(this).attr('closed', 'true');
+      $(this).children('.dd-child').hide();
     }
   })
 
   // Parents
-  $(".dropdown .dd-parent").addClass("clickable");
+  $('.dropdown .dd-parent').addClass('clickable');
 
-  $(".dropdown .dd-parent").on("click", function() {
-    let parent = $(this).parent(), value = Bool( parent.attr("closed") );
+  $('.dropdown .dd-parent').on('click', function() {
+    let parent = $(this).parent(), value = Bool( parent.attr('closed') );
 
-    parent.attr("closed", !value);
+    parent.attr('closed', !value);
 
     if (value) {
-      parent.children(".dd-child").slideDown();
+      parent.children('.dd-child').slideDown();
     } else {
-      parent.children(".dd-child").slideUp();
+      parent.children('.dd-child').slideUp();
     }
   });
 
 
 
   // Elements
-  $(".dropdown .dd-child textarea").attr("spellcheck", "false");
-  $(".dropdown .dd-child input").attr("spellcheck", "false");
+  $('.dropdown .dd-child textarea').attr('spellcheck', 'false');
+  $('.dropdown .dd-child input').attr('spellcheck', 'false');
 
 
 
   // Settings
   // - Track Display
-  if (localStorage.getItem("trackdisplay") != null) {
-    $("#trackdisplay").val(localStorage.getItem("trackdisplay"));
+  if (localStorage.getItem('trackdisplay') != null) {
+    $('#trackdisplay').val(localStorage.getItem('trackdisplay'));
   }
 
   // - Custom Font
-  if (localStorage.getItem("font") != null) {
-    $("#font").text(localStorage.getItem("font"));
+  if (localStorage.getItem('font') != null) {
+    $('#font').text(localStorage.getItem('font'));
     updateFont();
 
 
@@ -61,134 +61,134 @@ document.addEventListener("DOMContentLoaded", () => {
       // const fontAvailable = new Set();
 
       for (const font of fontCheck.values()) {
-        if (document.fonts.check(`12px "${font}"`)) {
+        if (document.fonts.check(`12px '${font}'`)) {
           // fontAvailable.add(font);
-          $("#fontlist").append( $(`<option value="${font}">${font}</option>`) );
+          $('#fontlist').append( $(`<option value='${font}'>${font}</option>`) );
         }
       }
 
       // console.log('Available Fonts:', [...fontAvailable.values()]);
 
-      $(`#fontlist option[value="${localStorage.getItem("font")}"]`).attr("selected", "true");
+      $(`#fontlist option[value='${localStorage.getItem('font')}']`).attr('selected', 'true');
     })();
   }
 
   // - Theme Color
-  if (localStorage.getItem("themecolor") != null) {
-    $("#themecolor").val( localStorage.getItem("themecolor") );
+  if (localStorage.getItem('themecolor') != null) {
+    $('#themecolor').val( localStorage.getItem('themecolor') );
     updateThemeColor();
   } else {
     setTimeout(function() {
-      $("#themecolor").val( $(':root').css("--theme-color") );
+      $('#themecolor').val( $(':root').css('--theme-color') );
     }, 100);
   }
-  // $("#themecolor").parents(".dropdown").on("click", function() {
-  //   if ($(this).attr("closed") == "false") {
-  //     $("#themecolor").focus();
-  //     $("#trackdisplay").focus();
-  //     $("#trackdisplay").blur();
+  // $('#themecolor').parents('.dropdown').on('click', function() {
+  //   if ($(this).attr('closed') == 'false') {
+  //     $('#themecolor').focus();
+  //     $('#trackdisplay').focus();
+  //     $('#trackdisplay').blur();
   //   }
   // })
-  $("#themecolor").on("change", function() {
+  $('#themecolor').on('change', function() {
     updateThemeColor($(this).val());
   });
 
   // - Background
-  if (localStorage.getItem("bgcolor") != null) {
-    $("#bgcolor").val( localStorage.getItem("bgcolor") );
+  if (localStorage.getItem('bgcolor') != null) {
+    $('#bgcolor').val( localStorage.getItem('bgcolor') );
     updateBGcolor();
   } else {
     setTimeout(function() {
-      $("#bgcolor").val( $(':root').css("--bg-color") );
+      $('#bgcolor').val( $(':root').css('--bg-color') );
     }, 100);
   }
-  $("#bgcolor").on("change", function() {
+  $('#bgcolor').on('change', function() {
     updateBGcolor($(this).val());
   });
 
   // Share Templates
   // - init
-  if (localStorage.getItem("twitter") != null) {
-    $("#twitter").val( localStorage.getItem("twitter") );
+  if (localStorage.getItem('twitter') != null) {
+    $('#twitter').val( localStorage.getItem('twitter') );
   }
-  if (localStorage.getItem("facebook") != null) {
-    $("#facebook").val( localStorage.getItem("facebook") );
+  if (localStorage.getItem('facebook') != null) {
+    $('#facebook').val( localStorage.getItem('facebook') );
   }
-  if (localStorage.getItem("tumblr") != null) {
-    $("#tumblr").val( localStorage.getItem("tumblr") );
+  if (localStorage.getItem('tumblr') != null) {
+    $('#tumblr').val( localStorage.getItem('tumblr') );
   }
-  if (localStorage.getItem("email") != null) {
-    let data = JSON.parse( localStorage.getItem("email") );
-    $("#email_subject").val(data["subject"]);
-    $("#email_body").val(data["body"]);
+  if (localStorage.getItem('email') != null) {
+    let data = JSON.parse( localStorage.getItem('email') );
+    $('#email_subject').val(data['subject']);
+    $('#email_body').val(data['body']);
   }
-  if (localStorage.getItem("copy") != null) {
-    $("#copy").val( localStorage.getItem("copy") );
+  if (localStorage.getItem('copy') != null) {
+    $('#copy').val( localStorage.getItem('copy') );
   }
 
   // - inputs
-  $("#trackdisplay").on("input", function() {
-    localStorage.setItem("trackdisplay", $(this).val());
+  $('#trackdisplay').on('input', function() {
+    localStorage.setItem('trackdisplay', $(this).val());
   });
-  $("#fontlist").on("input", function() {
-    localStorage.setItem("font", $(this).val());
+  $('#fontlist').on('input', function() {
+    localStorage.setItem('font', $(this).val());
     updateFont();
-    $("#font").text(localStorage.getItem("font"));
+    $('#font').text(localStorage.getItem('font'));
   });
 
-  $("#twitter").on("input", function() {
-    localStorage.setItem("twitter", $(this).val());
+  $('#twitter').on('input', function() {
+    localStorage.setItem('twitter', $(this).val());
   });
-  $("#facebook").on("input", function() {
-    localStorage.setItem("facebook", $(this).val());
+  $('#facebook').on('input', function() {
+    localStorage.setItem('facebook', $(this).val());
   });
-  $("#tumblr").on("input", function() {
-    localStorage.setItem("tumblr", $(this).val());
+  $('#tumblr').on('input', function() {
+    localStorage.setItem('tumblr', $(this).val());
   });
 
-  $("#email_subject").on("input", function() {
-    let data = JSON.parse(localStorage.getItem("email"));
+  $('#email_subject').on('input', function() {
+    let data = JSON.parse(localStorage.getItem('email'));
     // console.log($(this).val());
-    data["subject"] = $(this).val();
-    localStorage.setItem("email", JSON.stringify(data));
+    data['subject'] = $(this).val();
+    localStorage.setItem('email', JSON.stringify(data));
   });
-  $("#email_body").on("input", function() {
-    let data = JSON.parse(localStorage.getItem("email"));
+  $('#email_body').on('input', function() {
+    let data = JSON.parse(localStorage.getItem('email'));
     // console.log($(this).val());
-    data["body"] = $(this).val();
-    localStorage.setItem("email", JSON.stringify(data));
+    data['body'] = $(this).val();
+    localStorage.setItem('email', JSON.stringify(data));
   });
 
-  $("#copy").on("input", function() {
-    localStorage.setItem("copy", $(this).val());
+  $('#copy').on('input', function() {
+    localStorage.setItem('copy', $(this).val());
   });
 
 
 
   // Links
-  $("#discord").on("click", () => {
-    openURL("https://discord.gg/R9R6fdm");
+  $('#discord').on('click', () => {
+    openURL('https://discord.gg/R9R6fdm');
   });
-  $("#github").on("click", () => {
-    openURL("https://github.com/S4WA/soundcloud-player");
+  $('#github').on('click', () => {
+    openURL('https://github.com/S4WA/soundcloud-player');
   });
-  $("#feedback").on("click", () => {
-    openURL("https://forms.gle/oG2DvmK7HXhq8q8ZA");
+  $('#feedback').on('click', () => {
+    openURL('https://forms.gle/oG2DvmK7HXhq8q8ZA');
   });
-  $("#c-twitter").on("click", () => {
-    openURL("https://twitter.com/evildaimyoh");
+  $('#c-twitter').on('click', () => {
+    openURL('https://twitter.com/evildaimyoh');
   });
 
   // Dark Mode
-  if (localStorage.getItem("darkmode") != null) {
-    dark = (localStorage.getItem("darkmode") === "true");
+  if (localStorage.getItem('darkmode') != null) {
+    dark = (localStorage.getItem('darkmode') === 'true');
   }
   darkmode(dark);
-  $("#toggle_darkmode").on("click", () => { toggleDarkmode(); });
+  $('#toggle_darkmode').on('click', () => { toggleDarkmode(); });
 
   // No Duplicate Popout
   if (isPopout()) {
-    $("#back").attr("href", "popup.html?p=1")
+    $('#back').attr('href', 'popup.html?p=1')
   }
 });
 

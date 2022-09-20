@@ -10,12 +10,12 @@
   background-size: 80% 80%;
 }
 
-.dropdown[closed="true"] .dd-parent .icon {
-	background-image: url("../assets/dropdown/caret-right.svg");
+.dropdown[closed='true'] .dd-parent .icon {
+	background-image: url('../assets/dropdown/caret-right.svg');
 }
 
-.dropdown[closed="false"] .dd-parent .icon {
-	background-image: url("../assets/dropdown/caret-down.svg");
+.dropdown[closed='false'] .dd-parent .icon {
+	background-image: url('../assets/dropdown/caret-down.svg');
 }
 
 .dd-child div:not(:last-child) {
@@ -60,33 +60,33 @@ li:last-child {
 
 #exit {
 	background-size: 80% 80%;
-	background-image: url("../assets/chevron-left.svg");
+	background-image: url('../assets/chevron-left.svg');
 }
 
 #export_icon {
   background-size: 80% 80%;
-  background-image: url("../assets/file-export.svg");
+  background-image: url('../assets/file-export.svg');
 }
 
 /* Dark Mode */
-body[dark="true"], body[dark="true"] span, body[dark="true"] a, body[dark="true"] input {
+body[dark='true'], body[dark='true'] span, body[dark='true'] a, body[dark='true'] input {
   background-color: var(--bg-color);
   color: white;
 }
 
-body[dark="true"] table tr:nth-child(odd) {
+body[dark='true'] table tr:nth-child(odd) {
   background-color: #C0C0C0
 }
 
-body[dark="true"] .dropdown[closed="true"] .dd-parent .icon {
-  background-image: url("../assets/dropdown/caret-right_dark.svg");
+body[dark='true'] .dropdown[closed='true'] .dd-parent .icon {
+  background-image: url('../assets/dropdown/caret-right_dark.svg');
 }
 
-body[dark="true"] .dropdown[closed="false"] .dd-parent .icon {
-  background-image: url("../assets/dropdown/caret-down_dark.svg");
+body[dark='true'] .dropdown[closed='false'] .dd-parent .icon {
+  background-image: url('../assets/dropdown/caret-down_dark.svg');
 }
 
-body[dark="true"] #exit {
+body[dark='true'] #exit {
   background-size: 80% 80%;
-  background-image: url("../assets/chevron-left_dark.svg");
+  background-image: url('../assets/chevron-left_dark.svg');
 }

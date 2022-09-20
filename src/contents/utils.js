@@ -49,3 +49,27 @@ function getRepeatMode() {
 function isShuffling() {
   return $(".shuffleControl")[0].className.includes("m-shuffling");
 }
+
+function volumeDown() {
+  document.dispatchEvent(
+    new KeyboardEvent("keydown", {
+      key: "ArrowDown",
+      keyCode: 40, 
+      code: "ArrowDown",
+      which: 40,
+      shiftKey: true
+    })
+  );
+}
+
+function volumeUp() {
+  document.dispatchEvent(
+    new KeyboardEvent("keydown", {
+      key: "ArrowUp",
+      keyCode: 38, 
+      code: "ArrowUp",
+      which: 38,
+      shiftKey: true
+    })
+  );
+}

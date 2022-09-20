@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <script src="../jquery-3.4.1.min.js"></script>
-  <script src="utils.js"></script>
-  <script src="init.js"></script>
-  <script src="settings.js"></script>
+  <meta charset='UTF-8'>
+  <script src='../jquery-3.4.1.min.js'></script>
+  <script src='utils.js'></script>
+  <script src='init.js'></script>
+  <script src='settings.js'></script>
 
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <link rel="stylesheet" type="text/css" href="settings.css">
+  <link rel='stylesheet' type='text/css' href='style.css'>
+  <link rel='stylesheet' type='text/css' href='settings.css'>
 </head>
-<body dark="">
-  <div class="floating">
-    <div class="right">
-      <a id="back" class="clickable" title="Go back to track menu" href="popup.html">
-        <span id="exit" class="icon"></span>Back
+<body dark='' mode='default'>
+  <div id="audio-controller">
+    
+  </div>
+  <div class='floating'>
+    <div class='right'>
+      <a id='back' class='clickable' title='Go back to track menu' href='popup.html'>
+        <span id='exit' class='icon'></span>Back
       </a>
     </div>
   </div>
-  <div class="dropdown" closed="true">
-    <div class="dd-parent">
-      <span class="icon"></span>About
+  <div class='dropdown' closed='true'>
+    <div class='dd-parent'>
+      <span class='icon'></span>About
     </div>
     <hr>
-    <div class="dd-child">
+    <div class='dd-child'>
       <span>
         SoundCloud Player By Sawa.<br><br>
         Settings will automatically saved when the value has changed.
@@ -31,69 +34,69 @@
       <hr>
     </div>
   </div>
-  <div class="dropdown" closed="true">
-    <div class="dd-parent">
-      <span class="icon"></span>Displays
+  <div class='dropdown' closed='true'>
+    <div class='dd-parent'>
+      <span class='icon'></span>Displays
     </div>
     <hr>
-    <div class="dd-child">
+    <div class='dd-child'>
       <div>
         <span>Track Display:</span>
-        <textarea id="trackdisplay"></textarea>
+        <textarea id='trackdisplay'></textarea>
       </div>
       <div>
         <span>Theme Color:<br>(Default: #FF5500)</span>
-        <input id="themecolor" type="color">
+        <input id='themecolor' type='color'>
       </div>
       <div>
         <span>Background Color for Dark Mode:<br>(Default: #3F3F3F)</span>
-        <input id="bgcolor" type="color" style="background-color: #FFF;">
+        <input id='bgcolor' type='color' style='background-color: #FFF;'>
       </div>
       <div>
         <span>Font:</span>
         <ul>
           <li>
-            <span>Current Font: </span><b id="font"></b>
+            <span>Current Font: </span><b id='font'></b>
           </li>
           <li>
             <span>Font List</span>
-            <select id="fontlist" style="font-family: Arial;"></select>
+            <select id='fontlist' style='font-family: Arial;'></select>
           </li>
         </ul>
       </div>
       <hr>
     </div>
   </div>
-  <div class="dropdown" closed="true">
-    <div class="dd-parent">
-      <span class="icon"></span>Templates
+  <div class='dropdown' closed='true'>
+    <div class='dd-parent'>
+      <span class='icon'></span>Templates
     </div>
     <hr>
-    <div class="dd-child">
+    <div class='dd-child'>
       <div>
         <span>Twitter:</span>
-        <textarea id="twitter"></textarea>
+        <textarea id='twitter'></textarea>
       </div>
       <div>
         <span>Facebook:</span>
-        <textarea id="facebook"></textarea>
+        <textarea id='facebook'></textarea>
       </div>
       <div>
         <span>Tumbr:</span>
-        <textarea id="tumblr"></textarea>
+        <textarea id='tumblr'></textarea>
       </div>
       <div>
         <span>Email:</span>
         <br>
         <span>- Subject</span>
-        <textarea id="email_subject"></textarea>
+        <textarea id='email_subject'></textarea>
         <br>
         <span>- Body</span>
-        <textarea id="email_body"></textarea>
+        <textarea id='email_body'></textarea>
       </div>
       <div>
         <span>Copy:</span>
-        <textarea id="copy"></textarea>
+        <textarea id='copy'></textarea>
       </div>
 
       <span>
@@ -116,64 +119,62 @@
       <hr>
     </div>
   </div>
-  <div class="dropdown" closed="true">
-    <div class="dd-parent">
-      <span class="icon"></span>What's new?
+  <div class='dropdown' closed='true'>
+    <div class='dd-parent'>
+      <span class='icon'></span>Announcement
     </div>
     <hr>
-    <div class="dd-child">
+    <div class='dd-child'>
       Added
       <ul>
-        <li>Dark Mode</li>
-        <li>Meiryo Font</li>
-        <li>Popout (Beta)</li>
+        <li>Feedback forum link</li>
+        <li>Volume Buttons</li>
       </ul>
-      Changed
-      <ul>
-        <li>Few small things</li>
-      </ul>
-
-      <span style="color: gray;">Thank you guys for the great ideas :)</span>
+      <span class='gray'>
+        <i>Thank you for 7K users! :DDD
+        <br><br>
+        And I appologize for the disgusting design of the volume buttons.</i>
+      </span>
       <hr>
     </div>
   </div>
-  <div class="dropdown" closed="true">
-    <div class="dd-parent">
-      <span class="icon"></span>Contact
+  <div class='dropdown' closed='true'>
+    <div class='dd-parent'>
+      <span class='icon'></span>Contact
     </div>
     <hr>
-    <div class="dd-child">
+    <div class='dd-child'>
       <span>
-        <a id="c-twitter" class="clickable" href="#">
+        <a id='c-twitter' class='clickable' href='#'>
           Twitter
         </a>
       </span>
       <hr>
     </div>
   </div>
-  <div class="floating">
-    <div class="left">
+  <div class='floating'>
+    <div class='left'>
       <span>
-        <a title="Toggle Darkmode" class="clickable">
-          <span id="toggle_darkmode" class="icon" dark=""></span>
+        <a title='Toggle Darkmode' class='clickable'>
+          <span id='toggle_darkmode' class='icon' dark=''></span>
         </a>
-        <a id="feedback" class="clickable" href="#">Feedback</a>
+        <a id='feedback' class='clickable' href='#'>Feedback</a>
       </span>
       <span>|</span>
       <span>
-        <a id="github" class="clickable" href="#">
+        <a id='github' class='clickable' href='#'>
           Source Code
         </a>
       </span>
       <!-- <span>
-        <a id="discord" class="clickable" href="#" title="Join our Discord!">
+        <a id='discord' class='clickable' href='#' title='Join our Discord!'>
           Discord
         </a>
       </span> -->
     </div>
-    <div class="right">
-      <!-- <a id="export" class="clickable">
-        <span id="export_icon" class="icon"></span>Export
+    <div class='right'>
+      <!-- <a id='export' class='clickable'>
+        <span id='export_icon' class='icon'></span>Export
       </a> -->
     </div>
   </div>

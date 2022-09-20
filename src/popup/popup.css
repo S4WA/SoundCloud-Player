@@ -14,14 +14,14 @@ body .element.left {
   float: left;
 }
 
-body[dark="true"], body[dark="true"] input, body[dark="true"] span, body[dark="true"] a {
+body[dark='true'], body[dark='true'] input, body[dark='true'] span, body[dark='true'] a {
   background-color: var(--bg-color);
   color: white;
 }
 
 /* Popup elements */
 #track {
-  content: "* Click to Open SoundCloud *";
+  content: '* Click to Open SoundCloud *';
 }
 
 #artwork {
@@ -110,112 +110,120 @@ body div:not(:last-child):not(:first-child) {
 
 /* Audio */
 #prev {
-  background-image: url("../assets/audio/prev.svg");
+  background-image: url('../assets/audio/prev.svg');
 }
 
-#toggle[playing="true"] {
-  background-image: url("../assets/audio/pause.svg");
+#toggle[playing='true'] {
+  background-image: url('../assets/audio/pause.svg');
 }
 
-#toggle[playing="false"], #toggle[playing=""] {
-  background-image: url("../assets/audio/play.svg");
+#toggle[playing='false'], #toggle[playing=''] {
+  background-image: url('../assets/audio/play.svg');
 }
 
 #next {
-  background-image: url("../assets/audio/next.svg");
+  background-image: url('../assets/audio/next.svg');
 }
 
-#fav[favorite="true"] {
+#fav[favorite='true'] {
   background-color: var(--theme-color);
 
-  -webkit-mask: url("../assets/audio/unFav.svg");
+  -webkit-mask: url('../assets/audio/unFav.svg');
   -webkit-mask-size: cover;
 }
 
-#fav[favorite="false"], #fav[favorite=""] {
-  background-image: url("../assets/audio/fav.svg");
+#fav[favorite='false'], #fav[favorite=''] {
+  background-image: url('../assets/audio/fav.svg');
   background-size: cover;
 }
 
-#shuffle[shuffle="true"] {
+#shuffle[shuffle='true'] {
   background-color: var(--theme-color);
 
-  -webkit-mask: url("../assets/audio/shuffled.svg");
+  -webkit-mask: url('../assets/audio/shuffled.svg');
   -webkit-mask-size: cover;
 }
 
-#shuffle[shuffle="false"], #shuffle[shuffle=""] {
-  background-image: url("../assets/audio/shuffle.svg");
+#shuffle[shuffle='false'], #shuffle[shuffle=''] {
+  background-image: url('../assets/audio/shuffle.svg');
 }
 
-#repeat[mode=""], #repeat[mode="none"] {
-  background-image: url("../assets/audio/repeat.svg");
+#repeat[mode=''], #repeat[mode='none'] {
+  background-image: url('../assets/audio/repeat.svg');
 }
 
-#repeat[mode="one"] {
+#repeat[mode='one'] {
   background-color: var(--theme-color);
 
-  -webkit-mask: url("../assets/audio/repeat_one.svg");
+  -webkit-mask: url('../assets/audio/repeat_one.svg');
   -webkit-mask-size: cover;
 }
 
-#repeat[mode="all"] {
+#repeat[mode='all'] {
   background-color: var(--theme-color);
 
-  -webkit-mask: url("../assets/audio/repeat_all.svg");
+  -webkit-mask: url('../assets/audio/repeat_all.svg');
   -webkit-mask-size: cover;
 }
 
 #volume-icon {
-  background-image: url("../assets/audio/volume.svg");
+  background-image: url('../assets/audio/volume.svg');
 }
 
 #volume-icon.muted {
-  background-image: url("../assets/audio/muted.svg");
+  background-image: url('../assets/audio/muted.svg');
+}
+
+#up {
+  background-image: url('../assets/audio/plus.svg');
+}
+
+#down {
+  background-image: url('../assets/audio/minus.svg');
 }
 
 /* Share */
-body[dark="false"] #share_icon {
-  background-image: url("../assets/share/share.svg");
+body[dark='false'] #share_icon {
+  background-image: url('../assets/share/share.svg');
 }
 
-body[dark="true"] #share_icon {
-  background-image: url("../assets/share/share_dark.svg");
+body[dark='true'] #share_icon {
+  background-image: url('../assets/share/share_dark.svg');
 }
 
 #social .twitter {
-  background-image: url("../assets/share/twitter.svg");
+  background-image: url('../assets/share/twitter.svg');
 }
 
 #social .facebook {
-  background-image: url("../assets/share/facebook.svg");
+  background-image: url('../assets/share/facebook.svg');
 }
 
 #social .tumblr {
-  background-image: url("../assets/share/tumblr.svg");
+  background-image: url('../assets/share/tumblr.svg');
 }
 
 #social .email {
-  background-image: url("../assets/share/email.svg");
+  background-image: url('../assets/share/email.svg');
 }
 
 #social .clipboard {
   background-size: 60% 60%;
-  background-image: url("../assets/share/copy-solid.svg");
+  background-image: url('../assets/share/copy-solid.svg');
 }
 
 /* When light mode */
-body[dark="false"] #social .clipboard {
+body[dark='false'] #social .clipboard {
   filter: invert(1);
 }
 
 /* When dark mode */
-body[dark="true"] #social .clipboard {
+body[dark='true'] #social .clipboard {
   fill: var(--bg-color);
   background-color: white;
 }
 
-body[dark="true"] #controller button:not([favorite="true"]):not([shuffle="true"]):not([mode="one"]):not([mode="all"]) {
+body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']) {
   filter: invert(1);
 }
 
@@ -227,18 +235,18 @@ body[dark="true"] #controller button:not([favorite="true"]):not([shuffle="true"]
 
 #playlist_btn {
   background-size: 80% 80%;
-  background-image: url("../assets/list-solid.svg");
+  background-image: url('../assets/list-solid.svg');
 }
 
 #settings_icon {
-  background-image: url("../assets/cog.svg");
+  background-image: url('../assets/cog.svg');
 }
 
 #popout_icon {
-  background-image: url("../assets/popout.svg");
+  background-image: url('../assets/popout.svg');
 }
 
-body[dark="true"] #settings_icon, body[dark="true"] #popout_icon {
+body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down {
   background-color: transparent;
   filter: invert(1);
 }
