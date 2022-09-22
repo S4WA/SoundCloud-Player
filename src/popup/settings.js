@@ -1,4 +1,87 @@
 document.addEventListener('DOMContentLoaded', () => {
+  checkIfCompactIsEnabled();
+  registerElements();
+  initDropdown();
+  initSettings();
+  initTemplates();
+  initInputs();
+  putAllLinks();
+  initDarkmode();
+  initMarquees();
+  registerEvents();
+  ready = true;
+});
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message['type'] != 'update' || message['value'] == null) return false;
+
+  var items = message['value'];
+  if (json == items) return false;
+
+  // artwork
+  if ($(artworkElem).css('background-image') == 'none') {
+    $(artworkElem).css('background-image', json['artwork']);
+  }
+  if (items['artwork'] != json['artwork']) {
+    $(artworkElem).css('background-image', items['artwork']);
+  }
+  
+  // track
+  if (items['title'] != json['title']) {
+    $(titleElem).text( replaceText( localStorage.getItem('trackdisplay'), items) );
+    $(titleElem).attr( 'title', replaceText( localStorage.getItem('trackdisplay'), items) );
+  }
+  // link
+  if (items['link'] != json['link']) {
+    $(titleElem).attr( 'href', items['link'] );
+  }
+  
+  // play/pause
+  if (items['playing'] != json['playing']) {
+    $(toggleElem).attr( 'playing', items['playing'] );
+  }
+  
+  // fav/unfav
+  if (items['favorite'] != json['favorite']) {
+    $(favElem).attr( 'favorite', items['favorite'] );
+  }
+  
+  // shuffle
+  if (items['shuffle'] != json['shuffle']) {
+    $(shuffleElem).attr( 'shuffle', items['shuffle'] );
+  }
+  
+  // repeat
+  if (items['repeat'] != json['repeat']) {
+    $(repeatElem).attr( 'mode', items['repeat'] );
+  }
+  
+  // volume
+  if (items['volume'] != json['volume']) {
+    $('#current-volume').text( Math.floor(items['volume']) + ' %' );
+  }
+  
+  // mute/unmute
+  if (items['mute'] != json['mute']) {
+    items['mute'] ? $('#volume-icon').addClass('muted') : $('#volume-icon').removeClass('muted');
+  }
+  
+  // times
+  let timeJson = items['time'];
+
+  if ($('#current').text() != timeJson['current']) {
+    $('#current').text(timeJson['current']);
+    $('#share_current_time').val(timeJson['current']);
+  }
+  if ($('#end').text() != timeJson['end']) {
+    $('#end').text(timeJson['end']);
+  }
+
+  json = items;
+  sessionStorage.setItem('data', JSON.stringify(json));
+});
+
+function initDropdown() {
   // Childs
   $('.dropdown').each(function(i) {
     if ( $(this).attr('closed') != null ) {
@@ -26,20 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-
-
   // Elements
   $('.dropdown .dd-child textarea').attr('spellcheck', 'false');
   $('.dropdown .dd-child input').attr('spellcheck', 'false');
+}
 
-
-
-  // Settings
-  // - Track Display
-  if (localStorage.getItem('trackdisplay') != null) {
-    $('#trackdisplay').val(localStorage.getItem('trackdisplay'));
-  }
-
+function checkFonts() {
   // - Custom Font
   if (localStorage.getItem('font') != null) {
     $('#font').text(localStorage.getItem('font'));
@@ -72,7 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
       $(`#fontlist option[value='${localStorage.getItem('font')}']`).attr('selected', 'true');
     })();
   }
+}
 
+function checkCustomColors() {
   // - Theme Color
   if (localStorage.getItem('themecolor') != null) {
     $('#themecolor').val( localStorage.getItem('themecolor') );
@@ -105,7 +182,18 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#bgcolor').on('change', function() {
     updateBGcolor($(this).val());
   });
+}
 
+function initSettings() {
+  // - Track Display
+  if (localStorage.getItem('trackdisplay') != null) {
+    $('#trackdisplay').val(localStorage.getItem('trackdisplay'));
+  }
+  checkFonts();
+  checkCustomColors();
+}
+
+function initTemplates() {
   // Share Templates
   // - init
   if (localStorage.getItem('twitter') != null) {
@@ -125,8 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('copy') != null) {
     $('#copy').val( localStorage.getItem('copy') );
   }
+}
 
-  // - inputs
+function initInputs() {
   $('#trackdisplay').on('input', function() {
     localStorage.setItem('trackdisplay', $(this).val());
   });
@@ -162,9 +251,9 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#copy').on('input', function() {
     localStorage.setItem('copy', $(this).val());
   });
+}
 
-
-
+function putAllLinks() {
   // Links
   $('#discord').on('click', () => {
     openURL('https://discord.gg/R9R6fdm');
@@ -178,8 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#c-twitter').on('click', () => {
     openURL('https://twitter.com/evildaimyoh');
   });
+}
 
-  // Dark Mode
+function initDarkmode() {
   if (localStorage.getItem('darkmode') != null) {
     dark = (localStorage.getItem('darkmode') === 'true');
   }
@@ -190,6 +280,109 @@ document.addEventListener('DOMContentLoaded', () => {
   if (isPopout()) {
     $('#back').attr('href', 'popup.html?p=1')
   }
-});
+}
+
+function toggle() {
+  if (toggleElem == null) return;
+  let value = Bool( $(toggleElem).attr('playing') );
+  queue(value ? 'Pause' : 'Play');
+}
+
+function repeat() {
+  if (json['repeat'] == null || repeatElem == null) return;
+  queue('repeat');
+  $(repeatElem).attr( 'mode', json['repeat'] );
+}
+
+function toggleFav() {
+  if (favElem == null) return;
+  let value = Bool( $(favElem).attr('favorite') );
+  queue( value ? 'unFav' : 'Fav' );
+}
+
+function registerElements() {
+  artworkElem = $('#artwork')[0];
+  titleElem = $('.title')[0];
+  toggleElem = $('#toggle')[0];
+  prevElem = $('#prev')[0];
+  nextElem = $('#next')[0];
+  favElem = $('#fav')[0];
+  repeatElem = $('#repeat')[0];
+  shuffleElem = $('#shuffle')[0];
+}
+
+function registerEvents() {
+  $(toggleElem).on('click', () => { toggle(); });
+  $(prevElem).on('click', () => { queue('prev'); });
+  $(nextElem).on('click', () => { queue('next'); });
+  $(favElem).on('click', () => { toggleFav(); });
+  $(titleElem).on('click', () => { location.href = 'popup.html'; });
+  $(artworkElem).on('click', () => { location.href = 'popup.html'; });
+  $(repeatElem).on('click', () => { repeat(); });
+  $(shuffleElem).on('click', () => { queue('shuffle'); });
+  $('.title').on('click', () => { return false; });
+  $('#copynp').on('click', () => {
+    copyToClipboard( replaceText(localStorage.getItem('copy')) );
+  });
+  $('#toggle_compact').on('click', () => {
+    if ($('#controller-body').css('display') == 'none') {
+      if ($('.marquee .js-marquee-wrapper').css('animation') == null) {
+        startMarquees();
+        console.log('a');
+      }
+
+      $('#controller-body').css('display', 'inline-block');
+      localStorage.setItem('compact_in_settings', 'true');
+      $('.maruee').marquee('resume');
+    } else {
+      stopMarquees();
+
+      $('#controller-body').css('display', 'none');
+      localStorage.setItem('compact_in_settings', 'false');
+    }
+  });
+}
+
+function replaceText(text, json) {
+  if (!json) json = JSON.parse( sessionStorage.getItem('data') );
+  return text.replace('%title%', json['title']).replace('%artist%', json['artist']).replace('%url%', json['link']);
+}
+
+function startMarquees() {
+  $('.marquee')
+  .bind('finished', () => {
+    $('.marquee').marquee('pause');
+    setTimeout(() => {
+      $('.marquee').marquee('resume');
+    }, marqueePauseTime);
+  })
+  .marquee({
+    direction: 'left', 
+    duration: textVisibleDuration,
+    pauseOnHover: true,
+    startVisible: true,
+    duplicated: true
+  });
+}
+
+function stopMarquees() {
+  // clearInterval(marqueeTimer);
+  $('.maruee').marquee('pause');
+}
+
+function initMarquees() {
+  setTimeout(startMarquees, 50)
+}
+
+function checkIfCompactIsEnabled() {
+  if (localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true') {
+    $('#controller-body').css('display', 'inline-block');
+  } else {
+    $('#controller-body').css('display', 'none');
+  }
+}
 
 var dark = false;
+var ready = false, json = {};
+var artworkElem, titleElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem;
+var marqueeTimer, textVisibleDuration = 5000, marqueePauseTime = 5000;

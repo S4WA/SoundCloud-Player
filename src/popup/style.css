@@ -69,34 +69,6 @@ input[type='checkbox'] {
 /* Marquee */
 .marquee {
   overflow: hidden;
-  position: relative;
-}
-
-.marquee::after {
-  content: '';
-  white-space: nowrap;
-  display: inline-block;
-}
-
-.marquee > .marquee-inner {
-  position: absolute;
-  top: 0;
-  white-space: nowrap;
-  animation-name: marquee;
-  animation-timing-function: linear;
-  animation-duration: 20s;
-  animation-iteration-count: infinite;
-}
-
-@keyframes marquee {
-  0% {
-    left: 100%;
-    transform: translate(0);
-  }
-  100% {
-    left: 0;
-    transform: translate(-100%);
-  }
 }
 
 /* Second Elements Icon */

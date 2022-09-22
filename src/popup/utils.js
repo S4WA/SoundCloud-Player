@@ -127,7 +127,7 @@ function popup(mylink, windowname) {
   chrome.windows.create({
     url: mylink,
     type: "popup",
-    width: 280,
+    width: 300,
     height: 440,
     focused: true
   });

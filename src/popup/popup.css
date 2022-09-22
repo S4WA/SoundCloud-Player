@@ -168,10 +168,12 @@ body div:not(:last-child):not(:first-child) {
 
 #volume-icon {
   background-image: url('../assets/audio/volume.svg');
+  background-size: 130%;
 }
 
 #volume-icon.muted {
   background-image: url('../assets/audio/muted.svg');
+  background-size: 130%;
 }
 
 #up {
@@ -246,7 +248,7 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   background-image: url('../assets/popout.svg');
 }
 
-body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down {
+body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down, body[dark='true'] #volume-icon {
   background-color: transparent;
   filter: invert(1);
 }

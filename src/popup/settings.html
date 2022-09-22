@@ -3,6 +3,7 @@
 <head>
   <meta charset='UTF-8'>
   <script src='../jquery-3.4.1.min.js'></script>
+  <script src='../jquery.marquee.min.js'></script>
   <script src='utils.js'></script>
   <script src='init.js'></script>
   <script src='settings.js'></script>
@@ -11,8 +12,33 @@
   <link rel='stylesheet' type='text/css' href='settings.css'>
 </head>
 <body dark='' mode='default'>
-  <div id="audio-controller">
-    
+  <div id='controller-body' class="floating">
+    <div class="left">
+      <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
+    </div>
+    <div id='controller' class="right">
+      <div class='children marquee'>
+        <a class='title' title='' href='popup.html'>
+        </a>
+      </div>
+      <div class='children'>
+        <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
+        <div>
+          <span id='current' style='float: left;'></span>
+          <span id='hyphen' class="icon"></span>
+          <span id='end' style='float: right;'></span>
+        </div>
+        <button id='repeat' class='clickable' title='Repeat' mode=''></button>
+      </div>
+      <div class='children'>
+        <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
+        <button id='prev' class='clickable' title='Prev'></button>
+        <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
+        <button id='next' class='clickable' title='Next'></button>
+        <button id='copynp' class='clickable' title='Copy Title & URL'></button>
+      </div>
+    </div>
+    <hr>
   </div>
   <div class='floating'>
     <div class='right'>
@@ -41,6 +67,9 @@
     <hr>
     <div class='dd-child'>
       <div>
+        <span><b></b></span>
+      </div>
+      <div>
         <span>Track Display:</span>
         <textarea id='trackdisplay'></textarea>
       </div>
@@ -63,6 +92,10 @@
             <select id='fontlist' style='font-family: Arial;'></select>
           </li>
         </ul>
+      </div>
+      <div>
+        <span>Enable Compact Player In Settings Page:</span>
+        <input type="checkbox" name="">
       </div>
       <hr>
     </div>
@@ -128,12 +161,15 @@
       Added
       <ul>
         <li>Feedback forum link</li>
+      </ul>
+      Changed
+      <ul>
         <li>Volume Buttons</li>
       </ul>
       <span class='gray'>
         <i>Thank you for 7K users! :DDD
         <br><br>
-        And I appologize for the disgusting design of the volume buttons.</i>
+        We made a feedback forum! We'd like to hear about your experience.</i>
       </span>
       <hr>
     </div>
@@ -158,12 +194,19 @@
         <a title='Toggle Darkmode' class='clickable'>
           <span id='toggle_darkmode' class='icon' dark=''></span>
         </a>
+        <span>|</span>
         <a id='feedback' class='clickable' href='#'>Feedback</a>
       </span>
       <span>|</span>
       <span>
         <a id='github' class='clickable' href='#'>
           Source Code
+        </a>
+      </span>
+      <span>|</span>
+      <span>
+        <a title='Toggle Compact Controller' class='clickable'>
+          <span id='toggle_compact' class='icon'></span>
         </a>
       </span>
       <!-- <span>
