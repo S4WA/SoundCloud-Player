@@ -18,6 +18,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   var items = message['value'];
   if (json == items) return false;
 
+  if ($('#controller-body').css('display') == 'none' && 
+    localStorage.getItem('compact_in_settings') != null && 
+    localStorage.getItem('compact_in_settings') == 'true') {
+    $('#controller-body').css('display', 'inline-block');
+  }
+
   // artwork
   if ($(artworkElem).css('background-image') == 'none') {
     $(artworkElem).css('background-image', json['artwork']);
@@ -376,7 +382,11 @@ function initMarquees() {
 
 function checkIfCompactIsEnabled() {
   if (localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true') {
-    $('#controller-body').css('display', 'inline-block');
+    if (json['playing'] != null) {
+      $('#controller-body').css('display', 'inline-block');
+    } else {
+      $('#controller-body').css('display', 'none');
+    }
     $('#toggle_compact').attr('checked', 'true');
   } else {
     $('#controller-body').css('display', 'none');
