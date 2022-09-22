@@ -324,7 +324,7 @@ function registerEvents() {
   $('#copynp').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
-  $('#toggle_compact').on('click', () => {
+  $('#toggle_compact').on('input', () => {
     if ($('#controller-body').css('display') == 'none') {
       if ($('.marquee .js-marquee-wrapper').css('animation') == null) {
         startMarquees();
@@ -377,6 +377,7 @@ function initMarquees() {
 function checkIfCompactIsEnabled() {
   if (localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true') {
     $('#controller-body').css('display', 'inline-block');
+    $('#toggle_compact').attr('checked', 'true');
   } else {
     $('#controller-body').css('display', 'none');
   }
