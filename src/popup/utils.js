@@ -142,10 +142,11 @@ function initKeyboardBinds() {
     e.stopPropagation();
   });
   $('body').keydown(function (e) {
+    if (keyReady == false) return true;
     switch (e.keyCode) {
       case 32: { // space
         queue('toggle');
-        break;
+        return false;
       }
       case 38: { // up arrow
         if (e.shiftKey) queue('up');
@@ -170,3 +171,5 @@ function initKeyboardBinds() {
     }
   });
 }
+
+var keyReady = false;

@@ -9,3 +9,5 @@ This extension is for the soundcloud heavy users.
 ![image1](https://github.com/S4WA/soundcloud-player/blob/master/img/scplayer.png?raw=true)
 ![image2](https://github.com/S4WA/soundcloud-player/blob/master/img/scpl.png?raw=true)
 ![image3](https://github.com/S4WA/soundcloud-player/blob/master/img/24t.png?raw=true)
+
+i know my code isn't good more like hell bad, but i've played too much csgo and league. my brain is dead, yo.

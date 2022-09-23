@@ -23,12 +23,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     localStorage.getItem('compact_in_settings') != null && 
     localStorage.getItem('compact_in_settings') == 'true') {
     $('#controller-body').css('display', 'inline-block');
+    keyReady = true;
   }
 
   // artwork
-  if ($(artworkElem).css('background-image') == 'none') {
-    $(artworkElem).css('background-image', json['artwork']);
-  }
   if (items['artwork'] != json['artwork']) {
     $(artworkElem).css('background-image', items['artwork']);
   }
@@ -340,11 +338,13 @@ function registerEvents() {
       $('#controller-body').css('display', 'inline-block');
       localStorage.setItem('compact_in_settings', 'true');
       $('.maruee').marquee('resume');
+      keyReady = true;
     } else {
       stopMarquees();
 
       $('#controller-body').css('display', 'none');
       localStorage.setItem('compact_in_settings', 'false');
+      keyReady = false;
     }
   });
 }

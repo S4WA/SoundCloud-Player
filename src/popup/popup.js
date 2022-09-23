@@ -13,10 +13,12 @@ function init() {
       for (var i in hideList) {
         $(hideList[i]).hide();
       }
+      keyReady = false;
     } else {
       for (var i in hideList) {
         $(hideList[i]).show();
       }
+      keyReady = true;
     }
   });
 
