@@ -78,8 +78,8 @@ function registerAudioButtons() {
   $('#prev').on('click', () => { queue('prev'); });
   $('#next').on('click', () => { queue('next'); });
   $('#fav').on('click', () => { toggleFav(); });
-  $('#track,.title').on('click', () => { openSCTab(); });
-  $('#artwork').on('click', () => { openSCTab(); });
+  $('#track,.title').on('click', () => { openSCTab(); location.reload(); });
+  $('#artwork').on('click', () => { openSCTab(); location.reload(); });
   $('#repeat').on('click', () => { repeat(); });
   $('#shuffle').on('click', () => { queue('shuffle'); });
   $('#title,.title').on('click', () => { return false; });
@@ -205,7 +205,7 @@ function replaceText(text, json) {
 }
 
 var ready = false, json = {}, dark = false,
-  hideList = ['#close', '#second br:last-child', '#controller', 'hr:first', '#share_btn'],
+  hideList = ['#close', '#second', 'hr:last-child','#controller-body[mode="compact"] #hyphen'],
   shareSettings = {
     'share_with_time': false
   },
@@ -361,10 +361,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   sessionStorage.setItem('data', JSON.stringify(json));
   
   // Controller
-  if ($('#controller').is(':not(:visible)')) {
-    for (var i in hideList) {
-      $(hideList[i]).show();
-    }
+  for (var i in hideList) {
+    if ($(hideList[i]).css('display') != 'none') continue;
+    $(hideList[i]).show();
   }
 
   return true;
