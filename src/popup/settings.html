@@ -18,7 +18,7 @@
     </div>
     <div id='controller' class="right">
       <div class='children marquee'>
-        <a class='title' title='' href='popup.html'>
+        <a class='title' title=''>
         </a>
       </div>
       <div class='children'>
@@ -60,7 +60,7 @@
       <hr>
     </div>
   </div>
-  <div class='dropdown' closed='true'>
+  <div class='dropdown' closed='false'>
     <div class='dd-parent'>
       <span class='icon'></span>Displays
     </div>
@@ -70,31 +70,37 @@
         <span><b></b></span>
       </div>
       <div>
-        <span class='bold'>Track Display:</span>
+        <span>Track Display:</span>
         <textarea id='trackdisplay'></textarea>
       </div>
       <div>
-        <span class='bold'>Theme Color:<br>(Default: #FF5500)</span>
+        <span>Theme Color:</span><br>(Default: #FF5500)
         <input id='themecolor' type='color'>
       </div>
       <div>
-        <span class='bold'>Background Color for Dark Mode:<br>(Default: #3F3F3F)</span>
-        <input id='bgcolor' type='color' style='background-color: #FFF;'>
+        <span>Background Color for Dark Mode:<br>(Default: #3F3F3F)</span>
+        <input id='bgcolor' type='color'>
       </div>
       <div>
-        <span class='bold'>Font:</span>
-        <ul>
-          <li>
-            <span>Current Font: </span><b id='font'></b>
-          </li>
-          <li>
-            <span>Font List</span>
-            <select id='fontlist' style='font-family: Arial;'></select>
-          </li>
-        </ul>
+        <span>Font:</span>
+        <select id='fontlist'></select>
       </div>
       <div>
-        <span class='bold'>Enable Compact Player In Settings Page:</span>
+        <span>Theme:</span>
+        <select id='theme-select'>
+          <option value='default'>Default</option>
+          <option value='compact'>Compact</option>
+        </select>
+      </div>
+      <div>
+        <span>Speed for title text scrolling(ms):</span>
+        <input id='duration' type="number" step="500" style="width: 45px; height: 14px;">
+
+        <span>Pause length(ms):</span>
+        <input id='pause' type="number" step="500" style="width: 45px; height: 14px;">
+      </div>
+      <div>
+        <span>Enable Compact Player In This Page:</span>
         <input type="checkbox" name="toggle_compact" id='toggle_compact'>
       </div>
       <hr>
@@ -201,19 +207,19 @@
     </div>
     <hr>
     <div class='dd-child'>
-      <span class='bold'>Updates</span><br>
+      <span class='bold'>[Updates]</span><br>
       Added
       <ul>
-        <li>Feedback forum link</li>
+        <li>Feedback form link</li>
         <li>Compact Player</li>
         <li>Keyboard Shortcuts</li>
         <li>Volume Buttons</li>
       </ul>
-      <span class='bold'>Message</span><br>
-      <span class='gray'>
+      <span class='bold'>[Message]</span><br>
+      <span class='gray' style='line-break: anywhere;'>
         <i>Thank you for 7K users! :DDD
         <br><br>
-        I made a feedback forum! I'd like to hear about your experience.
+        I made a feedback form! I'd like to hear about your experience.
         <br><br>
         I know the issue that sometimes seeks doesn't work properly, it seeks in huge chunks. And I know how to fix this, but it would be against the SoundCloud Terms of Use. So I'm currently looking for another way. Please, wait just for now.
         </i>
@@ -223,14 +229,24 @@
   </div>
   <div class='dropdown' closed='true'>
     <div class='dd-parent'>
-      <span class='icon'></span>Contact
+      <span class='icon'></span>Links
     </div>
     <hr>
     <div class='dd-child'>
       <span>
-        <a id='c-twitter' class='clickable' href='#'>
-          Twitter
-        </a>
+        - Email: drip@outlook.jp<br>
+      </span>
+      <span>
+        - <a id='c-twitter' class='clickable' href='#'>Twitter</a><br>
+      </span>
+      <span>
+        - <a id='github' class='clickable' href='#'>Source Code</a><br>
+      </span>
+      <span>
+        - <a id='feedback' class='clickable' href='#'>Feedback Form</a><br>
+      </span>
+      <span>
+        - <a id='store' class='clickable' href='#'>Review This Extension</a><br>
       </span>
       <hr>
     </div>
@@ -240,14 +256,6 @@
       <span>
         <a title='Toggle Darkmode' class='clickable'>
           <span id='toggle_darkmode' class='icon' dark=''></span>
-        </a>
-        <span>|</span>
-        <a id='feedback' class='clickable' href='#'>Feedback</a>
-      </span>
-      <span>|</span>
-      <span>
-        <a id='github' class='clickable' href='#'>
-          Source Code
         </a>
       </span>
     </div>

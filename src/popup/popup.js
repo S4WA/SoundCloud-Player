@@ -3,8 +3,36 @@ document.addEventListener('DOMContentLoaded', () => {
   ready = true;
 });
 
+// Themes
+function setDefaultTheme() {
+  $('#controller-body')[0].innerHTML = defaultController;
+  $('#controller-body').attr('mode', 'default');
+}
+
+function setCompactTheme() {
+  $('#time').remove();
+  $('#controller-body')[0].innerHTML = compactController;
+  $('#controller-body').attr('mode', 'compact');
+}
+
+function getThemeName() {
+  if (localStorage.getItem('theme')) return localStorage.getItem('theme');
+  return 'default';
+}
+
 // Initialize:
 function init() {
+  switch (getThemeName()) {
+    case 'default': {
+      setDefaultTheme();
+      break;
+    }
+    case 'compact': {
+      setCompactTheme();
+      break;
+    }
+  }
+
   chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
     if (results.length == 0) {
       ready = false;
@@ -23,7 +51,6 @@ function init() {
   });
 
   $('#version').text('v' + chrome.runtime.getManifest().version);
-  registerElements();
   registerEvents();
 
   chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
@@ -41,20 +68,30 @@ function init() {
   }
 
   initKeyboardBinds();
+
+  $('.title').css('display', 'inline');
+  setTimeout(startMarquees, 100);
 }
 
-function registerElements() {
-  artworkElem = $('#artwork')[0];
-  trackElem = $('#track')[0];
-  toggleElem = $('#toggle')[0];
-  prevElem = $('#prev')[0];
-  nextElem = $('#next')[0];
-  favElem = $('#fav')[0];
-  repeatElem = $('#repeat')[0];
-  shuffleElem = $('#shuffle')[0];
+function registerAudioButtons() {
+  $('#toggle').on('click', () => { toggle(); });
+  $('#prev').on('click', () => { queue('prev'); });
+  $('#next').on('click', () => { queue('next'); });
+  $('#fav').on('click', () => { toggleFav(); });
+  $('#track,.title').on('click', () => { openSCTab(); });
+  $('#artwork').on('click', () => { openSCTab(); });
+  $('#repeat').on('click', () => { repeat(); });
+  $('#shuffle').on('click', () => { queue('shuffle'); });
+  $('#title,.title').on('click', () => { return false; });
+
+  $('#volume-icon').on('click', () => { queue('mute'); });
+  $('#playlist_btn').on('click', () => { queue('playlist'); });
+
+  $('#up').on('click', () => { queue('up'); });
+  $('#down').on('click', () => { queue('down'); });
 }
 
-function registerEvents() {
+function registerEvents() { 
   // Dark Mode
   if (localStorage.getItem('darkmode') != null) {
     dark = (localStorage.getItem('darkmode') === 'true');
@@ -63,23 +100,9 @@ function registerEvents() {
   $('#toggle_darkmode').on('click', () => { toggleDarkmode(); });
 
   // Audio
-  $(toggleElem).on('click', () => { toggle(); });
-  $(prevElem).on('click', () => { queue('prev'); });
-  $(nextElem).on('click', () => { queue('next'); });
-  $(favElem).on('click', () => { toggleFav(); });
-  $(trackElem).on('click', () => { openSCTab(); });
-  $(artworkElem).on('click', () => { openSCTab(); });
-  $(repeatElem).on('click', () => { repeat(); });
-  $(shuffleElem).on('click', () => { queue('shuffle'); });
-  $('#title').on('click', () => { return false; });
+  registerAudioButtons();
 
-  $('#volume-icon').on('click', () => { queue('mute'); });
-  $('#playlist_btn').on('click', () => { queue('playlist'); });
-
-  $('#up').on('click', () => { queue('up'); });
-  $('#down').on('click', () => { queue('down'); });
-
-
+  // Popout
   $('#P').on('click', () => {
     popup('popup/popup.html?p=1', 'a');
     // $('#P').css('display', 'none');
@@ -145,20 +168,20 @@ function registerEvents() {
 }
 
 function toggleFav() {
-  if (favElem == null) return;
-  let value = Bool( $(favElem).attr('favorite') );
+  if ($('#fav') == null) return;
+  let value = Bool( $('#fav').attr('favorite') );
   queue( value ? 'unFav' : 'Fav' );
 }
 
 function repeat() {
-  if (json['repeat'] == null || repeatElem == null) return;
+  if (json['repeat'] == null || $('#repeat') == null) return;
   queue('repeat');
-  $(repeatElem).attr( 'mode', json['repeat'] );
+  $('#repeat').attr( 'mode', json['repeat'] );
 }
 
 function toggle() {
-  if (toggleElem == null) return;
-  let value = Bool( $(toggleElem).attr('playing') );
+  if ($('#toggle') == null) return;
+  let value = Bool( $('#toggle').attr('playing') );
   queue(value ? 'Pause' : 'Play');
 }
 
@@ -182,7 +205,6 @@ function replaceText(text, json) {
 }
 
 var ready = false, json = {}, dark = false,
-  artworkElem, trackElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem,
   hideList = ['#close', '#second br:last-child', '#controller', 'hr:first', '#share_btn'],
   shareSettings = {
     'share_with_time': false
@@ -202,7 +224,56 @@ var ready = false, json = {}, dark = false,
       'body': '%url%'
     },
     'copy': '%title% By %artist% %url%'
-  };
+  },
+  defaultController = `<div id='controller' class='floating'>
+      <div class='left'>
+        <button id='prev' class='clickable' title='Prev'></button>
+        <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
+        <button id='next' class='clickable' title='Next'></button>
+      </div>
+      <div class='right'>
+        <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
+        <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
+        <button id='repeat' class='clickable' title='Repeat' mode=''></button>
+      </div>
+    </div>
+    <hr/>
+
+    <div style='padding-bottom: 6.5px;'>
+      <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
+      <a id='title' title='Open SoundCloud Tab' href=''>
+        <span id='track'></span>
+      </a>
+    </div>
+    <hr/>`,
+  compactController = `<div class='floating'>
+    <div class='left'>
+      <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
+    </div>
+    <div id='controller' class='right'>
+      <div class='children marquee'>
+        <a class='title' title='' href='' style='display: none;'>
+        </a>
+      </div>
+      <div class='children'>
+        <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
+        <div>
+          <span id='current' style='float: left;'></span>
+          <span id='hyphen' class='icon'></span>
+          <span id='end' style='float: right;'></span>
+        </div>
+        <button id='repeat' class='clickable' title='Repeat' mode=''></button>
+      </div>
+      <div class='children'>
+        <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
+        <button id='prev' class='clickable' title='Prev'></button>
+        <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
+        <button id='next' class='clickable' title='Next'></button>
+        <button id='copynp' class='clickable' title='Copy Title & URL'></button>
+      </div>
+    </div>
+    <hr style='margin-top: 5px;'>
+  </div>`;
 
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -216,32 +287,34 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   // artwork
   if (items['artwork'] != json['artwork']) {
-    $(artworkElem).css('background-image', items['artwork']);
+    $('#artwork').css('background-image', items['artwork']);
   }
   
   // track
   if (items['title'] != json['title']) {
-    $(trackElem).text( replaceText( localStorage.getItem('trackdisplay'), items) );
+    // console.log('aaa');
+    // trackElem.innerText = replaceText( localStorage.getItem('trackdisplay'), items);
+    $('#track,.title').text( replaceText( localStorage.getItem('trackdisplay'), items) );
   }
   
   // play/pause
   if (items['playing'] != json['playing']) {
-    $(toggleElem).attr( 'playing', items['playing'] );
+    $('#toggle').attr( 'playing', items['playing'] );
   }
   
   // fav/unfav
   if (items['favorite'] != json['favorite']) {
-    $(favElem).attr( 'favorite', items['favorite'] );
+    $('#fav').attr( 'favorite', items['favorite'] );
   }
   
   // shuffle
   if (items['shuffle'] != json['shuffle']) {
-    $(shuffleElem).attr( 'shuffle', items['shuffle'] );
+    $('#shuffle').attr( 'shuffle', items['shuffle'] );
   }
   
   // repeat
   if (items['repeat'] != json['repeat']) {
-    $(repeatElem).attr( 'mode', items['repeat'] );
+    $('#repeat').attr( 'mode', items['repeat'] );
   }
   
   // volume
@@ -280,7 +353,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (selectable) $('#copy').select();
 
   // title link
-  $('#title')[0].href = items['link'];
+  $('#title,.title')[0].href = items['link'];
 
 
   // Update local json data

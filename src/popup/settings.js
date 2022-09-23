@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
   checkIfCompactIsEnabled();
-  registerElements();
   initDropdown();
   initSettings();
   initTemplates();
@@ -28,37 +27,37 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   // artwork
   if (items['artwork'] != json['artwork']) {
-    $(artworkElem).css('background-image', items['artwork']);
+    $('#artwork').css('background-image', items['artwork']);
   }
   
   // track
   if (items['title'] != json['title']) {
-    $(titleElem).text( replaceText( localStorage.getItem('trackdisplay'), items) );
-    $(titleElem).attr( 'title', replaceText( localStorage.getItem('trackdisplay'), items) );
+    $('.title').text( replaceText( localStorage.getItem('trackdisplay'), items) );
+    $('.title').attr( 'title', replaceText( localStorage.getItem('trackdisplay'), items) );
   }
   // link
   if (items['link'] != json['link']) {
-    $(titleElem).attr( 'href', items['link'] );
+    $('.title').attr( 'href', items['link'] );
   }
   
   // play/pause
   if (items['playing'] != json['playing']) {
-    $(toggleElem).attr( 'playing', items['playing'] );
+    $('#toggle').attr( 'playing', items['playing'] );
   }
   
   // fav/unfav
   if (items['favorite'] != json['favorite']) {
-    $(favElem).attr( 'favorite', items['favorite'] );
+    $('#fav').attr( 'favorite', items['favorite'] );
   }
   
   // shuffle
   if (items['shuffle'] != json['shuffle']) {
-    $(shuffleElem).attr( 'shuffle', items['shuffle'] );
+    $('#shuffle').attr( 'shuffle', items['shuffle'] );
   }
   
   // repeat
   if (items['repeat'] != json['repeat']) {
-    $(repeatElem).attr( 'mode', items['repeat'] );
+    $('#repeat').attr( 'mode', items['repeat'] );
   }
   
   // volume
@@ -119,39 +118,41 @@ function initDropdown() {
   $('.dropdown .dd-child input').attr('spellcheck', 'false');
 }
 
+function checkMarqueesDurations() {
+  $('#duration').val(localStorage.getItem('duration'));
+  $('#pause').val(localStorage.getItem('pause'));
+}
+
 function checkFonts() {
   // - Custom Font
-  if (localStorage.getItem('font') != null) {
-    $('#font').text(localStorage.getItem('font'));
-    updateFont();
+  if (localStorage.getItem('font') == null) return;
+  updateFont();
 
+  const fontCheck = new Set([
+    // Windows 10
+    'Arial', 'Arial Black', 'Bahnschrift', 'Calibri', 'Cambria', 'Cambria Math', 'Candara', 'Comic Sans MS', 'Consolas', 'Constantia', 'Corbel', 'Courier New', 'Ebrima', 'Franklin Gothic Medium', 'Gabriola', 'Gadugi', 'Georgia', 'HoloLens MDL2 Assets', 'Impact', 'Ink Free', 'Javanese Text', 'Leelawadee UI', 'Lucida Console', 'Lucida Sans Unicode', 'Malgun Gothic', 'Marlett', 'Microsoft Himalaya', 'Microsoft JhengHei', 'Microsoft New Tai Lue', 'Microsoft PhagsPa', 'Microsoft Sans Serif', 'Microsoft Tai Le', 'Microsoft YaHei', 'Microsoft Yi Baiti', 'MingLiU-ExtB', 'Mongolian Baiti', 'MS Gothic', 'MV Boli', 'Myanmar Text', 'Nirmala UI', 'Palatino Linotype', 'Segoe MDL2 Assets', 'Segoe Print', 'Segoe Script', 'Segoe UI', 'Segoe UI Historic', 'Segoe UI Emoji', 'Segoe UI Symbol', 'SimSun', 'Sitka', 'Sylfaen', 'Symbol', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana', 'Webdings', 'Wingdings', 'Yu Gothic',
+    // macOS
+    'American Typewriter', 'Andale Mono', 'Arial', 'Arial Black', 'Arial Narrow', 'Arial Rounded MT Bold', 'Arial Unicode MS', 'Avenir', 'Avenir Next', 'Avenir Next Condensed', 'Baskerville', 'Big Caslon', 'Bodoni 72', 'Bodoni 72 Oldstyle', 'Bodoni 72 Smallcaps', 'Bradley Hand', 'Brush Script MT', 'Chalkboard', 'Chalkboard SE', 'Chalkduster', 'Charter', 'Cochin', 'Comic Sans MS', 'Copperplate', 'Courier', 'Courier New', 'Didot', 'DIN Alternate', 'DIN Condensed', 'Futura', 'Geneva', 'Georgia', 'Gill Sans', 'Helvetica', 'Helvetica Neue', 'Herculanum', 'Hoefler Text', 'Impact', 'Lucida Grande', 'Luminari', 'Marker Felt', 'Menlo', 'Microsoft Sans Serif', 'Monaco', 'Noteworthy', 'Optima', 'Palatino', 'Papyrus', 'Phosphate', 'Rockwell', 'Savoye LET', 'SignPainter', 'Skia', 'Snell Roundhand', 'Tahoma', 'Times', 'Times New Roman', 'Trattatello', 'Trebuchet MS', 'Verdana', 'Zapfino',
+    // Font Familiy
+    'Times', 'Times New Roman', 'Georgia', 'serif', 'Verdana', 'Arial', 'Helvetica', 'sans-serif', 'cursive', 'fantasy', 'emoji', 'math', 'fangsong', 'Meiryo'
+  ].sort());
 
-    const fontCheck = new Set([
-      // Windows 10
-      'Arial', 'Arial Black', 'Bahnschrift', 'Calibri', 'Cambria', 'Cambria Math', 'Candara', 'Comic Sans MS', 'Consolas', 'Constantia', 'Corbel', 'Courier New', 'Ebrima', 'Franklin Gothic Medium', 'Gabriola', 'Gadugi', 'Georgia', 'HoloLens MDL2 Assets', 'Impact', 'Ink Free', 'Javanese Text', 'Leelawadee UI', 'Lucida Console', 'Lucida Sans Unicode', 'Malgun Gothic', 'Marlett', 'Microsoft Himalaya', 'Microsoft JhengHei', 'Microsoft New Tai Lue', 'Microsoft PhagsPa', 'Microsoft Sans Serif', 'Microsoft Tai Le', 'Microsoft YaHei', 'Microsoft Yi Baiti', 'MingLiU-ExtB', 'Mongolian Baiti', 'MS Gothic', 'MV Boli', 'Myanmar Text', 'Nirmala UI', 'Palatino Linotype', 'Segoe MDL2 Assets', 'Segoe Print', 'Segoe Script', 'Segoe UI', 'Segoe UI Historic', 'Segoe UI Emoji', 'Segoe UI Symbol', 'SimSun', 'Sitka', 'Sylfaen', 'Symbol', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana', 'Webdings', 'Wingdings', 'Yu Gothic',
-      // macOS
-      'American Typewriter', 'Andale Mono', 'Arial', 'Arial Black', 'Arial Narrow', 'Arial Rounded MT Bold', 'Arial Unicode MS', 'Avenir', 'Avenir Next', 'Avenir Next Condensed', 'Baskerville', 'Big Caslon', 'Bodoni 72', 'Bodoni 72 Oldstyle', 'Bodoni 72 Smallcaps', 'Bradley Hand', 'Brush Script MT', 'Chalkboard', 'Chalkboard SE', 'Chalkduster', 'Charter', 'Cochin', 'Comic Sans MS', 'Copperplate', 'Courier', 'Courier New', 'Didot', 'DIN Alternate', 'DIN Condensed', 'Futura', 'Geneva', 'Georgia', 'Gill Sans', 'Helvetica', 'Helvetica Neue', 'Herculanum', 'Hoefler Text', 'Impact', 'Lucida Grande', 'Luminari', 'Marker Felt', 'Menlo', 'Microsoft Sans Serif', 'Monaco', 'Noteworthy', 'Optima', 'Palatino', 'Papyrus', 'Phosphate', 'Rockwell', 'Savoye LET', 'SignPainter', 'Skia', 'Snell Roundhand', 'Tahoma', 'Times', 'Times New Roman', 'Trattatello', 'Trebuchet MS', 'Verdana', 'Zapfino',
-      // Font Familiy
-      'Times', 'Times New Roman', 'Georgia', 'serif', 'Verdana', 'Arial', 'Helvetica', 'sans-serif', 'cursive', 'fantasy', 'emoji', 'math', 'fangsong', 'Meiryo'
-    ].sort());
+  (async() => {
+    await document.fonts.ready;
 
-    (async() => {
-      await document.fonts.ready;
+    // const fontAvailable = new Set();
 
-      // const fontAvailable = new Set();
-
-      for (const font of fontCheck.values()) {
-        if (document.fonts.check(`12px '${font}'`)) {
-          // fontAvailable.add(font);
-          $('#fontlist').append( $(`<option value='${font}'>${font}</option>`) );
-        }
+    for (const font of fontCheck.values()) {
+      if (document.fonts.check(`12px '${font}'`)) {
+        // fontAvailable.add(font);
+        $('#fontlist').append( $(`<option value='${font}'>${font}</option>`) );
       }
+    }
 
-      // console.log('Available Fonts:', [...fontAvailable.values()]);
+    // console.log('Available Fonts:', [...fontAvailable.values()]);
 
-      $(`#fontlist option[value='${localStorage.getItem('font')}']`).attr('selected', 'true');
-    })();
-  }
+    $(`#fontlist option[value='${localStorage.getItem('font')}']`).attr('selected', 'true');
+  })();
 }
 
 function checkCustomColors() {
@@ -189,13 +190,21 @@ function checkCustomColors() {
   });
 }
 
+function cheeckTheme() {
+  if (localStorage.getItem('theme') == null) return;
+  let themeName = localStorage.getItem('theme');
+  $(`#theme-select option[value='${themeName}']`).attr('selected', 'true');
+}
+
 function initSettings() {
   // - Track Display
   if (localStorage.getItem('trackdisplay') != null) {
     $('#trackdisplay').val(localStorage.getItem('trackdisplay'));
   }
+  cheeckTheme();
   checkFonts();
   checkCustomColors();
+  checkMarqueesDurations();
 }
 
 function initTemplates() {
@@ -221,50 +230,57 @@ function initTemplates() {
 }
 
 function initInputs() {
-  $('#trackdisplay').on('input', function() {
+  $('#trackdisplay').on('input', function () {
     localStorage.setItem('trackdisplay', $(this).val());
   });
-  $('#fontlist').on('input', function() {
+  $('#fontlist').on('input', function () {
     localStorage.setItem('font', $(this).val());
     updateFont();
-    $('#font').text(localStorage.getItem('font'));
+  });
+  $('#theme-select').on('change', function () {
+    localStorage.setItem('theme', $(this).val());
+  });
+  $('#duration,#pause').on('change', function() {
+    let name = $(this).attr('id');
+    localStorage.setItem(name, Number( $(this).val() ));
+    $('.marquee').marquee()
   });
 
-  $('#twitter').on('input', function() {
+  $('#twitter').on('input', function () {
     localStorage.setItem('twitter', $(this).val());
   });
-  $('#facebook').on('input', function() {
+  $('#facebook').on('input', function () {
     localStorage.setItem('facebook', $(this).val());
   });
-  $('#tumblr').on('input', function() {
+  $('#tumblr').on('input', function () {
     localStorage.setItem('tumblr', $(this).val());
   });
 
-  $('#email_subject').on('input', function() {
+  $('#email_subject').on('input', function () {
     let data = JSON.parse(localStorage.getItem('email'));
     // console.log($(this).val());
     data['subject'] = $(this).val();
     localStorage.setItem('email', JSON.stringify(data));
   });
-  $('#email_body').on('input', function() {
+  $('#email_body').on('input', function () {
     let data = JSON.parse(localStorage.getItem('email'));
     // console.log($(this).val());
     data['body'] = $(this).val();
     localStorage.setItem('email', JSON.stringify(data));
   });
 
-  $('#copy').on('input', function() {
+  $('#copy').on('input', function () {
     localStorage.setItem('copy', $(this).val());
   });
 }
 
 function putAllLinks() {
   // Links
-  $('#discord').on('click', () => {
-    openURL('https://discord.gg/R9R6fdm');
-  });
   $('#github').on('click', () => {
     openURL('https://github.com/S4WA/soundcloud-player');
+  });
+  $('#store').on('click', () => {
+    openURL('https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej');
   });
   $('#feedback').on('click', () => {
     openURL('https://forms.gle/oG2DvmK7HXhq8q8ZA');
@@ -288,42 +304,35 @@ function initDarkmode() {
 }
 
 function toggle() {
-  if (toggleElem == null) return;
+  if ($('#toggle') == null) return;
   queue('toggle');
 }
 
 function repeat() {
-  if (json['repeat'] == null || repeatElem == null) return;
+  if (json['repeat'] == null || $('#repeat') == null) return;
   queue('repeat');
-  $(repeatElem).attr( 'mode', json['repeat'] );
+  $('#repeat').attr( 'mode', json['repeat'] );
 }
 
 function toggleFav() {
-  if (favElem == null) return;
-  let value = Bool( $(favElem).attr('favorite') );
+  if ($('#fav') == null) return;
+  let value = Bool( $('#fav').attr('favorite') );
   queue( value ? 'unFav' : 'Fav' );
 }
 
-function registerElements() {
-  artworkElem = $('#artwork')[0];
-  titleElem = $('.title')[0];
-  toggleElem = $('#toggle')[0];
-  prevElem = $('#prev')[0];
-  nextElem = $('#next')[0];
-  favElem = $('#fav')[0];
-  repeatElem = $('#repeat')[0];
-  shuffleElem = $('#shuffle')[0];
+function goBackToMain() {
+  location.href = 'popup.html?' + (isPopout() ? 'p=1' : '');
 }
 
 function registerEvents() {
-  $(toggleElem).on('click', () => { toggle(); });
-  $(prevElem).on('click', () => { queue('prev'); });
-  $(nextElem).on('click', () => { queue('next'); });
-  $(favElem).on('click', () => { toggleFav(); });
-  $(titleElem).on('click', () => { location.href = 'popup.html'; });
-  $(artworkElem).on('click', () => { location.href = 'popup.html'; });
-  $(repeatElem).on('click', () => { repeat(); });
-  $(shuffleElem).on('click', () => { queue('shuffle'); });
+  $('#toggle').on('click', () => { toggle(); });
+  $('#prev').on('click', () => { queue('prev'); });
+  $('#next').on('click', () => { queue('next'); });
+  $('#fav').on('click', () => { toggleFav(); });
+  $('.title').on('click', () => { goBackToMain(); });
+  $('#artwork').on('click', () => { goBackToMain(); });
+  $('#repeat').on('click', () => { repeat(); });
+  $('#shuffle').on('click', () => { queue('shuffle'); });
   $('.title').on('click', () => { return false; });
   $('#copynp').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
@@ -354,23 +363,6 @@ function replaceText(text, json) {
   return text.replace('%title%', json['title']).replace('%artist%', json['artist']).replace('%url%', json['link']);
 }
 
-function startMarquees() {
-  $('.marquee')
-  .bind('finished', () => {
-    $('.marquee').marquee('pause');
-    setTimeout(() => {
-      $('.marquee').marquee('resume');
-    }, marqueePauseTime);
-  })
-  .marquee({
-    direction: 'left', 
-    duration: textVisibleDuration,
-    pauseOnHover: true,
-    startVisible: true,
-    duplicated: true
-  });
-}
-
 function stopMarquees() {
   // clearInterval(marqueeTimer);
   $('.maruee').marquee('pause');
@@ -395,5 +387,3 @@ function checkIfCompactIsEnabled() {
 
 var dark = false;
 var ready = false, json = {};
-var artworkElem, titleElem, toggleElem, prevElem, nextElem, favElem, repeatElem, shuffleElem;
-var marqueeTimer, textVisibleDuration = 5000, marqueePauseTime = 5000;

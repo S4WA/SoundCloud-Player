@@ -31,5 +31,8 @@ var settings = {
     'body': '%url%'
   },
   'copy': '%title% By %artist% %url%',
-  'font': 'Meiryo'
+  'font': 'Meiryo',
+  'theme': 'default',
+  'duration': 5000,
+  'pause': 5000
 }

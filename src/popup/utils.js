@@ -138,7 +138,7 @@ function isPopout() {
 }
 
 function initKeyboardBinds() {
-  $('textarea').keydown(function(e) {
+  $('input,select,textarea').keydown(function(e) {
     e.stopPropagation();
   });
   $('body').keydown(function (e) {
@@ -172,4 +172,31 @@ function initKeyboardBinds() {
   });
 }
 
+function startMarquees() {
+  if (!$().marquee) return;
+  $('.marquee').bind('finished', () => {
+    $('.marquee').marquee('pause');
+    setTimeout(() => {
+      $('.marquee').marquee('resume');
+    }, getPauseTime());
+  }).marquee({
+    direction: 'left', 
+    duration: getTextVisibleDuration(),
+    pauseOnHover: true,
+    startVisible: true,
+    duplicated: true
+  });
+}
+
+function getTextVisibleDuration() {
+  if (localStorage.getItem('duration')) return localStorage.getItem('duration');
+  return 5000;
+}
+
+function getPauseTime() {
+  if (localStorage.getItem('pause')) return localStorage.getItem('pause');
+  return 5000;
+}
+
 var keyReady = false;
+var marqueeTimer;

@@ -70,7 +70,7 @@ li:last-child {
 }
 
 /* Dark Mode */
-body[dark='true'], body[dark='true'] span, body[dark='true'] a, body[dark='true'] input {
+body[dark='true'], body[dark='true'] span, body[dark='true'] a { /* body[dark='true'] input */
   background-color: var(--bg-color);
   color: white;
 }
@@ -242,7 +242,9 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   filter: invert(1);
 }
 /* Icons End */
-
+select, select option, input {
+  font-family: Arial;
+}
 
 #side {
   width: 50px;
