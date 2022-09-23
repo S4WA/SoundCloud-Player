@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initDarkmode();
   initMarquees();
   registerEvents();
+  initKeyboardBinds();
   ready = true;
 });
 
@@ -290,8 +291,7 @@ function initDarkmode() {
 
 function toggle() {
   if (toggleElem == null) return;
-  let value = Bool( $(toggleElem).attr('playing') );
-  queue(value ? 'Pause' : 'Play');
+  queue('toggle');
 }
 
 function repeat() {
@@ -330,8 +330,8 @@ function registerEvents() {
   $('#copynp').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
-  $('#toggle_compact').on('input', () => {
-    if ($('#controller-body').css('display') == 'none') {
+  $('#toggle_compact').change(function() {
+    if ( $(this).prop('checked') ) {
       if ($('.marquee .js-marquee-wrapper').css('animation') == null) {
         startMarquees();
         console.log('a');

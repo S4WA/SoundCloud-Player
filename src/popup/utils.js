@@ -1,6 +1,6 @@
 function queue(request, value) {
   if (!ready) return;
-  request = request.toLowerCase();
+  request = String(request).toLowerCase();
   chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
     if (results.length != 0) {
       var jsonRequest = {}
@@ -135,4 +135,38 @@ function popup(mylink, windowname) {
 
 function isPopout() {
   return location.href.includes("p=1");
+}
+
+function initKeyboardBinds() {
+  $('textarea').keydown(function(e) {
+    e.stopPropagation();
+  });
+  $('body').keydown(function (e) {
+    switch (e.keyCode) {
+      case 32: { // space
+        queue('toggle');
+        break;
+      }
+      case 38: { // up arrow
+        if (e.shiftKey) queue('up');
+        break;
+      }
+      case 40: { // down arrow
+        if (e.shiftKey) queue('down');
+        break;
+      }
+      case 77: { // m key
+        queue('mute');
+        break;
+      }
+      case 37: {
+        queue(e.shiftKey ? 'prev' : 'seekb');
+        break;
+      }
+      case 39: {
+        queue(e.shiftKey ? 'next' : 'seekf');
+        break;
+      }
+    }
+  });
 }

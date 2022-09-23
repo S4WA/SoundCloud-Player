@@ -70,19 +70,19 @@
         <span><b></b></span>
       </div>
       <div>
-        <span>Track Display:</span>
+        <span class='bold'>Track Display:</span>
         <textarea id='trackdisplay'></textarea>
       </div>
       <div>
-        <span>Theme Color:<br>(Default: #FF5500)</span>
+        <span class='bold'>Theme Color:<br>(Default: #FF5500)</span>
         <input id='themecolor' type='color'>
       </div>
       <div>
-        <span>Background Color for Dark Mode:<br>(Default: #3F3F3F)</span>
+        <span class='bold'>Background Color for Dark Mode:<br>(Default: #3F3F3F)</span>
         <input id='bgcolor' type='color' style='background-color: #FFF;'>
       </div>
       <div>
-        <span>Font:</span>
+        <span class='bold'>Font:</span>
         <ul>
           <li>
             <span>Current Font: </span><b id='font'></b>
@@ -94,7 +94,7 @@
         </ul>
       </div>
       <div>
-        <span>Enable Compact Player In Settings Page:</span>
+        <span class='bold'>Enable Compact Player In Settings Page:</span>
         <input type="checkbox" name="toggle_compact" id='toggle_compact'>
       </div>
       <hr>
@@ -154,6 +154,53 @@
   </div>
   <div class='dropdown' closed='true'>
     <div class='dd-parent'>
+      <span class='icon'></span>Keyboard Shortcuts
+    </div>
+    <hr>
+    <div class='dd-child'>
+      <table>
+        <tr>
+          <th>SPACE</th>
+          <td>Play or Pause</td>
+        </tr>
+        <tr>
+          <th>SHIFT + ⇧</th>
+          <td>Increase Volume</td>
+        </tr>
+        <tr>
+          <th>SHIFT + ⇩</th>
+          <td>Decrease Volume</td>
+        </tr>
+        <tr>
+          <th>M</th>
+          <td>Mute Volume</td>
+        </tr>
+        <tr>
+          <th>SHIFT + ⇦</th>
+          <td>Previous Track</td>
+        </tr>
+        <tr>
+          <th>SHIFT + ⇨</th>
+          <td>Next Track</td>
+        </tr>
+        <tr>
+          <th>⇦</th>
+          <td>Seek Backward</td>
+        </tr>
+        <tr>
+          <th>⇨</th>
+          <td>Seek Forward</td>
+        </tr>
+        <tr>
+          <th>0...9</th>
+          <td>Seek to Position</td>
+        </tr>
+      </table>
+      <hr>
+    </div>
+  </div>
+  <div class='dropdown' closed='true'>
+    <div class='dd-parent'>
       <span class='icon'></span>Announcement
     </div>
     <hr>
@@ -161,6 +208,8 @@
       Added
       <ul>
         <li>Feedback forum link</li>
+        <li>Compact Player</li>
+        <li>Keyboard Shortcuts</li>
       </ul>
       Changed
       <ul>
@@ -203,17 +252,6 @@
           Source Code
         </a>
       </span>
-      <!-- <span>|</span>
-      <span>
-        <a title='Toggle Compact Controller' class='clickable'>
-          <span id='toggle_compact' class='icon'></span>
-        </a>
-      </span> -->
-      <!-- <span>
-        <a id='discord' class='clickable' href='#' title='Join our Discord!'>
-          Discord
-        </a>
-      </span> -->
     </div>
     <div class='right'>
       <!-- <a id='export' class='clickable'>

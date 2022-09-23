@@ -51,10 +51,12 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
   // console.log(request);
   switch(request["type"].toLowerCase()) {
     case "play":
-    case "pause": {
-      $(".playControl.sc-ir.playControls__control.playControls__play")[0].click();
-      json["playing"] = !json["playing"];
-      post();
+    case "pause": // TODO pause toggle
+    case "toggle": {
+      let elem = $(".playControl.sc-ir.playControls__control.playControls__play")[0];
+      elem.click();
+      json['playing'] = elem.title.includes('Pause');
+      post
       break;
     }
     case "prev": {
@@ -107,6 +109,15 @@ chrome.runtime.onMessage.addListener((request, sender, callback) => {
       volumeUp();
       break;
     }
+    case 'seekb': {
+      seekBack();
+      break;
+    }
+    case 'seekf': {
+      seekForward();
+      break;
+    }
+
     // case "playlist": {
     //   var array = [];
     //   $(".queue__itemsContainer .queueItemView__username").each(function( index ) {

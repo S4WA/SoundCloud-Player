@@ -1,5 +1,5 @@
 /* Dropdown */
-.dropdown .dd-child textarea, .dropdown .dd-child input {
+.dropdown .dd-child textarea, .dropdown .dd-child input:not([type='checkbox']) {
   margin: 0px;
   height: 28px;
   width: 245px;
@@ -44,7 +44,8 @@ table th, table td {
 }
 
 table tr:nth-child(odd) {
-  background-color: #ddd
+  background-color: #ddd;
+  color: black;
 }
 
 /* Others */
@@ -220,10 +221,6 @@ body[dark=true] #controller-body {
   padding-left: 9px;
 }
 
-#toggle_compact {
-  background-image: url('../assets/window.svg');
-}
-
 #controller button {
   border: 0;
   font: 0/0 a;
@@ -236,7 +233,11 @@ body[dark=true] #controller-body {
   background-position: center center;
 }
 
-body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']), body[dark='true'] #toggle_compact, body[dark='true'] #hyphen {
+.bold {
+  font-weight: bold;
+}
+
+body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']), body[dark='true'] #hyphen {
   background-color: transparent;
   filter: invert(1);
 }

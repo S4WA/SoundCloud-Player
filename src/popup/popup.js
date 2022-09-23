@@ -37,6 +37,8 @@ function init() {
     let item = localStorage.getItem(key);
     templates[key] = key != 'email' ? item : JSON.parse(item);
   }
+
+  initKeyboardBinds();
 }
 
 function registerElements() {

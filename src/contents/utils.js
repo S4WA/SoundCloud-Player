@@ -73,3 +73,25 @@ function volumeUp() {
     })
   );
 }
+
+function seekBack() {
+  document.dispatchEvent(
+    new KeyboardEvent("keydown", {
+      key: "ArrowLeft",
+      keyCode: 37, 
+      code: "ArrowLeft",
+      which: 37
+    })
+  );
+}
+
+function seekForward() {
+  document.dispatchEvent(
+    new KeyboardEvent("keydown", {
+      key: "ArrowRight",
+      keyCode: 39, 
+      code: "ArrowRight",
+      which: 39
+    })
+  );
+}

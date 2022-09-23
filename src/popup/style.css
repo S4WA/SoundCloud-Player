@@ -64,6 +64,7 @@ input[type='checkbox'] {
 
 .floating .right {
   float: right;
+  text-align: right;
 }
 
 /* Marquee */
