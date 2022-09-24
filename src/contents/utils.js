@@ -12,7 +12,11 @@ function getArtist() {
 }
 
 function getArtwork() {
-  return $(".playbackSoundBadge span.sc-artwork").css("background-image");
+  let a = $(".playbackSoundBadge span.sc-artwork").css("background-image");
+  if (a.includes('120x120')) {
+    a = a.replace('120x120', '500x500')
+  }
+  return a;
 }
 
 function getLink() {
