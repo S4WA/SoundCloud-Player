@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMarquees();
   registerEvents();
   initKeyboardBinds();
+  initResetButton();
   ready = true;
 });
 
@@ -85,6 +86,26 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   json = items;
   sessionStorage.setItem('data', JSON.stringify(json));
 });
+
+function initResetButton() {
+  $('#reset').on('click', function () {
+    let a = $('#count'), b = 1;
+    if (a.text() != '') {
+      b = Number(a.text());
+      b++;
+    }
+    a.text(b);
+
+    if (b >= 3) {
+      console.log('reset.');
+      $('#sure').append($(`<div><br>ARE YOU SURE YOU WANT TO RESET EVERYTHING ? [<span id='yes' class='clickable'>YES</span>] [<span id='no' class='clickable'>NO</span>] </div>`))
+      $('#yes,#no').on('click', function () {
+        if ($(this).attr('id') == 'yes') localStorage.clear(); 
+        location.reload();
+      });
+    }
+  });
+}
 
 function initDropdown() {
   // Childs
@@ -378,7 +399,7 @@ function stopMarquees() {
 }
 
 function initMarquees() {
-  setTimeout(startMarquees, 50)
+  setTimeout(startMarquees, 50);
 }
 
 function checkIfCompactIsEnabled() {

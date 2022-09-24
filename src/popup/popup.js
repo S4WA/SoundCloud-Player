@@ -70,7 +70,6 @@ function init() {
   initKeyboardBinds();
 
   $('.title').css('display', 'inline');
-  setTimeout(startMarquees, 100);
 }
 
 function registerAudioButtons() {
@@ -204,7 +203,7 @@ function replaceText(text, json) {
   return text.replace('%title%', json['title']).replace('%artist%', json['artist']).replace('%url%', json['link']);
 }
 
-var ready = false, json = {}, dark = false,
+var ready = false, json = {}, dark = false, marqueeReady = false,
   hideList = ['#close', '#second', 'hr:last-child','#controller-body[mode="compact"] #hyphen'],
   shareSettings = {
     'share_with_time': false
@@ -295,6 +294,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // console.log('aaa');
     // trackElem.innerText = replaceText( localStorage.getItem('trackdisplay'), items);
     $('#track,.title').text( replaceText( localStorage.getItem('trackdisplay'), items) );
+
+    if (marqueeReady == false) {
+      marqueeReady = true;
+      setTimeout(startMarquees, 50);
+    }
   }
   
   // play/pause

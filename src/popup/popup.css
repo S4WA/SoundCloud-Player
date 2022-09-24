@@ -246,6 +246,11 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   padding: 0;
 }
 
+#controller-body[mode='compact'] .title {
+  display: none;
+  white-space: nowrap;
+}
+
 .children.marquee {
   padding-left: 10px;
 }

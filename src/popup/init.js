@@ -32,7 +32,7 @@ var settings = {
     'body': '%url%'
   },
   'copy': '%title% By %artist% %url%',
-  'font': 'Meiryo',
+  'font': 'Arial',
   'font-size': '12px',
   'theme': 'default',
   'duration': 5000,

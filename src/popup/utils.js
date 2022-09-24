@@ -113,7 +113,7 @@ function updateFont(font) {
 
 function updateFontSize(px) {
   if (!px) {
-    px = localStorage.getItem("font");
+    px = localStorage.getItem("font-size");
   } else if (px != localStorage.getItem("font-size")) {
     localStorage.setItem('font-size', px);
   }
