@@ -120,6 +120,10 @@ body[dark=true] #controller-body {
   margin-top: 15px;
 }
 
+.children.marquee {
+  padding-left: 10px;
+}
+
 #controller .children:not(.marquee) {
   margin-right: auto;
   margin-left: auto;

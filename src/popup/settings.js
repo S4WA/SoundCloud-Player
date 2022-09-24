@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initInputs();
   putAllLinks();
   initDarkmode();
+  checkDuplication();
   initMarquees();
   registerEvents();
   initKeyboardBinds();
@@ -290,6 +291,9 @@ function putAllLinks() {
   $('#c-twitter').on('click', () => {
     openURL('https://twitter.com/evildaimyoh');
   });
+  $('#eshortcuts').on('click', () => {
+    openURL('chrome://extensions/shortcuts');
+  });
 }
 
 function initDarkmode() {
@@ -339,7 +343,7 @@ function registerEvents() {
   $('#copynp').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
-  $('#toggle_compact').change(function() {
+  $('#toggle_compact').change(function () {
     if ( $(this).prop('checked') ) {
       if ($('.marquee .js-marquee-wrapper').css('animation') == null) {
         startMarquees();
@@ -358,6 +362,10 @@ function registerEvents() {
       keyReady = false;
     }
   });
+
+  $('#duplication').change(function () {
+    localStorage.setItem('duplication', duplicated = $(this).prop('checked'));
+  })
 }
 
 function replaceText(text, json) {
@@ -366,7 +374,6 @@ function replaceText(text, json) {
 }
 
 function stopMarquees() {
-  // clearInterval(marqueeTimer);
   $('.maruee').marquee('pause');
 }
 
@@ -381,9 +388,15 @@ function checkIfCompactIsEnabled() {
     } else {
       $('#controller-body').css('display', 'none');
     }
-    $('#toggle_compact').attr('checked', 'true');
+    $('#toggle_compact').attr('checked', '');
   } else {
     $('#controller-body').css('display', 'none');
+  }
+}
+
+function checkDuplication() {
+  if (localStorage.getItem('duplication') != null && localStorage.getItem('duplication') == 'true') {
+    $('#duplication').attr('checked', '');
   }
 }
 

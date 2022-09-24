@@ -181,32 +181,45 @@ function initKeyboardBinds() {
     }
   });
 }
-
 function startMarquees() {
   if (!$().marquee) return;
   $('.marquee').bind('finished', () => {
-    $('.marquee').marquee('pause');
-    setTimeout(() => {
-      $('.marquee').marquee('resume');
-    }, getPauseTime());
+    if (isDuplicationEnabled() == true) {
+      $('.marquee').marquee('pause');
+      setTimeout(() => {
+        $('.marquee').marquee('resume');
+      }, getPauseTime());
+    } else {
+      setTimeout(() => {
+        $('.marquee').marquee('pause');
+      }, getTextVisibleDuration());
+      setTimeout(() => {
+        $('.marquee').marquee('resume');
+      }, getTextVisibleDuration() + getPauseTime());
+    }
+
   }).marquee({
     direction: 'left', 
     duration: getTextVisibleDuration(),
     pauseOnHover: true,
     startVisible: true,
-    duplicated: true
+    pauseOnCycle: true,
+    duplicated: isDuplicationEnabled()
   });
 }
 
 function getTextVisibleDuration() {
-  if (localStorage.getItem('duration')) return localStorage.getItem('duration');
+  if (localStorage.getItem('duration')) return Number( localStorage.getItem('duration') );
   return 5000;
 }
 
 function getPauseTime() {
-  if (localStorage.getItem('pause')) return localStorage.getItem('pause');
+  if (localStorage.getItem('pause')) return Number( localStorage.getItem('pause') );
   return 5000;
 }
 
-var keyReady = false;
-var marqueeTimer;
+function isDuplicationEnabled() {
+  return Bool(localStorage.getItem('duplication'));
+}
+
+var keyReady = false, duplicated = false;

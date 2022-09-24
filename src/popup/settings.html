@@ -67,10 +67,7 @@
     <hr>
     <div class='dd-child'>
       <div>
-        <span><b></b></span>
-      </div>
-      <div>
-        <span>Track Display:</span>
+        <span>[General]<br>Track Display:</span>
         <textarea id='trackdisplay'></textarea>
       </div>
       <div>
@@ -97,15 +94,20 @@
         </select>
       </div>
       <div>
-        <span>Speed for title text scrolling(ms):</span>
+        <span>Enable Compact Player In This Page:</span>
+        <input type="checkbox" name="toggle_compact" id='toggle_compact'>
+      </div>
+      <div>
+        <hr>
+        <span>[Text Scrolling]<br>Speed for title text scrolling(ms):</span>
         <input id='duration' type="number" step="500" style="width: 45px; height: 14px;">
 
         <span>Pause length(ms):</span>
         <input id='pause' type="number" step="500" style="width: 45px; height: 14px;">
       </div>
       <div>
-        <span>Enable Compact Player In This Page:</span>
-        <input type="checkbox" name="toggle_compact" id='toggle_compact'>
+        <span>Duplicate Scrolling Text:</span>
+        <input type="checkbox" name="duplication" id='duplication'>
       </div>
       <hr>
     </div>
@@ -170,6 +172,10 @@
     <div class='dd-child'>
       <table>
         <tr>
+          <th>CMD + SHIFT + S</th>
+          <td>Open the Popup<br>(In Chrome Window)</td>
+        </tr>
+        <tr>
           <th>SPACE</th>
           <td>Play or Pause</td>
         </tr>
@@ -202,6 +208,7 @@
           <td>Seek Forward</td>
         </tr>
       </table>
+      <a id='eshortcuts' class='clickable' href='#'>Open Extension Shortcuts Page</a><br>
       <hr>
     </div>
   </div>

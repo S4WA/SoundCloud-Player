@@ -1,6 +1,8 @@
 # Soundcloud-Player
 This extension is for the soundcloud heavy users.
 
+You can control the tracks without changing your tab. Just open the popup n boom.
+
 *Thanks for the 7k users!*
 
 - [Install this on Chrome](https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej)

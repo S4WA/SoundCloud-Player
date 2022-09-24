@@ -37,4 +37,5 @@ var settings = {
   'theme': 'default',
   'duration': 5000,
   'pause': 5000,
+  'duplication': false
 }

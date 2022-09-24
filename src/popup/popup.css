@@ -246,6 +246,9 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   padding: 0;
 }
 
+.children.marquee {
+  padding-left: 10px;
+}
 
 #controller-body[mode='compact'] #side {
   width: 50px;
