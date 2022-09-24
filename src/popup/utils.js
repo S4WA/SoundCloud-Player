@@ -111,6 +111,16 @@ function updateFont(font) {
   $(":root").css("--custom-font", font);
 }
 
+function updateFontSize(px) {
+  if (!px) {
+    px = localStorage.getItem("font");
+  } else if (px != localStorage.getItem("font-size")) {
+    localStorage.setItem('font-size', px);
+  }
+
+  $(":root").css("--font-size", px);
+}
+
 function toggleDarkmode() {
   darkmode(dark =! dark);
 }

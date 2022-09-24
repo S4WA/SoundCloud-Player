@@ -126,7 +126,7 @@ function checkMarqueesDurations() {
 function checkFonts() {
   // - Custom Font
   if (localStorage.getItem('font') == null) return;
-  updateFont();
+  $('#font-size').val( Number( localStorage.getItem('font-size').replace('px', '') ) );
 
   const fontCheck = new Set([
     // Windows 10
@@ -234,11 +234,13 @@ function initInputs() {
     localStorage.setItem('trackdisplay', $(this).val());
   });
   $('#fontlist').on('input', function () {
-    localStorage.setItem('font', $(this).val());
-    updateFont();
+    updateFont($(this).val());
   });
   $('#theme-select').on('change', function () {
     localStorage.setItem('theme', $(this).val());
+  });
+  $('#font-size').on('change', function() {
+    updateFontSize($(this).val() + 'px')
   });
   $('#duration,#pause').on('change', function() {
     let name = $(this).attr('id');

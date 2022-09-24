@@ -5,13 +5,14 @@ body {
 
 * {
   font-family: var(--custom-font);
-  font-size: 12px;
+  font-size: var(--font-size);
 }
 
 :root {
   --theme-color:#FF5500;
   --bg-color:#3F3F3F;
-  --custom-font: 'Meiryo';
+  --custom-font:'Meiryo';
+  --font-size:12px;
 }
 
 a {

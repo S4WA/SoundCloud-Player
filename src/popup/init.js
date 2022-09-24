@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateThemeColor();
   updateFont();
   updateBGcolor();
+  updateFontSize();
 
   if (isPopout()) {
     $('#P').css('display', 'none');
@@ -32,7 +33,8 @@ var settings = {
   },
   'copy': '%title% By %artist% %url%',
   'font': 'Meiryo',
+  'font-size': '12px',
   'theme': 'default',
   'duration': 5000,
-  'pause': 5000
+  'pause': 5000,
 }
