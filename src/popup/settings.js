@@ -318,6 +318,9 @@ function putAllLinks() {
   $('#support').on('click', () => {
     openURL('https://ko-fi.com/sawanese');
   });
+  $('.guide').on('click', () => {
+    openURL('https://www.youtube.com/watch?v=tTHUghco1XU');
+  });
 }
 
 function initDarkmode() {
