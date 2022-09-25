@@ -276,6 +276,7 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
 }
 
 #hyphen {
+  background-size: auto;
   background-image: url('../assets/audio/minus.svg');
   background-repeat: no-repeat;
   background-position: center;
@@ -306,7 +307,7 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   background-image: url('../assets/popout.svg');
 }
 
-body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down, body[dark='true'] #volume-icon, #hyphen {
+body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down, body[dark='true'] #volume-icon, body[dark='true'] #hyphen {
   background-color: transparent;
   filter: invert(1);
 }

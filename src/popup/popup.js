@@ -204,7 +204,7 @@ function replaceText(text, json) {
 }
 
 var ready = false, json = {}, dark = false, marqueeReady = false,
-  hideList = ['#close', '#second', 'hr:last-child','#controller-body[mode="compact"] #hyphen'],
+  hideList = ['#close', '#second', 'hr:last-child', '#controller-body[mode="compact"] #hyphen'],
   shareSettings = {
     'share_with_time': false
   },

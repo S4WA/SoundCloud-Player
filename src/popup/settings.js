@@ -94,10 +94,10 @@ function initResetButton() {
       b = Number(a.text());
       b++;
     }
+    if (b > 3) return;
     a.text(b);
 
-    if (b >= 3) {
-      console.log('reset.');
+    if (b == 3) { // if it's '>=', it's gonna add elements more than 1. 
       $('#sure').append($(`<div><br>ARE YOU SURE YOU WANT TO RESET EVERYTHING ? [<span id='yes' class='clickable'>YES</span>] [<span id='no' class='clickable'>NO</span>] </div>`))
       $('#yes,#no').on('click', function () {
         if ($(this).attr('id') == 'yes') localStorage.clear(); 

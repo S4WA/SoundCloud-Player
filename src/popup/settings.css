@@ -140,6 +140,7 @@ body[dark=true] #controller-body {
 }
 
 #hyphen {
+  background-size: auto;
   background-image: url('../assets/audio/minus.svg');
   background-repeat: no-repeat;
   background-position: center;
