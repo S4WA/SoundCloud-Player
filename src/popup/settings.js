@@ -316,7 +316,7 @@ function putAllLinks() {
     openURL('chrome://extensions/shortcuts');
   });
   $('#support').on('click', () => {
-    openURL('https://paypal.me/s4wa');
+    openURL('https://ko-fi.com/sawanese');
   });
 }
 

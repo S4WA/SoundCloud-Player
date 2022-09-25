@@ -7,6 +7,7 @@ You can control the tracks without changing your tab. Just open the popup n boom
 
 - [Install this on Chrome](https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej)
 - [Feedback](https://forms.gle/Cz6z8AgGYkHuSiQSA)
+- [Buy me a coffee!](https://ko-fi.com/sawanese)
 
 # YouTube Guide
 [![YouTube Video Thumbnail](http://img.youtube.com/vi/tTHUghco1XU/0.jpg?XD)](https://www.youtube.com/watch?v=tTHUghco1XU)
