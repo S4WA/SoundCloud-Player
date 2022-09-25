@@ -315,6 +315,9 @@ function putAllLinks() {
   $('#eshortcuts').on('click', () => {
     openURL('chrome://extensions/shortcuts');
   });
+  $('#support').on('click', () => {
+    openURL('https://paypal.me/s4wa');
+  });
 }
 
 function initDarkmode() {
