@@ -9,7 +9,7 @@ You can control the tracks without changing your tab. Just open the popup n boom
 - [Feedback](https://forms.gle/Cz6z8AgGYkHuSiQSA)
 
 # YouTube Guide
-[![YouTube Video Thumbnail](http://img.youtube.com/vi/tTHUghco1XU/0.jpg)](https://www.youtube.com/watch?v=tTHUghco1XU)
+[![YouTube Video Thumbnail](http://img.youtube.com/vi/tTHUghco1XU/0.jpg?XD)](https://www.youtube.com/watch?v=tTHUghco1XU)
 
 # Images
 ![image1](https://github.com/S4WA/soundcloud-player/blob/master/img/1.png?raw=true)
