@@ -55,8 +55,7 @@
     <div class='dd-child'>
       <span>
         SoundCloud Player By Sawa.<br><br>
-        Settings will automatically saved when the value has changed.<br><br>
-        <a class='guide' class='clickable' href='#'>I uploaded a guide video on YouTube</a>
+        Settings will automatically saved when the value has changed.
       </span>
       <hr>
     </div>
@@ -72,11 +71,11 @@
         <textarea id='trackdisplay'></textarea>
       </div>
       <div>
-        <span>Theme Color:</span><br>(Default: #FF5500)
+        <span>Theme Color:</span><br>(Default: #FF5500, Current: <span id='current-theme'></span>)
         <input id='themecolor' type='color'>
       </div>
       <div>
-        <span>Background Color for Dark Mode:<br>(Default: #3F3F3F)</span>
+        <span>Background Color for Dark Mode:<br>(Default: #3F3F3F, Current: <span id='current-bgcolor'></span>)</span>
         <input id='bgcolor' type='color'>
       </div>
       <div>
@@ -161,6 +160,8 @@
               <td>%url%</td>
             </tr>
           </table>
+          <br>
+          <i>templates are texts that applies to the share links. </i>
       </span>
       <hr>
     </div>
@@ -269,9 +270,6 @@
       </span>
       <span>
         - <a id='github' class='clickable' href='#'>Source Code</a><br>
-      </span>
-      <span>
-        - <a class='guide clickable' href='#'>YouTube Guide</a><br>
       </span>
       <span>
         - <a id='feedback' class='clickable' href='#'>Feedback Form</a><br>

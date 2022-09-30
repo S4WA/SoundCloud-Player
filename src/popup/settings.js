@@ -181,6 +181,7 @@ function checkCustomColors() {
   // - Theme Color
   if (localStorage.getItem('themecolor') != null) {
     $('#themecolor').val( localStorage.getItem('themecolor') );
+    $('#current-theme').text(` ${ localStorage.getItem('themecolor').toUpperCase() }`)
     updateThemeColor();
   } else {
     setTimeout(function() {
@@ -195,12 +196,14 @@ function checkCustomColors() {
   //   }
   // })
   $('#themecolor').on('change', function() {
+    $('#current-theme').text(`${ $(this).val().toUpperCase() }`)
     updateThemeColor($(this).val());
   });
 
   // - Background
   if (localStorage.getItem('bgcolor') != null) {
     $('#bgcolor').val( localStorage.getItem('bgcolor') );
+    $('#current-bgcolor').text(`${ localStorage.getItem('bgcolor').toUpperCase() }`)
     updateBGcolor();
   } else {
     setTimeout(function() {
@@ -317,9 +320,6 @@ function putAllLinks() {
   });
   $('#support').on('click', () => {
     openURL('https://ko-fi.com/sawanese');
-  });
-  $('.guide').on('click', () => {
-    openURL('https://www.youtube.com/watch?v=tTHUghco1XU');
   });
 }
 

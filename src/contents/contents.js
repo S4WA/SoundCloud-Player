@@ -3,7 +3,7 @@ window.onload = () => {
   setInterval(() => {
     try {
       chrome.runtime.sendMessage({ text: "isfirst" }, isFirst => {
-        if (isFirst) update();
+        if (isFirst) update(); // no info duping
       });
     } catch (err) {
       // 拡張機能がリロードされた時 contents.jsも合わせてリロードする
