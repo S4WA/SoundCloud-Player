@@ -76,7 +76,7 @@ function registerAudioButtons() {
   $('#toggle').on('click', () => { toggle(); });
   $('#prev').on('click', () => { queue('prev'); });
   $('#next').on('click', () => { queue('next'); });
-  $('#fav').on('click', () => { toggleFav(); });
+  $('#fav').on('click', () => { queue('fav'); });
   $('#track,.title').on('click', () => { openSCTab(); location.reload(); });
   $('#artwork').on('click', () => { openSCTab(); location.reload(); });
   $('#repeat').on('click', () => { repeat(); });
@@ -164,12 +164,6 @@ function registerEvents() {
       $('.marquee').children().toggleClass('marquee-inner');
     }
   );*/
-}
-
-function toggleFav() {
-  if ($('#fav') == null) return;
-  let value = Bool( $('#fav').attr('favorite') );
-  queue( value ? 'unFav' : 'Fav' );
 }
 
 function repeat() {

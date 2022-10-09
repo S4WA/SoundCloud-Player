@@ -170,11 +170,15 @@ function initKeyboardBinds() {
         queue('mute');
         break;
       }
-      case 37: {
+      case 76: { // l key
+        queue('fav')
+        break;
+      }
+      case 37: { // arrow left
         queue(e.shiftKey ? 'prev' : 'seekb');
         break;
       }
-      case 39: {
+      case 39: { // arrow right
         queue(e.shiftKey ? 'next' : 'seekf');
         break;
       }

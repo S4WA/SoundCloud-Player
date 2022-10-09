@@ -1,9 +1,12 @@
 /* Dropdown */
+textarea {
+  resize: none;
+}
+
 .dropdown .dd-child textarea:not(.options-table textarea), .dropdown .dd-child input:not([type='checkbox'], .options-table input) {
   margin: 0px;
   height: 28px;
   width: 245px;
-  resize: none;
 }
 
 .dropdown > .dd-parent > .icon {
