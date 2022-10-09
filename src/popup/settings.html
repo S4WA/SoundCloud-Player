@@ -66,48 +66,110 @@
     </div>
     <hr>
     <div class='dd-child'>
-      <div>
-        <span>[General]<br>Track Display:</span>
-        <textarea id='trackdisplay'></textarea>
+      <div class='dropdown' closed='true'>
+        <div class='dd-parent'>
+          [General]<span class='icon'></span>
+        </div>
+        <div class='dd-child'>
+          <div>
+            <span>Track Display:</span>
+            <textarea id='trackdisplay'></textarea>
+          </div>
+          <div>
+            <span>Theme Color:</span><br>(Default: #FF5500, Current: <span id='current-theme'></span>)
+            <input id='themecolor' type='color'>
+          </div>
+          <div>
+            <span>Background Color for Dark Mode:<br>(Default: #3F3F3F, Current: <span id='current-bgcolor'></span>)</span>
+            <input id='bgcolor' type='color'>
+          </div>
+          <div>
+            <table class='options-table'>
+              <tr>
+                <th>Font</th>
+                <td><select id='fontlist'></select></td>
+              </tr>
+              <tr>
+                <th>Font Size</th>
+                <td><input id='font-size' type="number" step="0.1" style="width: 45px; height: 14px;">px</td>
+              </tr>
+              <tr>
+                <th>Theme</th>
+                <td>
+                  <select id='theme-select'>
+                    <option value='default'>Default</option>
+                    <option value='compact'>Compact</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th>Enable Compact Player In This Page</th>
+                <td><input type="checkbox" name="toggle-compact" id='toggle-compact'></td>
+              </tr>
+              <tr>
+                <th>Disable Sliding Animation For Options</th>
+                <td><input type="checkbox" name="dropdown-animation" id='dropdown-animation'></td>
+              </tr>
+              <tr>
+                <th></th>
+                <td></td>
+              </tr>
+              <tr>
+                <th></th>
+                <td></td>
+              </tr>
+              <tr>
+                <th></th>
+                <td></td>
+              </tr>
+              <tr>
+                <th></th>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+          <!-- <div>
+            <span>Font:</span>
+            <select id='fontlist'></select>
+          </div> -->
+          <!-- <div>
+            <span>Font Size:</span>
+            <input id='font-size' type="number" step="0.1" style="width: 45px; height: 14px;">px
+          </div> -->
+          <!-- <div>
+            <span>Theme:</span>
+            <select id='theme-select'>
+              <option value='default'>Default</option>
+              <option value='compact'>Compact</option>
+            </select>
+          </div> -->
+          <!-- <div>
+            <span>Enable Compact Player In This Page:</span>
+            <input type="checkbox" name="toggle-compact" id='toggle-compact'>
+          </div> -->
+          <!-- <div>
+            <span>Disable Sliding Animation For Options:</span>
+            <input type="checkbox" name="dropdown-animation" id='dropdown-animation'>
+          </div> -->
+        </div>
       </div>
-      <div>
-        <span>Theme Color:</span><br>(Default: #FF5500, Current: <span id='current-theme'></span>)
-        <input id='themecolor' type='color'>
-      </div>
-      <div>
-        <span>Background Color for Dark Mode:<br>(Default: #3F3F3F, Current: <span id='current-bgcolor'></span>)</span>
-        <input id='bgcolor' type='color'>
-      </div>
-      <div>
-        <span>Font:</span>
-        <select id='fontlist'></select>
-      </div>
-      <div>
-        <span>Font Size:</span>
-        <input id='font-size' type="number" step="0.1" style="width: 45px; height: 14px;">px
-      </div>
-      <div>
-        <span>Theme:</span>
-        <select id='theme-select'>
-          <option value='default'>Default</option>
-          <option value='compact'>Compact</option>
-        </select>
-      </div>
-      <div>
-        <span>Enable Compact Player In This Page:</span>
-        <input type="checkbox" name="toggle_compact" id='toggle_compact'>
-      </div>
-      <div>
-        <hr>
-        <span>[Text Scrolling]<br>Speed for title text scrolling(ms):</span>
-        <input id='duration' type="number" step="500" style="width: 45px; height: 14px;">
+      <div class='dropdown' closed='true'>
+        <div class='dd-parent'>
+          [Text Scrolling]<span class='icon'></span>
+        </div>
+        <div class='dd-child'>
+          <div>
+            <span>Speed for title text scrolling(ms):</span>
+            <input id='duration' type="number" step="500" style="width: 45px; height: 14px;">
 
-        <span>Pause length(ms):</span>
-        <input id='pause' type="number" step="500" style="width: 45px; height: 14px;">
-      </div>
-      <div>
-        <span>Duplicate Scrolling Text:</span>
-        <input type="checkbox" name="duplication" id='duplication'>
+            <span>Pause length(ms):</span>
+            <input id='pause' type="number" step="500" style="width: 45px; height: 14px;">
+          </div>
+          <div>
+            <span>Duplicate Scrolling Text:</span>
+            <input type="checkbox" name="duplication" id='duplication'>
+          </div>
+        </div>
       </div>
       <hr>
     </div>

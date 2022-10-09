@@ -6,16 +6,29 @@
   resize: none;
 }
 
-.dropdown .dd-parent .icon {
+.dropdown > .dd-parent > .icon {
   background-size: 80% 80%;
 }
 
-.dropdown[closed='true'] .dd-parent .icon {
+.dropdown[closed='true'] > .dd-parent > .icon {
 	background-image: url('../assets/dropdown/caret-right.svg');
 }
 
-.dropdown[closed='false'] .dd-parent .icon {
+.dropdown[closed='false'] > .dd-parent > .icon {
 	background-image: url('../assets/dropdown/caret-down.svg');
+}
+
+.dropdown .dropdown .dd-child {
+  padding-left: 10px;
+}
+
+.dropdown .dropdown .dd-child #trackdisplay {
+  width: 239px !important;
+}
+
+.options-table th, .options-table td {
+  text-align: left;
+  padding-left: 10px;
 }
 
 .dd-child div:not(:last-child) {
@@ -79,11 +92,11 @@ body[dark='true'] table tr:nth-child(odd) {
   background-color: #C0C0C0
 }
 
-body[dark='true'] .dropdown[closed='true'] .dd-parent .icon {
+body[dark='true'] .dropdown[closed='true'] > .dd-parent > .icon {
   background-image: url('../assets/dropdown/caret-right_dark.svg');
 }
 
-body[dark='true'] .dropdown[closed='false'] .dd-parent .icon {
+body[dark='true'] .dropdown[closed='false'] > .dd-parent > .icon {
   background-image: url('../assets/dropdown/caret-down_dark.svg');
 }
 
