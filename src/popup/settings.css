@@ -1,5 +1,5 @@
 /* Dropdown */
-.dropdown .dd-child textarea, .dropdown .dd-child input:not([type='checkbox'], .options-table input) {
+.dropdown .dd-child textarea:not(.options-table textarea), .dropdown .dd-child input:not([type='checkbox'], .options-table input) {
   margin: 0px;
   height: 28px;
   width: 245px;
@@ -22,30 +22,39 @@
   padding-left: 10px;
 }
 
-.options-table #trackdisplay {
-  width: 103.5px !important;
-}
-
-.options-table #themecolor, .options-table #bgcolor {
-  width: 110px !important;
-}
-
-.options-table input:not([type='checkbox'], #themecolor, #bgcolor) {
-  width: 50%;
-}
-
-#fontlist {
-  width: 100px;
-}
-
-.options-table th {
-  width: 120%;
-}
-
 .options-table th, .options-table td {
   text-align: left;
   padding: 5px 5px ;
 }
+
+.options-table {
+  width: 240px;
+}
+
+.options-table th {
+  width: 140px !important;
+}
+
+.options-table td {
+  width: 100px !important;
+}
+
+#trackdisplay, #themecolor, #bgcolor {
+  width: 100%;
+}
+
+#current-theme, #current-bgcolor {
+  width: 55%;
+}
+
+#fontlist {
+  width: 98%;
+}
+
+/*
+.options-table input {
+  width: auto;
+}*/
 
 hr {
   margin-top: 5px;
