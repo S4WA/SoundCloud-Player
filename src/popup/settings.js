@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   registerEvents();
   initKeyboardBinds();
   initResetButton();
+  checkDDAnimation();
   ready = true;
 });
 
@@ -185,7 +186,7 @@ function checkCustomColors() {
   // - Theme Color
   if (localStorage.getItem('themecolor') != null) {
     $('#themecolor').val( localStorage.getItem('themecolor') );
-    $('#current-theme').text(` ${ localStorage.getItem('themecolor').toUpperCase() }`)
+    $('#current-theme').val(`${ localStorage.getItem('themecolor').toUpperCase() }`)
     updateThemeColor();
   } else {
     setTimeout(function() {
@@ -200,14 +201,18 @@ function checkCustomColors() {
   //   }
   // })
   $('#themecolor').on('change', function() {
-    $('#current-theme').text(`${ $(this).val().toUpperCase() }`)
+    $('#current-theme').val(`${ $(this).val().toUpperCase() }`);
+    updateThemeColor($(this).val());
+  });
+  $('#current-theme').on('change', function() {
+    $('#themecolor').val(`${ $(this).val().toUpperCase() }`);
     updateThemeColor($(this).val());
   });
 
   // - Background
   if (localStorage.getItem('bgcolor') != null) {
     $('#bgcolor').val( localStorage.getItem('bgcolor') );
-    $('#current-bgcolor').text(`${ localStorage.getItem('bgcolor').toUpperCase() }`)
+    $('#current-bgcolor').val(`${ localStorage.getItem('bgcolor').toUpperCase() }`)
     updateBGcolor();
   } else {
     setTimeout(function() {
@@ -215,6 +220,11 @@ function checkCustomColors() {
     }, 100);
   }
   $('#bgcolor').on('change', function() {
+    $('#current-bgcolor').val(`${ $(this).val().toUpperCase() }`);
+    updateBGcolor($(this).val());
+  });
+  $('#current-bgcolor').on('change', function() {
+    $('#bgcolor').val(`${ $(this).val().toUpperCase() }`);
     updateBGcolor($(this).val());
   });
 }
@@ -429,6 +439,12 @@ function checkIfCompactIsEnabled() {
     $('#toggle-compact').attr('checked', '');
   } else {
     $('#controller-body').css('display', 'none');
+  }
+}
+
+function checkDDAnimation() {
+  if (localStorage.getItem('dropdown-animation') != null && localStorage.getItem('dropdown-animation') == 'true') {
+    $('#dropdown-animation').attr('checked', '');
   }
 }
 

@@ -1,5 +1,5 @@
 /* Dropdown */
-.dropdown .dd-child textarea, .dropdown .dd-child input:not([type='checkbox']) {
+.dropdown .dd-child textarea, .dropdown .dd-child input:not([type='checkbox'], .options-table input) {
   margin: 0px;
   height: 28px;
   width: 245px;
@@ -22,17 +22,29 @@
   padding-left: 10px;
 }
 
-.dropdown .dropdown .dd-child #trackdisplay {
-  width: 239px !important;
+.options-table #trackdisplay {
+  width: 103.5px !important;
+}
+
+.options-table #themecolor, .options-table #bgcolor {
+  width: 110px !important;
+}
+
+.options-table input:not([type='checkbox'], #themecolor, #bgcolor) {
+  width: 50%;
+}
+
+#fontlist {
+  width: 100px;
+}
+
+.options-table th {
+  width: 120%;
 }
 
 .options-table th, .options-table td {
   text-align: left;
-  padding-left: 10px;
-}
-
-.dd-child div:not(:last-child) {
-  padding-bottom: 8px;
+  padding: 5px 5px ;
 }
 
 hr {
@@ -57,7 +69,12 @@ table th, table td {
 }
 
 table tr:nth-child(odd) {
-  background-color: #ddd;
+  background-color: #C3C3C3;
+  color: black;
+}
+
+table tr:nth-child(even) {
+  background-color: #DDD;
   color: black;
 }
 
@@ -83,13 +100,9 @@ li:last-child {
 }
 
 /* Dark Mode */
-body[dark='true'], body[dark='true'] span, body[dark='true'] a { /* body[dark='true'] input */
+body[dark='true'], body[dark='true'] a { /* body[dark='true'] span, body[dark='true'] input */
   background-color: var(--bg-color);
   color: white;
-}
-
-body[dark='true'] table tr:nth-child(odd) {
-  background-color: #C0C0C0
 }
 
 body[dark='true'] .dropdown[closed='true'] > .dd-parent > .icon {
