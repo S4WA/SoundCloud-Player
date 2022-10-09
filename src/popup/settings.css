@@ -39,7 +39,11 @@
   width: 100px !important;
 }
 
-#trackdisplay, #themecolor, #bgcolor {
+#trackdisplay {
+  width: 95%;
+}
+
+#themecolor, #bgcolor {
   width: 100%;
 }
 
