@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
       let value = typeof settings[key] == 'string' ? settings[key] : JSON.stringify(settings[key]);
       localStorage.setItem(key, value);
     } else {
-      let item = localStorage.getItem(key);
+      // let item = localStorage.getItem(key);
       // console.log(key, item);
-      settings[key] = (key != 'email' ? item : JSON.parse(item));
+      // settings[key] = (key != 'email' ? item : JSON.parse(item));
     }
   }
 
@@ -38,5 +38,6 @@ var settings = {
   'duration': 5000,
   'pause': 5000,
   'duplication': false,
-  'dropdown-animation': true
+  'dropdown-animation': true,
+  'display-artwork': true
 }

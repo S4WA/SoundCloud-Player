@@ -15,11 +15,6 @@ function setCompactTheme() {
   $('#controller-body').attr('mode', 'compact');
 }
 
-function getThemeName() {
-  if (localStorage.getItem('theme')) return localStorage.getItem('theme');
-  return 'default';
-}
-
 // Initialize:
 function init() {
   switch (getThemeName()) {
@@ -70,6 +65,8 @@ function init() {
   initKeyboardBinds();
 
   $('.title').css('display', 'inline');
+
+  checkDisplayArtwork();
 }
 
 function registerAudioButtons() {

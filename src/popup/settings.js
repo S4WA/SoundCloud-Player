@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initKeyboardBinds();
   initResetButton();
   checkDDAnimation();
+  checkDisplayArtwork();
   ready = true;
 });
 
@@ -386,9 +387,8 @@ function registerEvents() {
   });
   $('#toggle-compact').change(function () {
     if ( $(this).prop('checked') ) {
-      if ($('.marquee .js-marquee-wrapper').css('animation') == null) {
+      if ($('.marquee.js-marquee-wrapper').css('animation') == null) {
         startMarquees();
-        console.log('a');
       }
 
       $('#controller-body').css('display', 'inline-block');
@@ -404,12 +404,13 @@ function registerEvents() {
     }
   });
   $('#dropdown-animation').change(function() {
-    if ( $(this).prop('checked') ) {
-      localStorage.setItem('dropdown-animation', 'true');
-    } else {
-      localStorage.setItem('dropdown-animation', 'false');
-    }
-  })
+    localStorage.setItem('dropdown-animation', $(this).prop('checked') ? 'true' : 'false');
+  });
+  $('#display-artwork').change(function() {
+    let val = $(this).prop('checked');
+    toggleArtwork(val);
+    localStorage.setItem('display-artwork', String(val));
+  });
 
   $('#duplication').change(function () {
     localStorage.setItem('duplication', duplicated = $(this).prop('checked'));

@@ -81,6 +81,11 @@ function isJson(string) {
 }
 
 // Settings
+function getThemeName() {
+  if (localStorage.getItem('theme')) return localStorage.getItem('theme');
+  return 'default';
+}
+
 function updateThemeColor(color) {
   if (!color) {
     color = localStorage.getItem("themecolor");
@@ -185,6 +190,7 @@ function initKeyboardBinds() {
     }
   });
 }
+
 function startMarquees() {
   if (!$().marquee) return;
   $('.marquee').bind('finished', () => {
@@ -224,6 +230,31 @@ function getPauseTime() {
 
 function isDuplicationEnabled() {
   return Bool(localStorage.getItem('duplication'));
+}
+
+function checkDisplayArtwork() {
+  toggleArtwork( Bool( localStorage.getItem('display-artwork') ) );
+  if (location.href.includes('settings.html')) {
+    $('#artwork').css('display', Bool( localStorage.getItem('display-artwork') ) ? 'inline-block' : 'none');
+  }
+}
+
+function toggleArtwork(val) {
+  let hidden = (val != null && val == false), in_settings_page = location.href.includes('settings.html');
+  if (getThemeName() == 'compact' || in_settings_page) {
+    $('#controller').css('width', hidden ? '250px' : '200px');
+    $('#controller').css('height', hidden ? (in_settings_page ? '75px' : '65px') : '50px');
+    if (in_settings_page) {
+      $('.chiuldren.marquee').css('padding-left', hidden ? '0' : '10px');
+    }
+  }
+
+  // if (hidden) {
+  //   $('#artwork').attr('hidden', '')
+  // } else {
+  //   $('#artwork').removeAttr('hidden')
+  // }
+  $('#artwork').css('display', val ? 'inline-block' : 'none');
 }
 
 var keyReady = false, duplicated = false;

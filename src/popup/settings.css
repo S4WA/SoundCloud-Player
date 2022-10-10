@@ -1,6 +1,7 @@
 /* Dropdown */
 textarea {
   resize: none;
+  line-break: anywhere;
 }
 
 .dropdown .dd-child textarea:not(.options-table textarea), .dropdown .dd-child input:not([type='checkbox'], .options-table input) {
@@ -21,21 +22,13 @@ textarea {
 	background-image: url('../assets/dropdown/caret-down.svg');
 }
 
-.dropdown .dropdown .dd-child {
-  padding-left: 10px;
-}
-
 .options-table th, .options-table td {
   text-align: left;
   padding: 5px 5px ;
 }
 
-.options-table {
-  width: 240px;
-}
-
 .options-table th {
-  width: 140px !important;
+  width: 150px !important;
 }
 
 .options-table td {
@@ -47,11 +40,12 @@ textarea {
 }
 
 #themecolor, #bgcolor {
-  width: 100%;
+  height: 21px;
+  width: 29px;
 }
 
 #current-theme, #current-bgcolor {
-  width: 55%;
+  width: 60%;
 }
 
 #fontlist {
@@ -289,7 +283,7 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   filter: invert(1);
 }
 /* Icons End */
-select, select option, input {
+select, select option, input, textarea {
   font-family: Arial;
 }
 
