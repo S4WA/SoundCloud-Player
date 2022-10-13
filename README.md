@@ -9,14 +9,13 @@ You can control the tracks without changing your tab. Just open the popup n boom
 - [Feedback](https://forms.gle/Cz6z8AgGYkHuSiQSA)
 - [Buy me a coffee!](https://ko-fi.com/sawanese)
 
-# YouTube Guide
-[![YouTube Video Thumbnail](http://img.youtube.com/vi/tTHUghco1XU/0.jpg?XD)](https://www.youtube.com/watch?v=tTHUghco1XU)
-
 # Images
 ![image1](https://github.com/S4WA/soundcloud-player/blob/master/img/1.png?raw=true)
 ![image2](https://github.com/S4WA/soundcloud-player/blob/master/img/2.png?raw=true)
 ![image3](https://github.com/S4WA/soundcloud-player/blob/master/img/3.png?raw=true)
 ![image4](https://github.com/S4WA/soundcloud-player/blob/master/img/4.png?raw=true)
+
+# If you make an issue, Please write it in English or Japanese. Other language will not be supported.
 
 # Spagetti Code Warning
 ...
