@@ -230,20 +230,28 @@ function isDuplicationEnabled() {
   return Bool(localStorage.getItem('duplication'));
 }
 
+function areWeInSettingsPage() {
+  return location.href.includes('settings.html');
+}
+
 function checkDisplayArtwork() {
-  toggleArtwork( Bool( localStorage.getItem('display-artwork') ) );
-  if (location.href.includes('settings.html')) {
-    $('#artwork').css('display', Bool( localStorage.getItem('display-artwork') ) ? 'inline-block' : 'none');
+  let available = Bool( localStorage.getItem('display-artwork') );
+  toggleArtwork(available);
+  if (areWeInSettingsPage()) {
+    if (available) $('#display-artwork').attr('checked', '');
+
+    $('#artwork').css('display', available ? 'inline-block' : 'none');
   }
 }
 
 function toggleArtwork(val) {
   if (val == null || val) return;
 
-  let hidden = (val == false), in_settings_page = location.href.includes('settings.html');
-  if (getThemeName() == 'compact' || in_settings_page) {
+  let hidden = (val == false), 
+    isCompactInSettingsPage = (areWeInSettingsPage() && localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true');
+  if (getThemeName() == 'compact' || isCompactInSettingsPage) {
     $('#controller').css('width', hidden ? '250px' : '200px');
-    $('#controller').css('height', hidden ? (in_settings_page ? '75px' : '65px') : '50px');
+    $('#controller').css('height', hidden ? (isCompactInSettingsPage ? '75px' : '65px') : '50px');
     $('.children.marquee').css('padding-left', hidden ? '0px' : '10px');
   }
 
@@ -253,6 +261,12 @@ function toggleArtwork(val) {
   //   $('#artwork').removeAttr('hidden')
   // }
   $('#artwork').css('display', val ? 'inline-block' : 'none');
+}
+
+function replaceText(text, json) {
+  if (!json) json = JSON.parse( sessionStorage.getItem('data') );
+  text = text.replace('%title%', json['title']).replace('%artist%', json['artist']).replace('%url%', json['link']);
+  return text;
 }
 
 var keyReady = false, duplicated = false;

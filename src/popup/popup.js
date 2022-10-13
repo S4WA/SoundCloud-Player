@@ -140,12 +140,20 @@ function registerEvents() {
   }
 
   $('#social .clipboard').on('click', () => {
+    let text = replaceText(templates['copy']);
+    if (text.includes(json['link']) && shareSettings['share_with_time']) {
+      text = text.replace(json['link'], json['link'] + '#t=' + json['time']['current']);
+    }
+    copyToClipboard( text );
+  });
+
+  $('.copynp').on('click', () => {
     copyToClipboard( replaceText(templates['copy']) );
-  })
+  });
 
   $('#copy').focus(() => {
     $('#copy').select();
-  })
+  });
 
   
   // No Duplicate Popout
@@ -178,11 +186,6 @@ function shareLink(social) {
     let text = replaceText( templates[social] );
     return links[social].replace( '%text%', fixedEncoder(text) ).replace( '%url%', fixedEncoder(data['link']) );
   }
-}
-
-function replaceText(text, json) {
-  if (!json) json = JSON.parse( sessionStorage.getItem('data') );
-  return text.replace('%title%', json['title']).replace('%artist%', json['artist']).replace('%url%', json['link']);
 }
 
 var ready = false, json = {}, dark = false, marqueeReady = false,
@@ -250,7 +253,7 @@ var ready = false, json = {}, dark = false, marqueeReady = false,
         <button id='prev' class='clickable' title='Prev'></button>
         <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
         <button id='next' class='clickable' title='Next'></button>
-        <button id='copynp' class='clickable' title='Copy Title & URL'></button>
+        <button class='copynp clickable' title='Copy Title & URL'></button>
       </div>
     </div>
     <hr style='margin-top: 5px;'>

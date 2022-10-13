@@ -240,7 +240,7 @@ body[dark=true] #controller-body {
   -webkit-mask-size: cover;
 }
 
-#copynp {
+.copynp {
   background-size: 60% 60%;
   background-image: url('../assets/share/copy-solid.svg');
   background-repeat: no-repeat;

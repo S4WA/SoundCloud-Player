@@ -382,7 +382,7 @@ function registerEvents() {
   $('#repeat').on('click', () => { repeat(); });
   $('#shuffle').on('click', () => { queue('shuffle'); });
   $('.title').on('click', () => { return false; });
-  $('#copynp').on('click', () => {
+  $('.copynp').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
   $('#toggle-compact').change(function () {
@@ -415,11 +415,6 @@ function registerEvents() {
   $('#duplication').change(function () {
     localStorage.setItem('duplication', duplicated = $(this).prop('checked'));
   })
-}
-
-function replaceText(text, json) {
-  if (!json) json = JSON.parse( sessionStorage.getItem('data') );
-  return text.replace('%title%', json['title']).replace('%artist%', json['artist']).replace('%url%', json['link']);
 }
 
 function stopMarquees() {
