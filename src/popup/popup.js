@@ -152,15 +152,6 @@ function registerEvents() {
   if (isPopout()) {
     $('#settings').attr('href', 'settings.html?p=1')
   }
-
-  /*$('.marquee').hover(
-    () => {
-      $('.marquee').children().toggleClass('marquee-inner');
-    },
-    () => {
-      $('.marquee').children().toggleClass('marquee-inner');
-    }
-  );*/
 }
 
 function repeat() {

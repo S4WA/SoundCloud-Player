@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
       let value = typeof settings[key] == 'string' ? settings[key] : JSON.stringify(settings[key]);
       localStorage.setItem(key, value);
     } else {
-      // let item = localStorage.getItem(key);
+      let item = localStorage.getItem(key);
+      settings[key] = (key != 'email' ? item : JSON.parse(item));
       // console.log(key, item);
-      // settings[key] = (key != 'email' ? item : JSON.parse(item));
     }
   }
 
@@ -18,6 +18,21 @@ document.addEventListener('DOMContentLoaded', () => {
   if (isPopout()) {
     $('#P').css('display', 'none');
   }
+
+  // setInterval(function() {
+  //   var currentTime = new Date()
+  //   var hours = currentTime.getHours()
+  //   var minutes = currentTime.getMinutes()
+  //   if (minutes < 10){
+  //       minutes = "0" + minutes
+  //   }
+  //   var t_str = hours + ":" + minutes + " ";
+  //   if(hours > 11){
+  //       t_str += "PM";
+  //   } else {
+  //      t_str += "AM";
+  //   }
+  // }, 1000);
 });
 
 var settings = {

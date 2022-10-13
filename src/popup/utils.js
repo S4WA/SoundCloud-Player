@@ -11,7 +11,6 @@ function queue(request, value) {
   });
 }
 
-
 function openSCTab() {
   chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
     if (results.length !== 0) {
@@ -207,7 +206,6 @@ function startMarquees() {
         $('.marquee').marquee('resume');
       }, getTextVisibleDuration() + getPauseTime());
     }
-
   }).marquee({
     direction: 'left', 
     duration: getTextVisibleDuration(),
@@ -240,13 +238,13 @@ function checkDisplayArtwork() {
 }
 
 function toggleArtwork(val) {
-  let hidden = (val != null && val == false), in_settings_page = location.href.includes('settings.html');
+  if (val == null || val) return;
+
+  let hidden = (val == false), in_settings_page = location.href.includes('settings.html');
   if (getThemeName() == 'compact' || in_settings_page) {
     $('#controller').css('width', hidden ? '250px' : '200px');
     $('#controller').css('height', hidden ? (in_settings_page ? '75px' : '65px') : '50px');
-    if (in_settings_page) {
-      $('.chiuldren.marquee').css('padding-left', hidden ? '0' : '10px');
-    }
+    $('.children.marquee').css('padding-left', hidden ? '0px' : '10px');
   }
 
   // if (hidden) {
