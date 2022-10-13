@@ -17,3 +17,6 @@ You can control the tracks without changing your tab. Just open the popup n boom
 ![image2](https://github.com/S4WA/soundcloud-player/blob/master/img/2.png?raw=true)
 ![image3](https://github.com/S4WA/soundcloud-player/blob/master/img/3.png?raw=true)
 ![image4](https://github.com/S4WA/soundcloud-player/blob/master/img/4.png?raw=true)
+
+# Spagetti Code Warning
+...
