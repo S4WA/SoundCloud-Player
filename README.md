@@ -1,4 +1,4 @@
-# Soundcloud-Player
+# SoundCloud-Player
 This extension is for the soundcloud heavy users.
 
 You can control the tracks without changing your tab. Just open the popup n boom.
