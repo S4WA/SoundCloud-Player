@@ -336,6 +336,9 @@ function putAllLinks() {
   $('#support').on('click', () => {
     openURL('https://ko-fi.com/sawanese');
   });
+  $('.wiki').on('click', () => {
+    openURL('https://github.com/S4WA/soundcloud-player/wiki');
+  });
 }
 
 function initDarkmode() {
