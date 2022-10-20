@@ -73,9 +73,15 @@ table {
   border-spacing: 0;
 }
 
-table th, table td {
+#formats th, #formats td {
   padding: 4px 0;
   text-align: center;
+  width: 50%;
+}
+
+#shortcuts th, #shortcuts td {
+  padding: 4px 7px;
+  text-align: left;
 }
 
 table tr:nth-child(odd) {

@@ -70,14 +70,14 @@ function init() {
 }
 
 function registerAudioButtons() {
-  $('#toggle').on('click', () => { toggle(); });
-  $('#prev').on('click', () => { queue('prev'); });
-  $('#next').on('click', () => { queue('next'); });
-  $('#fav').on('click', () => { queue('fav'); });
-  $('#track,.title').on('click', () => { openSCTab(); location.reload(); });
-  $('#artwork').on('click', () => { openSCTab(); location.reload(); });
-  $('#repeat').on('click', () => { repeat(); });
-  $('#shuffle').on('click', () => { queue('shuffle'); });
+  $('#toggle').on('click', () => { toggle(); openSCTab2(); });
+  $('#prev').on('click', () => { queue('prev'); openSCTab2(); });
+  $('#next').on('click', () => { queue('next'); openSCTab2(); });
+  $('#fav').on('click', () => { queue('fav'); openSCTab2(); });
+  $('#track,.title').on('click', () => { openSCTab(); });
+  $('#artwork').on('click', () => { openSCTab(); });
+  $('#repeat').on('click', () => { repeat(); openSCTab2(); });
+  $('#shuffle').on('click', () => { queue('shuffle'); openSCTab2(); });
   $('#title,.title').on('click', () => { return false; });
 
   $('#volume-icon').on('click', () => { queue('mute'); });
@@ -160,12 +160,6 @@ function registerEvents() {
   if (isPopout()) {
     $('#settings').attr('href', 'settings.html?p=1')
   }
-}
-
-function repeat() {
-  if (json['repeat'] == null || $('#repeat') == null) return;
-  queue('repeat');
-  $('#repeat').attr( 'mode', json['repeat'] );
 }
 
 function toggle() {

@@ -11,7 +11,21 @@ function queue(request, value) {
   });
 }
 
+function openSCTab2() {
+  if (!isPopout()) {
+    window.close();
+  }
+  chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
+    if (results.length == 0) {
+      chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
+    }
+  });
+}
+
 function openSCTab() {
+  if (!isPopout()) {
+    window.close();
+  }
   chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
     if (results.length !== 0) {
     // Check SoundCloud Tab
@@ -77,6 +91,12 @@ function isJson(string) {
       return false;
   }
   return true;
+}
+
+function repeat() {
+  if (json['repeat'] == null || $('#repeat') == null) return;
+  queue('repeat');
+  $('#repeat').attr( 'mode', json['repeat'] );
 }
 
 // Settings
@@ -158,35 +178,43 @@ function initKeyboardBinds() {
   $('body').keydown(function (e) {
     if (keyReady == false) return true;
     switch (e.keyCode) {
-      case 32: { // space
+      case 32: { // Space
         queue('toggle');
         return false;
       }
-      case 9: { // tab
+      case 9: { // Tab
         openSCTab();
         break;
       }
-      case 38: { // up arrow
+      case 38: { // Arrow Up
         if (e.shiftKey) queue('up');
         break;
       }
-      case 40: { // down arrow
+      case 40: { // Arrow Down
         if (e.shiftKey) queue('down');
         break;
       }
-      case 77: { // m key
+      case 77: { // M Key
         queue('mute');
         break;
       }
-      case 76: { // l key
-        queue('fav')
+      case 76: { // L Key
+        if (e.shiftKey) {
+          repeat();
+        } else {
+          queue('fav');
+        }
         break;
       }
-      case 37: { // arrow left
+      case 83: { // S Key
+        if (e.shiftKey) queue('shuffle');
+        break;
+      }
+      case 37: { // Arrow Left
         queue(e.shiftKey ? 'prev' : 'seekb');
         break;
       }
-      case 39: { // arrow right
+      case 39: { // Arrow Righnt
         queue(e.shiftKey ? 'next' : 'seekf');
         break;
       }

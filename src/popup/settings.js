@@ -377,8 +377,8 @@ function registerEvents() {
   $('#prev').on('click', () => { queue('prev'); });
   $('#next').on('click', () => { queue('next'); });
   $('#fav').on('click', () => { toggleFav(); });
-  $('.title').on('click', () => { goBackToMain(); });
-  $('#artwork').on('click', () => { goBackToMain(); });
+  $('.title').on('click', () => { openSCTab(); });
+  $('#artwork').on('click', () => { openSCTab(); });
   $('#repeat').on('click', () => { repeat(); });
   $('#shuffle').on('click', () => { queue('shuffle'); });
   $('.title').on('click', () => { return false; });
