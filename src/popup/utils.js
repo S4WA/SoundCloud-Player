@@ -12,11 +12,11 @@ function queue(request, value) {
 }
 
 function openSCTab2() {
-  if (!isPopout()) {
-    window.close();
-  }
   chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
     if (results.length == 0) {
+      if (!isPopout()) {
+        window.close();
+      }
       chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
     }
   });
