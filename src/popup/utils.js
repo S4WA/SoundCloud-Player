@@ -162,6 +162,10 @@ function initKeyboardBinds() {
         queue('toggle');
         return false;
       }
+      case 9: { // tab
+        openSCTab();
+        break;
+      }
       case 38: { // up arrow
         if (e.shiftKey) queue('up');
         break;
