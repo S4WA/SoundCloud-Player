@@ -3,7 +3,7 @@ This extension is for the soundcloud heavy users.
 
 You can control the tracks without changing your tab. Just open the popup n boom.
 
-[How to Use](https://github.com/S4WA/soundcloud-player/wiki/How-to-Use)
+[Wiki](https://github.com/S4WA/soundcloud-player/wiki) | [How to Use](https://github.com/S4WA/soundcloud-player/wiki/How-to-Use)
 
 *Thanks for the 7k users!*
 
