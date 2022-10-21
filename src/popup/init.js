@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  document.title = 'SoundCloud Player';
   for (key in settings) {
     if (localStorage.getItem(key) == null) {
       let value = typeof settings[key] == 'string' ? settings[key] : JSON.stringify(settings[key]);
