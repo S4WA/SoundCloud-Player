@@ -26,26 +26,23 @@ function openSCTab() {
   if (!isPopout()) {
     window.close();
   }
+  // Search for SoundCloud Tab
   chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
+    // If no sc tab
     if (results.length !== 0) {
-    // Check SoundCloud Tab
-      chrome.tabs.query({ active: true }, (tab) => {        
-        if (results[0].id == tab[0].id) {
-          // If SoundCloud Tab is focused already then click to the current song
-          queue("open");
-        } else {
-          // If not, focus to the tab
-          chrome.tabs.update(results[0].id, { active : true }, () => {
-            if (results[0].windowId != tab[0].windowId) {
-              chrome.windows.update(results[0].windowId, { focused : true }, () => {
-                // window.close();
-              });
-            }
-          });
-        }
-      })
+      // Search the all active windows
+      chrome.tabs.query({ active: true }, (windows) => {
+        // Focus the tab
+        chrome.tabs.update(results[0].id, { active : true }, () => {
+          for (var i = 0; i < windows.length; i++) {
+            if (results[0].id != windows[i].id) continue;
+            // Open the current track's page
+            queue('open');
+          }
+        });
+      });
+    // If there was no SoundCloud tab, Create one
     } else {
-      // If there was no SoundCloud tab, Create one
       chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
       // window.close();
     }
@@ -182,7 +179,7 @@ function initKeyboardBinds() {
         queue('toggle');
         return false;
       }
-      case 9: { // Tab
+      case 81: { // Q Key
         openSCTab();
         break;
       }
