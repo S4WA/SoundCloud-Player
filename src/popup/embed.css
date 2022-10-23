@@ -1,0 +1,39 @@
+body {
+  color: #fff;
+  background-color: RED;
+  background-size: calc(500px + 2em + 1200px) 500px;
+  width: calc(500px + 2em + 1200px);
+  height: 500px;
+  margin: 0;
+  z-index: -100;
+}
+
+#artwork {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  margin-right: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url(../icon.png);
+  z-index: 2;
+}
+
+#right-box {
+  position: absolute;
+  padding-left: calc(500px + 1em);
+  height: 500px;
+  background-color: #33cc00;
+  z-index: 1;
+}
+
+#right-box span, #right-box a {
+  font-size: 100px;
+  color: #fff;
+}
+
+#right-box > div {
+  color: #fff;
+  width: 1200px;
+  height: 50%;
+}

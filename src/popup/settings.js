@@ -9,73 +9,97 @@ document.addEventListener('DOMContentLoaded', () => {
   checkDuplication();
   initMarquees();
   registerEvents();
-  initKeyboardBinds();
   initResetButton();
   checkDDAnimation();
   checkDisplayArtwork();
-  ready = true;
+  initReceiver();
+
+  if (isPopout()) {
+    $('#captureme').attr('href', 'embed.html?p=1');
+    $('#captureme').text('Capture Me');
+    $('#captureguide').on('click', function() {
+      openURL('https://github.com/S4WA/SoundCloud-Player/wiki/For-Streamers-and-Gamers#capture-the-green-screen');
+    });
+    $('#captureguide').text('(Guide)');
+  }
 });
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  if (message['type'] != 'update' || message['value'] == null) return false;
+async function initReceiver() {
+  queue('request-data').then((val) => {
+    update(val);
+    json = val;
+    sessionStorage.setItem('data', JSON.stringify(json));
+  });
 
-  var items = message['value'];
-  if (json == items) return false;
+  setInterval(async() => {
+    queue('request-data').then((val) => {
+      if (val != null && val != {}) {
+        update(val);
+        sessionStorage.setItem('data', JSON.stringify(json));
+        return val;
+      }
+      return {};
+    }).then((val) => {
+      json = val;
+    });
 
-  if ($('#controller-body').css('display') == 'none' && 
-    localStorage.getItem('compact_in_settings') != null && 
-    localStorage.getItem('compact_in_settings') == 'true') {
-    $('#controller-body').css('display', 'inline-block');
-    keyReady = true;
+    let [ScTab] = await chrome.tabs.query({ url: "*://soundcloud.com/*" });
+    // If sc tab is closed -> reload the popup.html (itself)
+    if (keyReady && ScTab == null) {
+      location.reload(); // RESET EVERYTHING!
+    }
+  }, 500);
+}
+
+function update(val) {
+  let compact_enabled = localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true';
+  
+  if (val == null) return;
+  if (compact_enabled == false) return;
+
+  $('#controller-body').css('display', 'inline-block');
+  keyReady = true;
+
+
+  // set artwork (text)
+  if (val['artwork'] != json['artwork']) {
+  // set artwork (text)
+    $('#artwork').css('background-image', val['artwork']);
   }
 
-  // artwork
-  if (items['artwork'] != json['artwork']) {
-    $('#artwork').css('background-image', items['artwork']);
+  // set title (text)
+  if (val['title'] != json['title']) {
+    $('.title').text( replaceText( localStorage.getItem('trackdisplay'), val) );
+    $('.title').attr( 'title', replaceText( localStorage.getItem('trackdisplay'), val) );
+  }
+
+  // set link (text)
+  if (val['link'] != json['link']) {
+    $('.title').attr( 'href', val['link'] );
   }
   
-  // track
-  if (items['title'] != json['title']) {
-    $('.title').text( replaceText( localStorage.getItem('trackdisplay'), items) );
-    $('.title').attr( 'title', replaceText( localStorage.getItem('trackdisplay'), items) );
+  // set playing status (true/false)
+  if (val['playing'] != json['playing']) {
+    $('#toggle').attr( 'playing', val['playing'] );
   }
-  // link
-  if (items['link'] != json['link']) {
-    $('.title').attr( 'href', items['link'] );
-  }
-  
-  // play/pause
-  if (items['playing'] != json['playing']) {
-    $('#toggle').attr( 'playing', items['playing'] );
+
+  // set favorite status (true/false)
+  if (val['favorite'] != null && val['favorite'] != json['favorite']) {
+    $('#fav').attr( 'favorite', val['favorite'] );
   }
   
-  // fav/unfav
-  if (items['favorite'] != json['favorite']) {
-    $('#fav').attr( 'favorite', items['favorite'] );
+  // set shuffle status (true/false)
+  if (val['shuffle'] != null && val['shuffle'] != json['shuffle']) {
+    $('#shuffle').attr( 'shuffle', val['shuffle'] );
   }
   
-  // shuffle
-  if (items['shuffle'] != json['shuffle']) {
-    $('#shuffle').attr( 'shuffle', items['shuffle'] );
+  // set repeat status (one/all/none)
+  if (val['repeat'] != null && val['repeat'] != json['repeat']) {
+    $('#repeat').attr( 'mode', val['repeat'] );
   }
-  
-  // repeat
-  if (items['repeat'] != json['repeat']) {
-    $('#repeat').attr( 'mode', items['repeat'] );
-  }
-  
-  // volume
-  if (items['volume'] != json['volume']) {
-    $('#current-volume').text( Math.floor(items['volume']) + ' %' );
-  }
-  
-  // mute/unmute
-  if (items['mute'] != json['mute']) {
-    items['mute'] ? $('#volume-icon').addClass('muted') : $('#volume-icon').removeClass('muted');
-  }
-  
-  // times
-  let timeJson = items['time'];
+
+  // set current time & duration
+  let timeJson = val['time'];
 
   if ($('#current').text() != timeJson['current']) {
     $('#current').text(timeJson['current']);
@@ -85,9 +109,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     $('#end').text(timeJson['end']);
   }
 
-  json = items;
-  sessionStorage.setItem('data', JSON.stringify(json));
-});
+
+}
 
 function initResetButton() {
   $('#reset').on('click', function () {
@@ -454,4 +477,4 @@ function checkDuplication() {
 }
 
 var dark = false;
-var ready = false, json = {};
+var json = {};

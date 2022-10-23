@@ -248,7 +248,6 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
 }
 
 #controller-body[mode='compact'] .title {
-  display: none;
   white-space: nowrap;
 }
 

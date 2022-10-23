@@ -1,52 +1,63 @@
-function queue(request, value) {
-  if (!ready) return;
-  request = String(request).toLowerCase();
-  chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
-    if (results.length != 0) {
-      var jsonRequest = {}
-      jsonRequest["type"] = request;
-      if (value) jsonRequest["value"] = value;
-      return chrome.tabs.sendMessage(results[0].id, jsonRequest, null);
-    }
-  });
-}
+async function queue(request, value) {
+  return new Promise((resolve, reject) => {
+    request = String(request).toLowerCase();
+    chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
+      if (results.length != 0) {
+        var jsonRequest = {}
 
-function openSCTab2() {
-  chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
-    if (results.length == 0) {
-      if (!isPopout()) {
-        window.close();
+        jsonRequest["type"] = request;
+
+        if (value) jsonRequest["value"] = value;
+
+        chrome.tabs.sendMessage(results[0].id, jsonRequest, function(res) {
+          // console.log(res);
+          resolve(res);
+        });
       }
-      chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
-    }
+    });
   });
 }
 
-function openSCTab() {
+async function openSCTab2() {
+  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+  if (!ScTab) {
+    if (!isPopout()) {
+      window.close();
+    }
+    chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
+  }
+  return;
+}
+
+async function openSCTab() {
   if (!isPopout()) {
     window.close();
   }
-  // Search for SoundCloud Tab
-  chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
-    // If no sc tab
-    if (results.length !== 0) {
-      // Search the all active windows
-      chrome.tabs.query({ active: true }, (windows) => {
-        // Focus the tab
-        chrome.tabs.update(results[0].id, { active : true }, () => {
-          for (var i = 0; i < windows.length; i++) {
-            if (results[0].id != windows[i].id) continue;
-            // Open the current track's page
-            queue('open');
-          }
-        });
-      });
-    // If there was no SoundCloud tab, Create one
-    } else {
-      chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
-      // window.close();
-    }
-  });
+
+  // Search for SoundCloud Tab (true/false)
+  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+  let [currentTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  
+  // -> If no Sc Tab, Make one
+  if (!ScTab) {
+    chrome.tabs.create({ url: 'https://soundcloud.com' });
+    return;
+  }
+
+  // -> If not same window, focus the window that has sc tab
+  if (currentTab.windowId != ScTab.windowId) {
+    chrome.windows.update(ScTab.windowId, { focused : true }, null);
+  }
+
+  // -> If current tab is sc tab ->
+  //    no  ->  focus the sc tab.
+  //    yes ->  queue open (no need to focus)
+  if (currentTab.id != ScTab.id) {
+    chrome.tabs.update(ScTab.id, { active : true }, () => {});
+  } else {
+    queue('open');
+  }
+  return;
 }
 
 function fixedEncoder(str) {
@@ -88,12 +99,6 @@ function isJson(string) {
       return false;
   }
   return true;
-}
-
-function repeat() {
-  if (json['repeat'] == null || $('#repeat') == null) return;
-  queue('repeat');
-  $('#repeat').attr( 'mode', json['repeat'] );
 }
 
 // Settings
@@ -197,7 +202,7 @@ function initKeyboardBinds() {
       }
       case 76: { // L Key
         if (e.shiftKey) {
-          repeat();
+          queue('repeat');
         } else {
           queue('fav');
         }
@@ -266,22 +271,18 @@ function areWeInSettingsPage() {
 function checkDisplayArtwork() {
   let available = Bool( localStorage.getItem('display-artwork') );
   toggleArtwork(available);
-  if (areWeInSettingsPage()) {
-    if (available) $('#display-artwork').attr('checked', '');
-
-    $('#artwork').css('display', available ? 'inline-block' : 'none');
-  }
+  if (areWeInSettingsPage() && available) $('#display-artwork').attr('checked', '');
 }
 
 function toggleArtwork(val) {
-  if (val == null || val) return;
+  if (val == null) return;
 
   let hidden = (val == false), 
     isCompactInSettingsPage = (areWeInSettingsPage() && localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true');
   if (getThemeName() == 'compact' || isCompactInSettingsPage) {
     $('#controller').css('width', hidden ? '250px' : '200px');
     $('#controller').css('height', hidden ? (isCompactInSettingsPage ? '75px' : '65px') : '50px');
-    $('.children.marquee').css('padding-left', hidden ? '0px' : '10px');
+    $('.children.marquee').css('padding-left', hidden ? '5px' : '10px');
   }
 
   // if (hidden) {

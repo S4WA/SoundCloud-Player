@@ -1,42 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
   document.title = 'SoundCloud Player';
-  for (key in settings) {
-    if (localStorage.getItem(key) == null) {
-      let value = typeof settings[key] == 'string' ? settings[key] : JSON.stringify(settings[key]);
-      localStorage.setItem(key, value);
-    } else {
-      let item = localStorage.getItem(key);
-      settings[key] = (key != 'email' ? item : JSON.parse(item));
-      // console.log(key, item);
+  new Promise((resolve, reject) => {
+    for (key in settings) {
+      if (localStorage.getItem(key) == null) {
+        let value = (typeof settings[key] == 'string') ? settings[key] : JSON.stringify(settings[key]);
+        localStorage.setItem(key, value);
+      } else {
+        let item = localStorage.getItem(key);
+        settings[key] = (key != 'email' ? item : JSON.parse(item));
+      }
     }
-  }
+    resolve();
+  }).then(() => {
+    updateThemeColor();
+    updateFont();
+    updateBGcolor();
+    updateFontSize();
+    return;
+  }).then(() => {
+    initKeyboardBinds();
+  });
 
-  updateThemeColor();
-  updateFont();
-  updateBGcolor();
-  updateFontSize();
-
-  if (isPopout()) {
-    $('#P').css('display', 'none');
-  }
-
-  // setInterval(function() {
-  //   var currentTime = new Date()
-  //   var hours = currentTime.getHours()
-  //   var minutes = currentTime.getMinutes()
-  //   if (minutes < 10){
-  //       minutes = "0" + minutes
-  //   }
-  //   var t_str = hours + ":" + minutes + " ";
-  //   if(hours > 11){
-  //       t_str += "PM";
-  //   } else {
-  //      t_str += "AM";
-  //   }
-  // }, 1000);
+  $('#version').text('v' + chrome.runtime.getManifest().version);
 });
 
-var settings = {
+var json = {}, settings = {
   'trackdisplay': '%title% by %artist%',
   'themecolor': '#FF5500',
   'bgcolor': '#3F3F3F',

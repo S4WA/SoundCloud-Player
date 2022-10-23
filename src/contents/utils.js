@@ -13,7 +13,7 @@ function getArtist() {
 
 function getArtwork() {
   let a = $(".playbackSoundBadge span.sc-artwork").css("background-image");
-  if (a.includes('120x120')) {
+  if (a != null && a.includes('120x120')) {
     a = a.replace('120x120', '500x500')
   }
   return a;
