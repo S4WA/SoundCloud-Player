@@ -22,10 +22,7 @@ async function openSCTab2() {
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
   if (!ScTab) {
     chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
-  }
-
-  if (!isPopout()) {
-    window.close();
+    if (!isPopout()) window.close();
   }
   return;
 }
@@ -37,7 +34,6 @@ async function openSCTab() {
   
   // -> If no Sc Tab, Make one
   if (!ScTab) {
-    console.log('creaete')
     chrome.tabs.create({ url: 'https://soundcloud.com' });
     return;
   }

@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#captureme').attr('href', 'embed.html?p=1');
     $('#captureme').text('Capture Me');
     $('#captureguide').on('click', function() {
-      openURL('https://github.com/S4WA/SoundCloud-Player/wiki/For-Streamers-and-Gamers#capture-the-green-screen');
+      openURL('https://github.com/S4WA/SoundCloud-Player/wiki/For-Streamers-and-Gamers#using-the-green-screen-soundcloud-player-embed');
     });
     $('#captureguide').text('(Guide)');
   }
