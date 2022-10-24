@@ -21,25 +21,23 @@ async function queue(request, value) {
 async function openSCTab2() {
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
   if (!ScTab) {
-    if (!isPopout()) {
-      window.close();
-    }
     chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
+  }
+
+  if (!isPopout()) {
+    window.close();
   }
   return;
 }
 
 async function openSCTab() {
-  if (!isPopout()) {
-    window.close();
-  }
-
   // Search for SoundCloud Tab (true/false)
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
   let [currentTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   
   // -> If no Sc Tab, Make one
   if (!ScTab) {
+    console.log('creaete')
     chrome.tabs.create({ url: 'https://soundcloud.com' });
     return;
   }
@@ -56,6 +54,10 @@ async function openSCTab() {
     chrome.tabs.update(ScTab.id, { active : true }, () => {});
   } else {
     queue('open');
+  }
+
+  if (!isPopout()) {
+    window.close();
   }
   return;
 }
