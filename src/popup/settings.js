@@ -276,17 +276,6 @@ function initTemplates() {
   if (localStorage.getItem('twitter') != null) {
     $('#twitter').val( localStorage.getItem('twitter') );
   }
-  if (localStorage.getItem('facebook') != null) {
-    $('#facebook').val( localStorage.getItem('facebook') );
-  }
-  if (localStorage.getItem('tumblr') != null) {
-    $('#tumblr').val( localStorage.getItem('tumblr') );
-  }
-  if (localStorage.getItem('email') != null) {
-    let data = JSON.parse( localStorage.getItem('email') );
-    $('#email_subject').val(data['subject']);
-    $('#email_body').val(data['body']);
-  }
   if (localStorage.getItem('copy') != null) {
     $('#copy').val( localStorage.getItem('copy') );
   }
@@ -313,25 +302,6 @@ function initInputs() {
 
   $('#twitter').on('input', function () {
     localStorage.setItem('twitter', $(this).val());
-  });
-  $('#facebook').on('input', function () {
-    localStorage.setItem('facebook', $(this).val());
-  });
-  $('#tumblr').on('input', function () {
-    localStorage.setItem('tumblr', $(this).val());
-  });
-
-  $('#email_subject').on('input', function () {
-    let data = JSON.parse(localStorage.getItem('email'));
-    // console.log($(this).val());
-    data['subject'] = $(this).val();
-    localStorage.setItem('email', JSON.stringify(data));
-  });
-  $('#email_body').on('input', function () {
-    let data = JSON.parse(localStorage.getItem('email'));
-    // console.log($(this).val());
-    data['body'] = $(this).val();
-    localStorage.setItem('email', JSON.stringify(data));
   });
 
   $('#copy').on('input', function () {

@@ -16,7 +16,7 @@ function toggleElements(arg) {
 async function init() {
   for (key in templates) {
     let item = localStorage.getItem(key);
-    templates[key] = key != 'email' ? item : JSON.parse(item);
+    templates[key] = item;
   }
 
   // No Duplicate Popout
@@ -246,7 +246,7 @@ function registerEvents() {
   });
 
   // Social
-  var socials = ['Twitter', 'Facebook', 'Tumblr', 'Email'];
+  var socials = ['Twitter'];
   for (var i in socials) with ({i:i}) {
     var elem = $( '#social .' + socials[i].toLowerCase() );
     elem.on('click', () => {
@@ -278,20 +278,11 @@ function shareLink(social) {
   social = social.toLowerCase();
   let data = JSON.parse( sessionStorage.getItem('data') ); 
   // console.log(data);
-  if (social == 'email') {
-    let subject = replaceText( templates['email']['subject'] ), body = replaceText( templates['email']['body'] );
-    if (shareSettings['share_with_time']) {
-      subject = subject.replace( data['link'], data['link'] + '#t=' + data['time']['current'] );
-      body = body.replace( data['link'], data['link'] + '#t=' + data['time']['current'] );
-    }
-    return links['email'].replace( '%subject%', fixedEncoder(subject) ).replace( '%body%', fixedEncoder(body) );
-  } else {
-    let text = replaceText( templates[social] );
-    if (shareSettings['share_with_time']) {
-      text = text.replace( data['link'], data['link'] + '#t=' + data['time']['current'] );
-    }
-    return links[social].replace( '%text%', fixedEncoder(text) );
+  let text = replaceText( templates[social] );
+  if (shareSettings['share_with_time']) {
+    text = text.replace( data['link'], data['link'] + '#t=' + data['time']['current'] );
   }
+  return links[social].replace( '%text%', fixedEncoder(text) );
 }
 
 // Variables
@@ -300,18 +291,9 @@ var dark = false,
   hideList = ['#close', '#second', 'hr:last-child', '#controller-body[mode="compact"] #hyphen', '.marquee .title'],
   links = {
     'twitter': 'https://twitter.com/intent/tweet?text=%text%&hashtags=NowPlaying',
-    'facebook': 'https://www.facebook.com/sharer/sharer.php?u=%text%',
-    'tumblr': 'https://www.tumblr.com/widgets/share/tool?canonicalUrl=%url%&posttype=audio&tags=SoundCloud%2Cmusic%2CNowPlaying&caption=%text%',
-    'email': 'mailto:?subject=%subject%&body=%body%'
   },
   templates = {
     'twitter': '%title% By %artist% %url%',
-    'facebook': '%url%',
-    'tumblr': '%title% By %artist%',
-    'email': {
-      'subject': '%title% By %artist%',
-      'body': '%url%'
-    },
     'copy': '%title% By %artist% %url%'
   },
   shareSettings = {
