@@ -19,7 +19,5 @@ You can control the tracks without changing your tab. Just open the popup n boom
 - [Buy me a coffee!](https://ko-fi.com/sawanese)
 
 # Disclaimer
-If you make an issue, Please write it in English or Japanese. Other language will not be supported.
+If you want to make an issue, Please write it in English or Japanese. Other language will not be supported.
 
-# Spagetti Code Warning
-...
