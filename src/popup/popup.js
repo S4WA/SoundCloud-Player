@@ -71,6 +71,7 @@ async function init() {
     });
 
     let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+
     // If sc tab is closed -> reload the popup.html (itself)
     if (keyReady && ScTab == null) {
       location.reload(); // RESET EVERYTHING!
@@ -228,14 +229,6 @@ function registerEvents() {
   // Link buttons
   $('#store').on('click', () => {
     openURL('https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej');
-  });
-  $('#close').on('click', () => {
-    chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
-      if (results.length != 0) {
-         chrome.tabs.remove(results[0].id, () => {});
-         window.close();
-      }
-    });
   });
 
   // Share

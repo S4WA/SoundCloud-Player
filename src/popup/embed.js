@@ -32,6 +32,7 @@ async function init() {
     });
 
     let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+
     // If sc tab is closed -> reload the popup.html (itself)
     if (keyReady && ScTab == null) {
       location.reload(); // RESET EVERYTHING!
