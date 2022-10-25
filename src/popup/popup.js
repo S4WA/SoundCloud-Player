@@ -70,7 +70,7 @@ async function init() {
       json = val;
     });
 
-    let [ScTab] = await chrome.tabs.query({ url: "*://soundcloud.com/*" });
+    let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
     // If sc tab is closed -> reload the popup.html (itself)
     if (keyReady && ScTab == null) {
       location.reload(); // RESET EVERYTHING!
@@ -79,6 +79,9 @@ async function init() {
 }
 
 async function update(val) {
+  // if value is null or isn't json, return. 
+  if (val == null || typeof val !== 'object') return;
+
   // set artwork (text)
   if (val['artwork'] != null && val['artwork'] != json['artwork']) {
     $('#artwork').css('background-image', val['artwork']);

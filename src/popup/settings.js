@@ -43,7 +43,7 @@ async function initReceiver() {
       json = val;
     });
 
-    let [ScTab] = await chrome.tabs.query({ url: "*://soundcloud.com/*" });
+    let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
     // If sc tab is closed -> reload the popup.html (itself)
     if (keyReady && ScTab == null) {
       location.reload(); // RESET EVERYTHING!
@@ -51,10 +51,11 @@ async function initReceiver() {
   }, 500);
 }
 
-function update(val) {
+async function update(val) {
+  // if value is null or isn't json, return. 
+  if (val == null || typeof val !== 'object') return;
+
   let compact_enabled = localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true';
-  
-  if (val == null) return;
   if (compact_enabled == false) return;
 
   $('#controller-body').css('display', 'inline-block');
@@ -62,24 +63,24 @@ function update(val) {
 
 
   // set artwork (text)
-  if (val['artwork'] != json['artwork']) {
+  if (val['artwork'] != null && val['artwork'] != json['artwork']) {
   // set artwork (text)
     $('#artwork').css('background-image', val['artwork']);
   }
 
   // set title (text)
-  if (val['title'] != json['title']) {
+  if (val['title'] != null && val['title'] != json['title']) {
     $('.title').text( replaceText( localStorage.getItem('trackdisplay'), val) );
     $('.title').attr( 'title', replaceText( localStorage.getItem('trackdisplay'), val) );
   }
 
   // set link (text)
-  if (val['link'] != json['link']) {
+  if (val['link'] != null && val['link'] != json['link']) {
     $('.title').attr( 'href', val['link'] );
   }
   
   // set playing status (true/false)
-  if (val['playing'] != json['playing']) {
+  if (val['playing'] != null && val['playing'] != json['playing']) {
     $('#toggle').attr( 'playing', val['playing'] );
   }
 
@@ -99,17 +100,18 @@ function update(val) {
   }
 
   // set current time & duration
-  let timeJson = val['time'];
+  if (val['time'] != null) {
+    let timeJson = val['time'];
 
-  if ($('#current').text() != timeJson['current']) {
-    $('#current').text(timeJson['current']);
-    $('#share_current_time').val(timeJson['current']);
+    if ($('#current').text() != timeJson['current']) {
+      $('#current').text(timeJson['current']);
+      $('#share_current_time').val(timeJson['current']);
+    }
+
+    if ($('#end').text() != timeJson['end']) {
+      $('#end').text(timeJson['end']);
+    }
   }
-  if ($('#end').text() != timeJson['end']) {
-    $('#end').text(timeJson['end']);
-  }
-
-
 }
 
 function initResetButton() {

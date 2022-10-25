@@ -1,13 +1,13 @@
 async function queue(request, value) {
   return new Promise((resolve, reject) => {
     request = String(request).toLowerCase();
-    chrome.tabs.query({ url: "*://soundcloud.com/*" }, (results) => {
+    chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
       if (results.length != 0) {
         var jsonRequest = {}
 
-        jsonRequest["type"] = request;
+        jsonRequest['type'] = request;
 
-        if (value) jsonRequest["value"] = value;
+        if (value) jsonRequest['value'] = value;
 
         chrome.tabs.sendMessage(results[0].id, jsonRequest, function(res) {
           // console.log(res);
@@ -21,7 +21,7 @@ async function queue(request, value) {
 async function openSCTab2() {
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
   if (!ScTab) {
-    chrome.tabs.create({ url: "https://soundcloud.com" }, (tab) => {});
+    await chrome.tabs.create({ url: 'https://soundcloud.com' }, (tab) => {});
     if (!isPopout()) window.close();
   }
   return;
@@ -34,22 +34,22 @@ async function openSCTab() {
   
   // -> If no Sc Tab, Make one
   if (!ScTab) {
-    chrome.tabs.create({ url: 'https://soundcloud.com' });
+    await chrome.tabs.create({ url: 'https://soundcloud.com' });
     return;
   }
 
   // -> If not same window, focus the window that has sc tab
   if (currentTab.windowId != ScTab.windowId) {
-    chrome.windows.update(ScTab.windowId, { focused : true }, null);
+    await chrome.windows.update(ScTab.windowId, { focused : true }, null);
   }
 
   // -> If current tab is sc tab ->
   //    no  ->  focus the sc tab.
   //    yes ->  queue open (no need to focus)
   if (currentTab.id != ScTab.id) {
-    chrome.tabs.update(ScTab.id, { active : true }, () => {});
+    await chrome.tabs.update(ScTab.id, { active : true }, () => {});
   } else {
-    queue('open');
+    await queue('open');
   }
 
   if (!isPopout()) {
@@ -69,34 +69,25 @@ function openURL(link) {
 }
 
 function copyToClipboard(text) {
-  var input = $("<input>"), 
+  var input = $('<input>'), 
     style = {
-      "position": "fixed",
-      "opacity": 0
+      'position': 'fixed',
+      'opacity': 0
     };
 
   input.css(style);
   input.val(text);
 
-  $("body").append(input);
+  $('body').append(input);
 
   input.select();
-  document.execCommand("Copy");
+  document.execCommand('Copy');
 
   input.remove();
 };
 
 function Bool(string) {
-  return string.toLowerCase() == "true";
-}
-
-function isJson(string) {
-  try {
-      JSON.parse(str);
-  } catch (e) {
-      return false;
-  }
-  return true;
+  return string.toLowerCase() == 'true';
 }
 
 // Settings
@@ -107,42 +98,41 @@ function getThemeName() {
 
 function updateThemeColor(color) {
   if (!color) {
-    color = localStorage.getItem("themecolor");
+    color = localStorage.getItem('themecolor');
   }
-  if (color != localStorage.getItem("themecolor")){
-    localStorage.setItem("themecolor", color);
+  if (color != localStorage.getItem('themecolor')){
+    localStorage.setItem('themecolor', color);
   }
-  $(':root').css("--theme-color", color);
+  $(':root').css('--theme-color', color);
 }
 
 function updateBGcolor(color) {
   if (!color) {
-    color = localStorage.getItem("bgcolor");
+    color = localStorage.getItem('bgcolor');
   }
-  if (color != localStorage.getItem("bgcolor")){
-    localStorage.setItem("bgcolor", color);
+  if (color != localStorage.getItem('bgcolor')){
+    localStorage.setItem('bgcolor', color);
   }
-  $(':root').css("--bg-color", color);
+  $(':root').css('--bg-color', color);
 }
 
 function updateFont(font) {
   if (!font) {
-    font = localStorage.getItem("font");
-  } else if (font != localStorage.getItem("font")){
-    localStorage.setItem("font", font);
+    font = localStorage.getItem('font');
+  } else if (font != localStorage.getItem('font')){
+    localStorage.setItem('font', font);
   }
-  // $("*").css("font-family", font);
-  $(":root").css("--custom-font", font);
+  $(':root').css('--custom-font', font);
 }
 
 function updateFontSize(px) {
   if (!px) {
-    px = localStorage.getItem("font-size");
-  } else if (px != localStorage.getItem("font-size")) {
+    px = localStorage.getItem('font-size');
+  } else if (px != localStorage.getItem('font-size')) {
     localStorage.setItem('font-size', px);
   }
 
-  $(":root").css("--font-size", px);
+  $(':root').css('--font-size', px);
 }
 
 function toggleDarkmode() {
@@ -151,16 +141,16 @@ function toggleDarkmode() {
 
 function darkmode(val) {
   if (val == null) return;
-  $("body").attr("dark", val);
-  $("#toggle_darkmode").attr("dark", val); // this attr is for the icons 
-  localStorage.setItem("darkmode", val);
+  $('body').attr('dark', val);
+  $('#toggle_darkmode').attr('dark', val); // this attr is for the icons 
+  localStorage.setItem('darkmode', val);
   return val;
 }
 
 function popup(mylink, windowname) {
   chrome.windows.create({
     url: mylink,
-    type: "popup",
+    type: 'popup',
     width: 300,
     height: 440,
     focused: true
@@ -168,7 +158,7 @@ function popup(mylink, windowname) {
 }
 
 function isPopout() {
-  return location.href.includes("p=1");
+  return location.href.includes('p=1');
 }
 
 function initKeyboardBinds() {
