@@ -96,14 +96,16 @@ async function update(val) {
   }
 
   // set current time & duration
-  let timeJson = val['time'];
+  if (val['time'] != null) {
+    let timeJson = val['time'];
 
-  if ($('#current').text() != timeJson['current']) {
-    $('#current').text(timeJson['current']);
-    $('#share_current_time').val(timeJson['current']);
-  }
-  if ($('#end').text() != timeJson['end']) {
-    $('#end').text(timeJson['end']);
+    if ($('#current').text() != timeJson['current']) {
+      $('#current').text(timeJson['current']);
+      $('#share_current_time').val(timeJson['current']);
+    }
+    if ($('#end').text() != timeJson['end']) {
+      $('#end').text(timeJson['end']);
+    }
   }
 
   // set playing status (true/false)
@@ -127,8 +129,7 @@ async function update(val) {
   }
 
   // set current volume (X%)
-  if (val['volume'] != json['volume']) {
-    if (val['volume'] == null) val['volume'] = 0;
+  if (val['volume'] != null && val['volume'] != json['volume']) {
     $('#current-volume').text( Math.floor(val['volume']) + ' %' );
   }
 

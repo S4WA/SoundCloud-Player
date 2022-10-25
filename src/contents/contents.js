@@ -51,7 +51,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
       elem.click();
       json['playing'] = elem.title.includes('Pause');
 
-      callback( {'response': {'playing': json['playing'], 'volume': json['volume']} } );
+      callback( {'response': { 'playing': json['playing'], 'volume': json['volume'] } } );
       break;
     }
     case 'prev': { // MEMO: 'prev', 'next' 共にcallbackのコードを付けるとカクつく = 曲が始まった時音が ダブって聞こえる/プツっとなる
@@ -108,7 +108,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
 
-      callback( {'response': {'time': json['time'], 'volume': json['volume']} } );
+      callback( {'response': { 'time': json['time'], 'volume': json['volume'] } } );
       break;
     }
     case 'seekb':
@@ -121,7 +121,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
 
-      callback( {'response': {'time': json['time']} } );
+      callback( {'response': { 'time': json['time'] } } );
       break;
     }
     default: {

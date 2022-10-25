@@ -179,7 +179,9 @@ function initKeyboardBinds() {
     if (keyReady == false) return true;
     switch (e.keyCode) {
       case 32: { // Space
-        queue('toggle');
+        queue('toggle').then((val) => {
+          update(val);
+        });
         return false;
       }
       case 81: { // Q Key
@@ -187,35 +189,50 @@ function initKeyboardBinds() {
         break;
       }
       case 38: { // Arrow Up
-        if (e.shiftKey) queue('up');
-        break;
-      }
-      case 40: { // Arrow Down
-        if (e.shiftKey) queue('down');
-        break;
-      }
-      case 77: { // M Key
-        queue('mute');
-        break;
-      }
-      case 76: { // L Key
         if (e.shiftKey) {
-          queue('repeat');
-        } else {
-          queue('fav');
+          queue('up').then((val) => {
+            update(val);
+          });
         }
         break;
       }
+      case 40: { // Arrow Down
+        if (e.shiftKey) { 
+          queue('down').then((val) => {
+            update(val);
+          });
+        }
+        break;
+      }
+      case 77: { // M Key
+        queue('mute').then((val) => {
+          update(val);
+        });
+        break;
+      }
+      case 76: { // L Key
+        queue(e.shiftKey ? 'repeat' : 'fav').then((val) => {
+          update(val);
+        });
+        break;
+      }
       case 83: { // S Key
-        if (e.shiftKey) queue('shuffle');
+        if (!e.shiftKey) return;
+        queue('shuffle').then((val) => {
+          update(val);
+        });
         break;
       }
       case 37: { // Arrow Left
-        queue(e.shiftKey ? 'prev' : 'seekb');
+        queue(e.shiftKey ? 'prev' : 'seekb').then((val) => {
+            update(val);
+        });
         break;
       }
       case 39: { // Arrow Righnt
-        queue(e.shiftKey ? 'next' : 'seekf');
+        queue(e.shiftKey ? 'next' : 'seekf').then((val) => {
+            update(val);
+        });
         break;
       }
     }
