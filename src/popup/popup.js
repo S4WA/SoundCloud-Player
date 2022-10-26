@@ -26,7 +26,7 @@ async function init() {
   }
 
   chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
-    let arg = results.length != 0;
+    let arg = results.length != 0 && results[0].status == 'complete';
     keyReady = arg;
     toggleElements(arg);
   });

@@ -315,7 +315,7 @@ function initInputs() {
 function putAllLinks() {
   // Links
   $('#github').on('click', () => {
-    openURL('https://github.com/S4WA/soundcloud-player');
+    openURL('https://github.com/S4WA/SoundCloud-Player');
   });
   $('#store').on('click', () => {
     openURL('https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej');
@@ -333,7 +333,7 @@ function putAllLinks() {
     openURL('https://ko-fi.com/sawanese');
   });
   $('.wiki').on('click', () => {
-    openURL('https://github.com/S4WA/soundcloud-player/wiki');
+    openURL('https://github.com/S4WA/SoundCloud-Player/wiki');
   });
 }
 

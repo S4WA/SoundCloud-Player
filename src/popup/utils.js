@@ -2,10 +2,8 @@ async function queue(request, value) {
   return new Promise((resolve, reject) => {
     request = String(request).toLowerCase();
     chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
-      if (results.length != 0) {
-        var jsonRequest = {}
-
-        jsonRequest['type'] = request;
+      if (results.length != 0 && results[0].status == 'complete') {
+        var jsonRequest = { 'type': request }
 
         if (value) jsonRequest['value'] = value;
 
