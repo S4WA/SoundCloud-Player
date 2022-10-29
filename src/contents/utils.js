@@ -16,12 +16,28 @@ function getArtwork() {
   if (a != null && a.includes('120x120')) {
     a = a.replace('120x120', '500x500')
   }
+  if (a != null && a.includes('50x50.')) {
+    a = a.replace('50x50.', '500x500.');
+  }
   return a;
 }
 
 function getLink() {
   var cls = ".playbackSoundBadge__titleLink.sc-truncate";
-  return $(cls).length != 0 ? $(cls)[0].href : null;
+
+  if ($(cls).length == 0) return null;
+
+  var url = new URL($(cls)[0].href);
+  var params = url.searchParams;
+  var in_system_playlist = params.get('in_system_playlist') != null;
+
+  if (in_system_playlist) {
+    params.delete('in_system_playlist');
+  }
+
+  url.searchParams = params;
+
+  return url.href;
 }
 
 function isLiked() {

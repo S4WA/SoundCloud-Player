@@ -20,13 +20,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
   // Debug:
   // if (request.type != 'request-data') console.log('received:', request);
   switch (request.type) {
+    case 'smart-rd': {
+      break;
+    }
     case 'request-data': {
-      let artwork = getArtwork();
-      if (artwork != null && artwork.includes('50x50.')) artwork = artwork.replace('50x50.', '500x500.');
-
       json['title'] = getTitle();
       json['artist'] = getArtist();
-      json['artwork'] = artwork;
+      json['artwork'] = getArtwork();
       json['link'] = getLink();
       json['playing'] = isPlaying();
       json['favorite'] = isLiked();
