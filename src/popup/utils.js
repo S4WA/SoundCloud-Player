@@ -246,7 +246,7 @@ function startMarquees() {
   }).marquee({
     direction: 'left', 
     duration: getTextVisibleDuration(),
-    pauseOnHover: true,
+    pauseOnHover: location.href.includes('embed') ? false : true,
     startVisible: true,
     pauseOnCycle: true,
     duplicated: isDuplicationEnabled()

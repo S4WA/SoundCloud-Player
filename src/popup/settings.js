@@ -32,7 +32,7 @@ async function initReceiver() {
   });
 
   setInterval(async() => {
-    queue('request-data').then((val) => {
+    queue('smart-request-data').then((val) => {
       if (val != null && val != {}) {
         update(val);
         sessionStorage.setItem('data', JSON.stringify(json));
