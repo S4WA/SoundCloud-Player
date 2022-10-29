@@ -41,36 +41,29 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       break;
     }
     case 'smart-request-data': {
-      let d = false, temp = { 'playing': isPlaying() }; // NOTE: debug = on/off
+      let temp = { 'playing': isPlaying() };
 
       if (getTitle() != json['title']) {
-        if (d) console.log(prefix, 'title sent');
         temp['title'] = getTitle();
         update();
         temp = json;
       }
       if (getArtist() != json['artist']) {
-        if (d) console.log(prefix, 'artist sent');
         temp['artist'] = getArtist();
       }
       if (getArtwork() != json['artwork']) {
-        if (d) console.log(prefix, 'artwork sent');
         temp['artwork'] = getArtwork();
       }
       if (getLink() != json['link']) {
-        if (d) console.log(prefix, 'link sent');
         temp['link'] = getLink();
       }
       if (isPlaying() != json['playing']) {
-        if (d) console.log(prefix, 'playing sent');
         temp['playing'] = isPlaying();
       }
       if (isLiked() != json['favorite']) {
-        if (d) console.log(prefix, 'fav sent');
         temp['favorite'] = isLiked();
       }
       if (getVolume() != json['volume'] || getCurrentTime() != json['time']['current']) {
-        if (d) console.log(prefix, 'volume & time sent');
         temp['playing'] = isPlaying();
         temp['volume'] = getVolume();
         temp['time'] = {};
@@ -78,15 +71,12 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
         temp['time']['end'] = getEndTime();
       }
       if (isMuted() != json['mute']) {
-        if (d) console.log(prefix, 'mute sent');
         temp['mute'] = isMuted();
       }
       if (getRepeatMode() != json['repeat']) {
-        if (d) console.log(prefix, 'repeat sent');
         temp['repeat'] = getRepeatMode();
       }
       if (isShuffling() != json['shuffle']) {
-        if (d) console.log(prefix, 'shuffle sent');
         temp['shuffle'] = isShuffling();
       }
 
