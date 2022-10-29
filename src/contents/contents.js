@@ -38,7 +38,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback) {
       break;
     }
     case 'smart-request-data': {
-      let d = true; // NOTE: debug = on/off
+      let d = false; // NOTE: debug = on/off
 
       if (getTitle() != json['title']) {
         if (d) console.log(prefix, 'title sent');
