@@ -54,7 +54,7 @@ function getEndTime() {
 }
 
 function getVolume() {
-  return Number($(".volume__sliderWrapper").attr("aria-valuenow"))*100;
+  return Number($(".volume__sliderWrapper")[0].getAttribute("aria-valuenow"))*100;
 }
 
 function isMuted() {

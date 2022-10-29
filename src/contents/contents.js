@@ -16,80 +16,81 @@ window.onload = (async() => {
   }, 10000);
 });
 
-chrome.runtime.onMessage.addListener(function(request, sender, callback) {
+function update() {
+  json['title'] = getTitle();
+  json['artist'] = getArtist();
+  json['artwork'] = getArtwork();
+  json['link'] = getLink();
+  json['playing'] = isPlaying();
+  json['favorite'] = isLiked();
+  json['time']['current'] = getCurrentTime();
+  json['time']['end'] = getEndTime();
+  json['volume'] = getVolume();
+  json['mute'] = isMuted();
+  json['repeat'] = getRepeatMode();
+  json['shuffle'] = isShuffling();
+}
+
+chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
   // Debug:
   // if (request.type != 'request-data') console.log('received:', request);
   switch (request.type) {
     case 'request-data': {
-      json['title'] = getTitle();
-      json['artist'] = getArtist();
-      json['artwork'] = getArtwork();
-      json['link'] = getLink();
-      json['playing'] = isPlaying();
-      json['favorite'] = isLiked();
-      json['time']['current'] = getCurrentTime();
-      json['time']['end'] = getEndTime();
-      json['volume'] = getVolume();
-      json['mute'] = isMuted();
-      json['repeat'] = getRepeatMode();
-      json['shuffle'] = isShuffling();
-
+      update();
       callback(json);
       break;
     }
     case 'smart-request-data': {
-      let d = false; // NOTE: debug = on/off
+      let d = false, temp = { 'playing': isPlaying() }; // NOTE: debug = on/off
 
       if (getTitle() != json['title']) {
         if (d) console.log(prefix, 'title sent');
-        json['title'] = getTitle();
+        temp['title'] = getTitle();
+        update();
+        temp = json;
       }
       if (getArtist() != json['artist']) {
         if (d) console.log(prefix, 'artist sent');
-        json['artist'] = getArtist();
+        temp['artist'] = getArtist();
       }
       if (getArtwork() != json['artwork']) {
         if (d) console.log(prefix, 'artwork sent');
-        json['artwork'] = getArtwork();
+        temp['artwork'] = getArtwork();
       }
       if (getLink() != json['link']) {
         if (d) console.log(prefix, 'link sent');
-        json['link'] = getLink();
+        temp['link'] = getLink();
       }
       if (isPlaying() != json['playing']) {
         if (d) console.log(prefix, 'playing sent');
-        json['playing'] = isPlaying();
+        temp['playing'] = isPlaying();
       }
       if (isLiked() != json['favorite']) {
         if (d) console.log(prefix, 'fav sent');
-        json['favorite'] = isLiked();
+        temp['favorite'] = isLiked();
       }
-      if (getCurrentTime() != json['time']['current']) {
-        if (d) console.log(prefix, 'time current sent');
-        json['time']['current'] = getCurrentTime();
-      }
-      if (getEndTime() != json['time']['end']) {
-        if (d) console.log(prefix, 'time end sent');
-        json['time']['end'] = getEndTime();
-      }
-      if (getVolume() != json['volume']) {
-        if (d) console.log(prefix, 'volume sent');
-        json['volume'] = getVolume();
+      if (getVolume() != json['volume'] || getCurrentTime() != json['time']['current']) {
+        if (d) console.log(prefix, 'volume & time sent');
+        temp['playing'] = isPlaying();
+        temp['volume'] = getVolume();
+        temp['time'] = {};
+        temp['time']['current'] = getCurrentTime();
+        temp['time']['end'] = getEndTime();
       }
       if (isMuted() != json['mute']) {
         if (d) console.log(prefix, 'mute sent');
-        json['mute'] = isMuted();
+        temp['mute'] = isMuted();
       }
       if (getRepeatMode() != json['repeat']) {
         if (d) console.log(prefix, 'repeat sent');
-        json['repeat'] = getRepeatMode();
+        temp['repeat'] = getRepeatMode();
       }
       if (isShuffling() != json['shuffle']) {
         if (d) console.log(prefix, 'shuffle sent');
-        json['shuffle'] = isShuffling();
+        temp['shuffle'] = isShuffling();
       }
 
-      callback(json);
+      callback(temp);
       break;
     }
     case 'open': {

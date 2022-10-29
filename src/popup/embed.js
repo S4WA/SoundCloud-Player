@@ -41,6 +41,8 @@ async function init() {
 }
 
 async function update(val) {
+  if (val == null) return;
+
   // set artwork (text)
   if (val['artwork'] != null && val['artwork'] != json['artwork']) {
     $('#artwork').css('background-image', val['artwork']);
