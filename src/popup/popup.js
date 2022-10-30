@@ -58,7 +58,7 @@ async function init() {
     queue('smart-request-data').then((val) => {
       if (val != null && val != {}) {
         update(val);
-        sessionStorage.setItem('data', JSON.stringify(json));
+        // console.log(val);
         
         // Controller
         toggleElements(true);
@@ -67,7 +67,13 @@ async function init() {
       }
       return {};
     }).then((val) => {
-      json = val;
+      for (let key in json) {
+        if (json[key] == val[key] || val[key] == null) continue;
+        let value = val[key];
+        json[key] = value;
+        // console.log(key, ': ', value)
+      }
+      sessionStorage.setItem('data', JSON.stringify(json));
     });
 
     let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
@@ -144,7 +150,7 @@ async function update(val) {
 
   // set share link
   if (val['time'] != json['time']) {
-    $('#copy').val(val['link'] + (shareSettings['share_with_time'] ? '#t=' + val['time']['current'] : '') );
+    $('#copy').val(json['link'] + (shareSettings['share_with_time'] ? '#t=' + val['time']['current'] : '') );
 
     let selectable = shareSettings['share_with_time']
                     && $('#copy')[0].selectionStart != null
