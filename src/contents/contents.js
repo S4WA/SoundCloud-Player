@@ -112,7 +112,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       let btn = $('.playbackSoundBadge__like')[0];
       btn.click();
       json['favorite'] = btn.title == "Unlike";
-      
+
       callback( {'response': {'favorite': json['favorite']} } );
       break;
     }
@@ -120,7 +120,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       let btn = $('.repeatControl')[0];
       btn.click();
       json['repeat'] = getRepeatMode(); // none -> one -> all
-      
+
       callback( {'response': {'repeat': json['repeat']} } );
       break;
     }
@@ -128,7 +128,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       let btn = $('.shuffleControl')[0];
       btn.click();
       json['shuffle'] = isShuffling();
-      
+
       callback( {'response': {'shuffle': json['shuffle']} } );
       break;
     }
@@ -136,7 +136,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
     case 'unmute': {
       $('.volume button[type="button"]')[0].click();
       json['mute'] = $('.volume')[0].className.includes('muted');
-      
+
       callback( {'response': {'mute': json['mute']} } );
       break;
     }

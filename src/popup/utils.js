@@ -168,7 +168,9 @@ function initKeyboardBinds() {
     switch (e.keyCode) {
       case 32: { // Space
         queue('toggle').then((val) => {
-          update(val);
+          if (val != null && val['response'] != null) {
+            update(val['response']);
+          }
         });
         return false;
       }
@@ -179,7 +181,9 @@ function initKeyboardBinds() {
       case 38: { // Arrow Up
         if (e.shiftKey) {
           queue('up').then((val) => {
-            update(val);
+            if (val != null && val['response'] != null) {
+              update(val['response']);
+            }
           });
         }
         break;
@@ -187,39 +191,51 @@ function initKeyboardBinds() {
       case 40: { // Arrow Down
         if (e.shiftKey) { 
           queue('down').then((val) => {
-            update(val);
+            if (val != null && val['response'] != null) {
+              update(val['response']);
+            }
           });
         }
         break;
       }
       case 77: { // M Key
         queue('mute').then((val) => {
-          update(val);
+          if (val != null && val['response'] != null) {
+            update(val['response']);
+          }
         });
         break;
       }
       case 76: { // L Key
         queue(e.shiftKey ? 'repeat' : 'fav').then((val) => {
-          update(val);
+          if (val != null && val['response'] != null) {
+            update(val['response']);
+          }
         });
         break;
       }
       case 83: { // S Key
         if (!e.shiftKey) return;
         queue('shuffle').then((val) => {
-          update(val);
+          if (val != null && val['response'] != null) {
+            update(val['response']);
+          }
         });
         break;
       }
       case 37: { // Arrow Left
         queue(e.shiftKey ? 'prev' : 'seekb').then((val) => {
-            update(val);
+          if (val != null && val['response'] != null) {
+            update(val['response']);
+          }
         });
         break;
       }
-      case 39: { // Arrow Righnt
+      case 39: { // Arrow Right
         queue(e.shiftKey ? 'next' : 'seekf').then((val) => {
-            update(val);
+          if (val != null && val['response'] != null) {
+            update(val['response']);
+          }
         });
         break;
       }

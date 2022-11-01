@@ -95,7 +95,7 @@ async function update(val) {
   }
 
   // set title (text)
-  if (val['artwork'] != null && val['title'] != json['title']) {
+  if (val['title'] != null && val['title'] != json['title']) {
     $('.title').text( replaceText( localStorage.getItem('trackdisplay'), val) );
 
     if (marqueeReady == false) {
@@ -119,27 +119,27 @@ async function update(val) {
   }
 
   // set playing status (true/false)
-  if (val['playing'] != null && val['playing'] != json['playing']) {
+  if (val['playing'] != null) {
     $('#toggle').attr( 'playing', val['playing'] );
   }
 
   // set favorite status (true/false)
-  if (val['favorite'] != null && val['favorite'] != json['favorite']) {
+  if (val['favorite'] != null) {
     $('#fav').attr( 'favorite', val['favorite'] );
   }
   
   // set shuffle status (true/false)
-  if (val['shuffle'] != null && val['shuffle'] != json['shuffle']) {
+  if (val['shuffle'] != null) {
     $('#shuffle').attr( 'shuffle', val['shuffle'] );
   }
   
   // set repeat status (one/all/none)
-  if (val['repeat'] != null && val['repeat'] != json['repeat']) {
+  if (val['repeat'] != null) {
     $('#repeat').attr( 'mode', val['repeat'] );
   }
 
   // set current volume (X%)
-  if (val['volume'] != null && val['volume'] != json['volume']) {
+  if (val['volume'] != null) {
     $('#current-volume').text( Math.floor(val['volume']) + ' %' );
   }
 
@@ -173,24 +173,37 @@ function setCompactTheme() {
 function registerAudioButtons() {
   $('#toggle').on('click', () => {
     queue('toggle').then((val) => {
-      update(val.response);
+      if (val != null && val['response'] != null) {
+        update(val['response']);
+      }
     });
     openSCTab2();
   });
   $('#prev').on('click', () => { queue('prev'); openSCTab2(); });
   $('#next').on('click', () => { queue('next'); openSCTab2(); });
-  $('#fav').on('click', () => { queue('fav'); openSCTab2(); });
+  $('#fav').on('click', () => {
+    queue('fav').then((val) => {
+      if (val != null && val['response'] != null) {
+        update(val['response']);
+      }
+    }); 
+    openSCTab2();
+  });
   $('.title').on('click', () => { openSCTab(); });
   $('#artwork').on('click', () => { openSCTab(); });
   $('#repeat').on('click', () => {
     queue('repeat').then((val) => {
-      update(val.response);
+      if (val != null && val['response'] != null) {
+        update(val['response']);
+      }
     });
     openSCTab2();
   });
   $('#shuffle').on('click', () => {
     queue('shuffle').then((val) => {
-      update(val.response);
+      if (val != null && val['response'] != null) {
+        update(val['response']);
+      }
     });
     openSCTab2();
   });
@@ -198,18 +211,24 @@ function registerAudioButtons() {
 
   $('#volume-icon').on('click', () => {
     queue('mute').then((val) => {
-      update(val.response);
+      if (val != null && val['response'] != null) {
+        update(val['response']);
+      }
     });
   });
 
   $('#up').on('click', () => {
     queue('up').then((val) => {
-      update(val.response);
+      if (val != null && val['response'] != null) {
+        update(val['response']);
+      }
     });
   });
   $('#down').on('click', () => {
     queue('down').then((val) => {
-      update(val.response);
+      if (val != null && val['response'] != null) {
+        update(val['response']);
+      }
     });
   });
 }
