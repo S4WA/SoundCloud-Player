@@ -9,7 +9,7 @@ You can control the tracks without changing your tab. Just open the popup n boom
 - [CRXcavator Report](https://crxcavator.io/report/oackhlcggjandamnkggpfhfjbnecefej/)
 
 # Images
-![image1](https://github.com/S4WA/soundcloud-player/blob/master/img/1.png?raw=true)
+![image](https://user-images.githubusercontent.com/24929259/200180718-aac8c85a-cf2c-4e67-acee-4856df7d7349.png)
 ![image2](https://github.com/S4WA/soundcloud-player/blob/master/img/2.png?raw=true)
 ![image3](https://github.com/S4WA/soundcloud-player/blob/master/img/3.png?raw=true)
 ![image4](https://github.com/S4WA/soundcloud-player/blob/master/img/4.png?raw=true)
