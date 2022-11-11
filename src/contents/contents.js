@@ -84,7 +84,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       break;
     }
     case 'open': {
-      $('.playbackSoundBadge__titleLink.sc-truncate')[0].click();
+      focus();
       break;
     }
     case 'play':
@@ -141,7 +141,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       break;
     }
     case 'up':
-    case 'down': {
+    case 'down': { // volume up/down
       if (request.type == 'up') {
         volumeUp();
       } else if (request.type == 'down') {
@@ -155,7 +155,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       break;
     }
     case 'seekb':
-    case 'seekf': {
+    case 'seekf': { // seek backward/forward
       if (request.type == 'seekb') {
         seekBack();
       } else if (request.type == 'seekf') {
@@ -165,6 +165,18 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       json['time']['end'] = getEndTime();
 
       callback( {'response': { 'time': json['time'] } } );
+      break;
+    }
+    case 'ap': { // add to playlist
+      focus();
+      new Promise((resolve) => {
+        $('.sc-button-more.sc-button-secondary.sc-button.sc-button-medium.sc-button-responsive')[0].click();
+        console.log('1');
+        resolve();
+      }).then(() => {
+        console.log('2');
+        $('.sc-button-addtoset.sc-button.moreActions__button.sc-button-medium.sc-button-tertiary')[0].click();
+      });
       break;
     }
     default: {
