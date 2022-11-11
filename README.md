@@ -3,6 +3,7 @@ This extension is for the soundcloud heavy users.
 
 You can control the tracks without changing your tab. Just open the popup n boom.
 
+We uploaded a quick tutorial video on YouTube.
 [![](https://img.youtube.com/vi/hIJyF2u3-RY/maxresdefault.jpg)](https://www.youtube.com/watch?v=hIJyF2u3-RY)
 
 # Documents
