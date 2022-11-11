@@ -320,6 +320,9 @@ function putAllLinks() {
   $('#store').on('click', () => {
     openURL('https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej');
   });
+  $('#yt').on('click', () => {
+    openURL('https://youtu.be/hIJyF2u3-RY');
+  });
   $('#feedback').on('click', () => {
     openURL('https://forms.gle/oG2DvmK7HXhq8q8ZA');
   });
