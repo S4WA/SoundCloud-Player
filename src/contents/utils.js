@@ -1,3 +1,7 @@
+function focus() {
+  $('.playbackSoundBadge__titleLink.sc-truncate')[0].click();
+}
+
 function isPlaying() {
   var cls = ".playControl";
   return $(cls).length != 0 ? $(cls)[0].title == "Pause current" : false;
