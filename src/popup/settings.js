@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   checkDDAnimation();
   checkDisplayArtwork();
   initReceiver();
+  initDarkModeAutomation();
 
   if (isPopout()) {
     $('#captureme').attr('href', 'embed.html?p=1');
@@ -22,6 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     $('#captureguide').text('(Guide)');
   }
+
+  $('#video').on('click', function() {
+    $(this).siblings('.dd-child').html('<iframe width="100%" src="https://www.youtube.com/embed/hIJyF2u3-RY" title="Quick Tutorial for SoundCloud Player 1.3.0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
+  });
 });
 
 async function initReceiver() {
@@ -267,10 +272,15 @@ function initSettings() {
   if (localStorage.getItem('trackdisplay') != null) {
     $('#trackdisplay').val(localStorage.getItem('trackdisplay'));
   }
+
   cheeckTheme();
   checkFonts();
   checkCustomColors();
   checkMarqueesDurations();
+
+  if (localStorage.getItem('startpage') != null) {
+    $('#startpage').val(localStorage.getItem('startpage'));
+  }
 }
 
 function initTemplates() {
@@ -310,34 +320,30 @@ function initInputs() {
   $('#copy').on('input', function () {
     localStorage.setItem('copy', $(this).val());
   });
+
+  $('#startpage').on('input', function () {
+    localStorage.setItem('startpage', $(this).val());
+  })
 }
 
 function putAllLinks() {
-  // Links
-  $('#github').on('click', () => {
-    openURL('https://github.com/S4WA/SoundCloud-Player');
-  });
-  $('#store').on('click', () => {
-    openURL('https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej');
-  });
-  $('#yt').on('click', () => {
-    openURL('https://youtu.be/hIJyF2u3-RY');
-  });
-  $('#feedback').on('click', () => {
-    openURL('https://forms.gle/oG2DvmK7HXhq8q8ZA');
-  });
-  $('#c-twitter').on('click', () => {
-    openURL('https://twitter.com/evildaimyoh');
-  });
-  $('#eshortcuts').on('click', () => {
-    openURL('chrome://extensions/shortcuts');
-  });
-  $('#support').on('click', () => {
-    openURL('https://ko-fi.com/sawanese');
-  });
-  $('.wiki').on('click', () => {
-    openURL('https://github.com/S4WA/SoundCloud-Player/wiki');
-  });
+  let linkList = [
+    [ '#github', 'https://github.com/S4WA/SoundCloud-Player' ],
+    [ '#store', 'https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej' ],
+    [ '#yt', 'https://youtu.be/hIJyF2u3-RY' ],
+    [ '#feedback', 'https://forms.gle/oG2DvmK7HXhq8q8ZA' ],
+    [ '#c-twitter', 'https://twitter.com/evildaimyoh' ],
+    [ '#eshortcuts', 'chrome://extensions/shortcuts' ],
+    [ '#support', 'https://ko-fi.com/sawanese' ], 
+    [ '.wiki', 'https://github.com/S4WA/SoundCloud-Player/wiki' ]
+  ];
+  for (var i = 0; i < linkList.length; i++) {
+    (function(n) {
+      $(linkList[n][0]).on('click', function() {
+        openURL(linkList[n][1]);
+      });
+    })(i);
+  }
 }
 
 function initDarkmode() {
@@ -449,6 +455,30 @@ function checkDDAnimation() {
 function checkDuplication() {
   if (localStorage.getItem('duplication') != null && localStorage.getItem('duplication') == 'true') {
     $('#duplication').attr('checked', '');
+  }
+}
+
+function initDarkModeAutomation() {
+  let auto = settings['darkmode_automation'];
+  $('#da').prop('checked', auto['enabled']);
+
+  $('#da').change(function() {
+    auto['enabled'] = $(this).prop('checked');
+    localStorage.setItem('darkmode_automation', JSON.stringify(auto));
+  });
+
+  $('#da-sh').val(auto['range-start'][0]);
+  $('#da-sm').val(auto['range-start'][1]);
+  $('#da-eh').val(auto['range-end'][0]);
+  $('#da-em').val(auto['range-end'][1]);
+
+  let el = $('#range').find('input');
+  for (var i = 0; i < el.length; i++) {
+    $( el[i] ).on('input', function() {
+      let o = $(this)[0].id, head = o.includes('s') ? 'range-start' : 'range-end', num = o.includes('h') ? 0 : 1, z = Number( $(this).val() );
+      auto[head][num] = z;
+      localStorage['darkmode_automation'] = JSON.stringify(auto);
+    });
   }
 }
 

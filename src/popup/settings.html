@@ -48,6 +48,14 @@
     </div>
   </div>
   <div class='dropdown' closed='true'>
+    <div class='dd-parent' id='video'>
+      <span class='icon'></span>How to Use
+    </div>
+    <hr>
+    <div class='dd-child'>
+    </div>
+  </div>
+  <div class='dropdown' closed='true'>
     <div class='dd-parent'>
       <span class='icon'></span>About
     </div>
@@ -95,7 +103,7 @@
             </tr>
             <tr>
               <th>Font Size</th>
-              <td><input id='font-size' type='number' step='0.1' style='width: 45px; height: 14px;'> px</td>
+              <td><input id='font-size' type='number' step='0.1' min='1' style='width: 45px; height: 14px; font-size: 12px !important;'> px</td>
             </tr>
             <tr>
               <th>Theme</th>
@@ -138,6 +146,45 @@
           </table>
         </div>
       </div>
+      <hr>
+    </div>
+  </div>
+  <div class='dropdown' closed='true'>
+    <div class='dd-parent'>
+      <span class='icon'></span>General
+    </div>
+    <hr>
+    <div class='dd-child'>
+      <table class='options-table'>
+        <tr>
+          <th>Start Page</th>
+          <td><textarea id='startpage'></textarea></td>
+        </tr>
+        <tr>
+          <th>Dark Mode Automation</th>
+          <td>
+            Enabled: <input id='da' type='checkbox'>
+            <hr>
+            Range:
+            <table id='range'>
+              <tr>  
+                <th class='ignore' width='20%'>Start</th>
+                <td class='ignore'>
+                  <input id='da-sh' type='number' step='1' min='0' max='23' style='width: 30px; height: 14px;'>：
+                  <input id='da-sm' type='number' step='1' min='0' max='59' style='width: 30px; height: 14px;'>
+                </td>
+              </tr>
+              <tr>
+                <th class='ignore' width='20%'>End</th>
+                <td class='ignore'>
+                  <input id='da-eh' type='number' step='1' min='0' max='23' style='width: 30px; height: 14px;'>：
+                  <input id='da-em' type='number' step='1' min='0' max='59' style='width: 30px; height: 14px;'>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
       <hr>
     </div>
   </div>
@@ -288,7 +335,7 @@
     </div>
     <hr>
     <div class='dd-child'>
-      <div id='reset' class='clickable'>[Click Me 3 Times to Reset Everything]</div>
+      <div id='reset' class='clickable'>[Click me 3 times to reset all of your settings]</div>
       You clicked [<span id='count'></span>] Times.<div id='sure'></div>
       <hr>
     </div>

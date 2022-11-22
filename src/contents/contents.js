@@ -34,10 +34,13 @@ function update() {
 chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
   // Debug:
   // if (request.type != 'request-data') console.log('received:', request);
+
+  let response = {};
+
   switch (request.type) {
     case 'request-data': {
       update();
-      callback(json);
+      response = json;
       break;
     }
     case 'smart-request-data': {
@@ -80,7 +83,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
         temp['shuffle'] = isShuffling();
       }
 
-      callback(temp);
+      response = temp;
       break;
     }
     case 'open': {
@@ -94,7 +97,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       elem.click();
       json['playing'] = elem.title.includes('Pause');
 
-      callback( {'response': { 'playing': json['playing'], 'volume': json['volume'] } } );
+      response = {'response': { 'playing': json['playing'], 'volume': json['volume'] } };
       break;
     }
     case 'prev': { // MEMO: 'prev', 'next' 共にcallbackのコードを付けるとカクつく = 曲が始まった時音が ダブって聞こえる/プツっとなる
@@ -113,7 +116,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       btn.click();
       json['favorite'] = btn.title == "Unlike";
 
-      callback( {'response': {'favorite': json['favorite']} } );
+      response = {'response': {'favorite': json['favorite']} };
       break;
     }
     case 'repeat': {
@@ -121,7 +124,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       btn.click();
       json['repeat'] = getRepeatMode(); // none -> one -> all
 
-      callback( {'response': {'repeat': json['repeat']} } );
+      response = {'response': {'repeat': json['repeat']} };
       break;
     }
     case 'shuffle': {
@@ -129,7 +132,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       btn.click();
       json['shuffle'] = isShuffling();
 
-      callback( {'response': {'shuffle': json['shuffle']} } );
+      response = {'response': {'shuffle': json['shuffle']} };
       break;
     }
     case 'mute':
@@ -137,7 +140,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       $('.volume button[type="button"]')[0].click();
       json['mute'] = $('.volume')[0].className.includes('muted');
 
-      callback( {'response': {'mute': json['mute']} } );
+      response = {'response': {'mute': json['mute']} };
       break;
     }
     case 'up':
@@ -151,7 +154,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
 
-      callback( {'response': { 'time': json['time'], 'volume': json['volume'] } } );
+      response = {'response': { 'time': json['time'], 'volume': json['volume'] } };
       break;
     }
     case 'seekb':
@@ -164,7 +167,7 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
 
-      callback( {'response': { 'time': json['time'] } } );
+      response = {'response': { 'time': json['time'] } };
       break;
     }
     case 'ap': { // add to playlist
@@ -184,6 +187,8 @@ chrome.runtime.onMessage.addListener(async(request, sender, callback) => {
       break;
     };
   }
+
+  callback(response);
 });
 
 var prefix = '[SoundCloud Player] ', 

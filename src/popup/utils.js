@@ -19,7 +19,8 @@ async function queue(request, value) {
 async function openSCTab2() {
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
   if (!ScTab) {
-    await chrome.tabs.create({ url: 'https://soundcloud.com' }, (tab) => {});
+    let startpage = settings['startpage'] != null ? settings['startpage'] : 'https://soundcloud.com';
+    await chrome.tabs.create({ url: startpage }, (tab) => {});
     if (!isPopout()) window.close();
   }
   return;
@@ -32,7 +33,8 @@ async function openSCTab() {
   
   // -> If no Sc Tab, Make one
   if (!ScTab) {
-    await chrome.tabs.create({ url: 'https://soundcloud.com' });
+    let startpage = settings['startpage'] != null ? settings['startpage'] : 'https://soundcloud.com';
+    await chrome.tabs.create({ url: startpage });
     return;
   }
 
@@ -316,6 +318,28 @@ function replaceText(text, json) {
   if (!json) json = JSON.parse( sessionStorage.getItem('data') );
   text = text.replace('%title%', json['title']).replace('%artist%', json['artist']).replace('%url%', json['link']);
   return text;
+}
+
+function isJsonString(str) {
+  let o;
+  try {
+    o = JSON.parse(str);
+  } catch (e) {
+    return null;
+  }
+  return o;
+}
+
+function nightTime(hour, minute) {
+  let auto = settings['darkmode_automation'];
+  if (auto == null || auto['enabled'] == null || auto['enabled'] == false) {
+    return -1;
+  }
+
+  let valSH = auto['range-start'][0], valSM = auto['range-start'][1], valEH = auto['range-end'][0], valEM = auto['range-end'][1];
+  let date = new Date(), hrs = hour ? hour : date.getHours(), mins = minute ? minute : date.getMinutes();
+
+  return (hrs > valSH || (hrs == valSH && mins >= valSM)) || (hrs < valEH || (hrs == valEH && mins <= valEM));
 }
 
 var keyReady = false, duplicated = false;

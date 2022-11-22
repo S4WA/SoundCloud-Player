@@ -3,7 +3,7 @@
   "name": "SoundCloud Player",
   "short_name": "SC Player",
   "description": "SoundCloud Popup Player 🔥",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "homepage_url": "https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej",
   "permissions": [
     "tabs",

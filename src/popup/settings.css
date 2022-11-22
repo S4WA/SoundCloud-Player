@@ -24,14 +24,14 @@ textarea {
 
 .options-table th, .options-table td {
   text-align: left;
-  padding: 5px 5px ;
+  padding: 5px 5px;
 }
 
-.options-table th {
+.options-table th:not(.ignore) {
   width: 150px !important;
 }
 
-.options-table td {
+.options-table td:not(.ignore) {
   width: 100px !important;
 }
 

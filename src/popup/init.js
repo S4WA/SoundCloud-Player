@@ -3,8 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
   new Promise((resolve, reject) => {
     for (key in settings) {
       if (localStorage.getItem(key) == null) {
-        let value = (typeof settings[key] == 'string') ? settings[key] : JSON.stringify(settings[key]);
+        let value = (typeof settings[key] == 'string' || typeof settings[key] == 'number' || typeof settings[key] == 'boolean') ? 
+                    settings[key] : JSON.stringify(settings[key]);
         localStorage.setItem(key, value);
+      } else {
+        let o = isJsonString(localStorage.getItem(key));
+        settings[key] = o == null ? localStorage.getItem(key) : o;
       }
     }
     resolve();
@@ -19,9 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('#version').text('v' + chrome.runtime.getManifest().version);
+
+  if (settings['darkmode_automation'] != null && settings['darkmode_automation']['enabled']) {
+    darkmode(nightTime());
+    // console.log(prefix, 'darkmode automation:', nightTime());
+  }
 });
 
-var json = {}, settings = {
+var prefix = '[SoundCloud Player]', json = {}, settings = {
   'trackdisplay': '%title% by %artist%',
   'themecolor': '#FF5500',
   'bgcolor': '#3F3F3F',
@@ -34,5 +43,11 @@ var json = {}, settings = {
   'pause': 5000,
   'duplication': false,
   'dropdown-animation': true,
-  'display-artwork': true
+  'display-artwork': true,
+  'startpage': 'https://soundcloud.com',
+  'darkmode_automation': {
+    'enabled': false,
+    'range-start': [ 17, 0 ],
+    'range-end': [ 5, 0 ]
+  }
 }
