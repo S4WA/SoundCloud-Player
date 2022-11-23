@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initKeyboardBinds();
   });
 
-  $('#version').text('v' + chrome.runtime.getManifest().version);
+  $('#version').text('v' + browser.runtime.getManifest().version);
 
   if (settings['darkmode_automation'] != null && settings['darkmode_automation']['enabled']) {
     darkmode(nightTime());

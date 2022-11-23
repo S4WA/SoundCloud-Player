@@ -39,6 +39,10 @@ body[dark='true'], body[dark='true'] input, body[dark='true'] span, body[dark='t
   float: right;
 }
 
+#second .right, #second .left {
+  padding-bottom: 3.5px;
+}
+
 /* Share buttons */
 
 #share {

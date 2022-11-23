@@ -1,26 +1,64 @@
+function getBrowserName() {
+  const scheme = browser.runtime.getURL('');
+  if (scheme.startsWith('chrome-extension://')) {
+    return 'chrome';
+  } else if (scheme.startsWith('moz-extension://')) {
+    return 'firefox';
+  }
+  return null;
+}
+
+function shortcutPage() {
+  switch (getBrowserName()) {
+    case 'firefox': {
+      return 'about:addons';
+    }
+    case 'chrome': {
+      return 'chrome://extensions/shortcuts';
+    }
+    default: {
+      return `Extension's settings page`;
+    }
+  }
+}
+
+function getStoreLink(review) {
+  switch (getBrowserName()) {
+    case 'chrome': {
+      return 'https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej' + (review ? '/reviews' : '');
+    }
+    default: {
+      return 'https://akiba.cloud/soundcloud-player/';
+    }
+  }
+}
+
 async function queue(request, value) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     request = String(request).toLowerCase();
-    chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
-      if (results.length != 0 && results[0].status == 'complete') {
-        var jsonRequest = { 'type': request }
+    let results = await browser.tabs.query({ url: '*://soundcloud.com/*' });
 
-        if (value) jsonRequest['value'] = value;
+    if (results.length != 0 && results[0].status == 'complete') {
+      let jsonRequest = { 'type': request };
 
-        chrome.tabs.sendMessage(results[0].id, jsonRequest, function(res) {
-          // console.log(res);
-          resolve(res);
-        });
-      }
-    });
+      if (value) jsonRequest['value'] = value;
+
+      await browser.tabs.sendMessage(results[0].id, jsonRequest).then(async(res) => {
+        // console.log(res);
+        resolve(res);
+      });
+    }
   });
 }
 
+function getStartPage() {
+  return settings['startpage'] != null ? settings['startpage'] : 'https://soundcloud.com';
+}
+
 async function openSCTab2() {
-  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
   if (!ScTab) {
-    let startpage = settings['startpage'] != null ? settings['startpage'] : 'https://soundcloud.com';
-    await chrome.tabs.create({ url: startpage }, (tab) => {});
+    await browser.tabs.create({ url: getStartPage() });
     if (!isPopout()) window.close();
   }
   return;
@@ -28,26 +66,29 @@ async function openSCTab2() {
 
 async function openSCTab() {
   // Search for SoundCloud Tab (true/false)
-  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
-  let [currentTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+  let [currentTab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+
+  if (!currentTab) {
+    return;
+  }
   
   // -> If no Sc Tab, Make one
   if (!ScTab) {
-    let startpage = settings['startpage'] != null ? settings['startpage'] : 'https://soundcloud.com';
-    await chrome.tabs.create({ url: startpage });
+    await browser.tabs.create({ url: getStartPage() });
     return;
   }
 
   // -> If not same window, focus the window that has sc tab
   if (currentTab.windowId != ScTab.windowId) {
-    await chrome.windows.update(ScTab.windowId, { focused : true }, null);
+    await browser.windows.update(ScTab.windowId, { focused : true });
   }
 
   // -> If current tab is sc tab ->
   //    no  ->  focus the sc tab.
   //    yes ->  queue open (no need to focus)
   if (currentTab.id != ScTab.id) {
-    await chrome.tabs.update(ScTab.id, { active : true }, () => {});
+    await browser.tabs.update(ScTab.id, { active : true });
   } else {
     await queue('open');
   }
@@ -65,7 +106,7 @@ function fixedEncoder(str) {
 }
 
 function openURL(link) {
-  chrome.tabs.create({ url: link }, (tab) => {});
+  browser.tabs.create({ url: link });
 }
 
 function copyToClipboard(text) {
@@ -92,7 +133,7 @@ function Bool(string) {
 
 // Settings
 function getThemeName() {
-  if (localStorage.getItem('theme')) return localStorage.getItem('theme');
+  if (localStorage.getItem('theme')) return localStorage.getItem('theme').toLowerCase();
   return 'default';
 }
 
@@ -123,6 +164,7 @@ function updateFont(font) {
     localStorage.setItem('font', font);
   }
   $(':root').css('--custom-font', font);
+  settings['font'] = font;
 }
 
 function updateFontSize(px) {
@@ -133,6 +175,7 @@ function updateFontSize(px) {
   }
 
   $(':root').css('--font-size', px);
+  settings['font-size'] = px;
 }
 
 function toggleDarkmode() {
@@ -148,11 +191,11 @@ function darkmode(val) {
 }
 
 function popup(mylink, windowname) {
-  chrome.windows.create({
+  browser.windows.create({
     url: mylink,
     type: 'popup',
-    width: 300,
-    height: 440,
+    width: 290,
+    height: 400,
     focused: true
   });
 }
@@ -289,7 +332,7 @@ function areWeInSettingsPage() {
   return location.href.includes('settings.html');
 }
 
-function checkDisplayArtwork() {
+async function checkDisplayArtwork() {
   let available = Bool( localStorage.getItem('display-artwork') );
   toggleArtwork(available);
   if (areWeInSettingsPage() && available) $('#display-artwork').attr('checked', '');

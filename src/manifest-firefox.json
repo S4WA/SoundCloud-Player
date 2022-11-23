@@ -34,7 +34,7 @@
   "commands": {
     "_execute_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+S"
+        "default": "Shift+Alt+S"
       },
       "description": "Open the popup"
     }

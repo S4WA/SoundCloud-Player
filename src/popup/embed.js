@@ -28,10 +28,12 @@ async function init() {
       }
       return {};
     }).then((val) => {
-      json = val;
+      for (key in val) {
+        json[key] = val[key];
+      }
     });
 
-    let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+    let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
 
     // If sc tab is closed -> reload the popup.html (itself)
     if (keyReady && ScTab == null) {

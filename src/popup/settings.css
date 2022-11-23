@@ -84,6 +84,10 @@ table {
   text-align: left;
 }
 
+#eshortcuts {
+  word-break: break-all;
+}
+
 table tr:nth-child(odd) {
   background-color: #C3C3C3;
   color: black;

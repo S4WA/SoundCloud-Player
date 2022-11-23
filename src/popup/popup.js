@@ -1,37 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
-  init();
+  Promise.all(
+    [
+      init(),
+      checkElements(),
+      setTheme(),
+      registerEvents(),
+      checkDisplayArtwork(),
+      queue('request-data').then((val) => {
+        for (key in val) {
+          json[key] = val[key];
+        }
+        update(val);
+        sessionStorage.setItem('data', JSON.stringify(json));
+      }),
+      setInterval(loopRequestData, 500),
+    ]
+  );
 });
 
-function toggleElements(arg) {
-  for (var i in hideList) {
-    if (arg) { // Show? If Yes ->  
-      $(hideList[i]).show();
+async function toggleElements(arg) {
+  for (var i of hideList) {
+    if (arg) { // Show? If Yes ->
+      $(i).show();
     } else {
-      $(hideList[i]).hide();
+      $(i).hide();
     }
   }
 }
 
-// Initialize:
-async function init() {
-  for (key in templates) {
-    let item = localStorage.getItem(key);
-    templates[key] = item;
-  }
+async function checkElements() {
+  let results = await browser.tabs.query({ url: '*://soundcloud.com/*' });
 
-  // No Duplicate Popout
-  if (isPopout()) {
-    $('#P').hide();
-    $('#settings').attr('href', 'settings.html?p=1')
-  }
+  let arg = results.length != 0 && results[0].status == 'complete';
+  keyReady = arg;
+  toggleElements(arg);
+}
 
-  chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
-    let arg = results.length != 0 && results[0].status == 'complete';
-    keyReady = arg;
-    toggleElements(arg);
-  });
-
-  new Promise((resolve, reject) => {
+function setTheme() {
+  return new Promise((resolve, reject) => {
     switch (getThemeName()) {
       case 'default': {
         setDefaultTheme();
@@ -43,46 +49,47 @@ async function init() {
       }
     }
     resolve();
-  }).then(() => {
-    registerEvents();
-    checkDisplayArtwork();
   });
+}
 
-  queue('request-data').then((val) => {
-    update(val);
-    json = val;
+// Initialize:
+async function init() {
+  for (key in templates) {
+    let item = localStorage.getItem(key);
+    templates[key] = item;
+  }
+  // No Duplicate Popout
+  if (isPopout()) {
+    $('#P').hide();
+    $('#settings').attr('href', 'settings.html?p=1');
+  } 
+}
+
+async function loopRequestData() {
+  queue('smart-request-data').then((val) => {
+    if (val != null && val != {}) {
+      update(val);
+      // console.log(val);
+        
+      // Controller
+      toggleElements(true);
+      keyReady = true;
+      return val;
+    }
+    return {};
+  }).then((val) => {
+    for (let key in val) {
+      json[key] = val[key];
+    }
     sessionStorage.setItem('data', JSON.stringify(json));
   });
 
-  setInterval(async() => {
-    queue('smart-request-data').then((val) => {
-      if (val != null && val != {}) {
-        update(val);
-        // console.log(val);
-        
-        // Controller
-        toggleElements(true);
-        keyReady = true;
-        return val;
-      }
-      return {};
-    }).then((val) => {
-      for (let key in json) {
-        if (json[key] == val[key] || val[key] == null) continue;
-        let value = val[key];
-        json[key] = value;
-        // console.log(key, ': ', value)
-      }
-      sessionStorage.setItem('data', JSON.stringify(json));
-    });
+  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
 
-    let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
-
-    // If sc tab is closed -> reload the popup.html (itself)
-    if (keyReady && ScTab == null) {
-      location.reload(); // RESET EVERYTHING!
-    }
-  }, 500);
+  // If sc tab is closed -> reload the popup.html (itself)
+  if (keyReady && ScTab == null) {
+    location.reload(); // RESET EVERYTHING!
+  }
 }
 
 async function update(val) {
@@ -90,12 +97,12 @@ async function update(val) {
   if (val == null || typeof val !== 'object') return;
 
   // set artwork (text)
-  if (val['artwork'] != null && val['artwork'] != json['artwork']) {
+  if (val['artwork'] != null) {
     $('#artwork').css('background-image', val['artwork']);
   }
 
   // set title (text)
-  if (val['title'] != null && val['title'] != json['title']) {
+  if (val['title'] != null) {
     $('.title').text( replaceText( localStorage.getItem('trackdisplay'), val) );
 
     if (marqueeReady == false) {
@@ -144,12 +151,12 @@ async function update(val) {
   }
 
   // set mute (true/false)
-  if (val['mute'] != json['mute']) {
+  if (val['mute'] != null) {
     val['mute'] ? $('#volume-icon').addClass('muted') : $('#volume-icon').removeClass('muted');
   }
 
   // set share link
-  if (val['time'] != json['time']) {
+  if (val['time'] != null) {
     $('#copy').val(json['link'] + (shareSettings['share_with_time'] ? '#t=' + val['time']['current'] : '') );
 
     let selectable = shareSettings['share_with_time']
@@ -233,7 +240,7 @@ function registerAudioButtons() {
   });
 }
 
-function registerEvents() { 
+async function registerEvents() { 
   // Dark Mode
   if (localStorage.getItem('darkmode') != null) {
     dark = (localStorage.getItem('darkmode') === 'true');
@@ -246,14 +253,14 @@ function registerEvents() {
 
   // Popout
   $('#P').on('click', () => {
-    popup('popup/popup.html?p=1', 'a');
+    popup('../popup/popup.html?p=1', 'a');
     // $('#P').css('display', 'none');
     window.close();
   });
 
   // Link buttons
   $('#store').on('click', () => {
-    openURL('https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej');
+    openURL(getStoreLink());
   });
 
   // Share
@@ -264,7 +271,11 @@ function registerEvents() {
   });
 
   $('#share_with_time').on('input', () => {
-    shareSettings['share_with_time'] = $('#share_with_time').prop('checked');
+    let check = $('#share_with_time').prop('checked');
+    shareSettings['share_with_time'] = check;
+
+    let copyLink = check ? json['link'] : `${json['link']}'#t=${json['time']['current']}`;
+    $('#copy').val(copyLink);
   });
 
   // Social
@@ -310,7 +321,7 @@ function shareLink(social) {
 // Variables
 var dark = false, 
   marqueeReady = false, 
-  hideList = ['#close', '#second', 'hr:last-child', '#controller-body[mode="compact"] #hyphen', '.marquee .title'],
+  hideList = ['#close', '#second', '#controller-body[mode="compact"] #hyphen', '.marquee .title'],
   links = {
     'twitter': 'https://twitter.com/intent/tweet?text=%text%&hashtags=NowPlaying',
   },

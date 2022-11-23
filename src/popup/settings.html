@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset='UTF-8'>
+  <script src='../browser-polyfill.min.js'></script>
   <script src='../jquery-3.4.1.min.js'></script>
   <script src='../jquery.marquee.min.js'></script>
   <script src='utils.js'></script>
@@ -233,7 +234,7 @@
     <div class='dd-child'>
       <table id='shortcuts'>
         <tr>
-          <td>Open the Popup<br>(In Chrome Window)</td>
+          <td>Open the Popup<br>(In Browser Window)</td>
           <th>CMD + SHIFT + S</th>
         </tr>
         <tr>
@@ -285,7 +286,8 @@
           <th>Q</th>
         </tr>
       </table>
-      <a id='eshortcuts' class='clickable' href='#'>Open Extension Shortcuts Page</a><br>
+      <br>
+      <span id='eshortcuts' href='#'></span><br>
       <hr>
     </div>
   </div>
@@ -298,32 +300,19 @@
       <span class='bold'>[Updates]</span><br>
       Added
       <ul>
-        <li>Green Screen Page</li>
-        <li>Fav/Unfav Shortcut</li>
-        <li>Shifting Repeat Shortcut</li>
-        <li>Toggle Shuffle Shortcut</li>
-        <li>Disable Option for Dropdown Animation</li>
-      </ul>
-      Improved
-      <ul>
-        <li>Design for settings page</li>
-        <li>Inside of the code</li>
+        <li>Start Page Option</li>
+        <li>Dark Mode Automation</li>
       </ul>
       Fixed
       <ul>
-        <li>Minor Bugs</li>
-      </ul>
-      Changed
-      <ul>
-        <li>Now you can open a new sc tab by clicking audio buttons due to change of artwork function.</li>
+        <li>Couple minor bugs.</li>
+        <li>The error: Unchecked runtime.lastError</li>
       </ul>
       <span class='bold'>[Message]</span><br>
       <span class='gray' style='line-break: anywhere;'>
-        <i>Replaced & improved the fundamental part of the code.
+        <i>Ported to the Web Extension.<br>Hi Firefox, Opera and Edge users!
         <br><br>
-        Thanks for 8k users!
-        <br><br>
-        24 Oct 2022.
+        11 Nov 2022.
         </i>
       </span>
       <hr>
@@ -382,6 +371,7 @@
       </span>
     </div>
     <div class='right'>
+      <span style='display: none;' id='small-msg'>Multiple popup/popout is currently<br>unstable due to migration.<br></span>
       <a id='captureme' class='clickable' href=''></a>
       <a id='captureguide' class='clickable'></a>
     </div>

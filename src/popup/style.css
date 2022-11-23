@@ -3,6 +3,10 @@ body {
   width: 250px;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 * {
   font-family: var(--custom-font);
   font-size: var(--font-size);

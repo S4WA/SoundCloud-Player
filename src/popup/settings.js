@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#video').on('click', function() {
     $(this).siblings('.dd-child').html('<iframe width="100%" src="https://www.youtube.com/embed/hIJyF2u3-RY" title="Quick Tutorial for SoundCloud Player 1.3.0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
   });
+
+  if (browser.extension.getViews().length > 1) {
+    $('#small-msg').css('display', 'block');
+  }
 });
 
 async function initReceiver() {
@@ -45,10 +49,12 @@ async function initReceiver() {
       }
       return {};
     }).then((val) => {
-      json = val;
+      for (key in val) {
+        json[key] = val[key];
+      }
     });
 
-    let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+    let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
 
     // If sc tab is closed -> reload the popup.html (itself)
     if (keyReady && ScTab == null) {
@@ -69,39 +75,39 @@ async function update(val) {
 
 
   // set artwork (text)
-  if (val['artwork'] != null && val['artwork'] != json['artwork']) {
+  if (val['artwork'] != null) {
   // set artwork (text)
     $('#artwork').css('background-image', val['artwork']);
   }
 
   // set title (text)
-  if (val['title'] != null && val['title'] != json['title']) {
+  if (val['title'] != null) {
     $('.title').text( replaceText( localStorage.getItem('trackdisplay'), val) );
     $('.title').attr( 'title', replaceText( localStorage.getItem('trackdisplay'), val) );
   }
 
   // set link (text)
-  if (val['link'] != null && val['link'] != json['link']) {
+  if (val['link'] != null) {
     $('.title').attr( 'href', val['link'] );
   }
   
   // set playing status (true/false)
-  if (val['playing'] != null && val['playing'] != json['playing']) {
+  if (val['playing'] != null) {
     $('#toggle').attr( 'playing', val['playing'] );
   }
 
   // set favorite status (true/false)
-  if (val['favorite'] != null && val['favorite'] != json['favorite']) {
+  if (val['favorite'] != null) {
     $('#fav').attr( 'favorite', val['favorite'] );
   }
   
   // set shuffle status (true/false)
-  if (val['shuffle'] != null && val['shuffle'] != json['shuffle']) {
+  if (val['shuffle'] != null) {
     $('#shuffle').attr( 'shuffle', val['shuffle'] );
   }
   
   // set repeat status (one/all/none)
-  if (val['repeat'] != null && val['repeat'] != json['repeat']) {
+  if (val['repeat'] != null) {
     $('#repeat').attr( 'mode', val['repeat'] );
   }
 
@@ -296,12 +302,14 @@ function initTemplates() {
 
 function initInputs() {
   $('#trackdisplay').on('input', function () {
+    settings['trackdisplay'] = $(this).val();
     localStorage.setItem('trackdisplay', $(this).val());
   });
   $('#fontlist').on('input', function () {
     updateFont($(this).val());
   });
   $('#theme-select').on('change', function () {
+    settings['theme'] = $(this).val();
     localStorage.setItem('theme', $(this).val());
   });
   $('#font-size').on('change', function() {
@@ -329,11 +337,10 @@ function initInputs() {
 function putAllLinks() {
   let linkList = [
     [ '#github', 'https://github.com/S4WA/SoundCloud-Player' ],
-    [ '#store', 'https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej' ],
+    [ '#store', getStoreLink() ],
     [ '#yt', 'https://youtu.be/hIJyF2u3-RY' ],
     [ '#feedback', 'https://forms.gle/oG2DvmK7HXhq8q8ZA' ],
     [ '#c-twitter', 'https://twitter.com/evildaimyoh' ],
-    [ '#eshortcuts', 'chrome://extensions/shortcuts' ],
     [ '#support', 'https://ko-fi.com/sawanese' ], 
     [ '.wiki', 'https://github.com/S4WA/SoundCloud-Player/wiki' ]
   ];
@@ -344,6 +351,7 @@ function putAllLinks() {
       });
     })(i);
   }
+  $('#eshortcuts').text(`To change the shortcut for opening popup, access '${shortcutPage()}' manually.`);
 }
 
 function initDarkmode() {
@@ -370,12 +378,6 @@ function repeat() {
   $('#repeat').attr( 'mode', json['repeat'] );
 }
 
-function toggleFav() {
-  if ($('#fav') == null) return;
-  let value = Bool( $('#fav').attr('favorite') );
-  queue( value ? 'unFav' : 'Fav' );
-}
-
 function goBackToMain() {
   location.href = 'popup.html?' + (isPopout() ? 'p=1' : '');
 }
@@ -384,7 +386,13 @@ function registerEvents() {
   $('#toggle').on('click', () => { toggle(); });
   $('#prev').on('click', () => { queue('prev'); });
   $('#next').on('click', () => { queue('next'); });
-  $('#fav').on('click', () => { toggleFav(); });
+  $('#fav').on('click', () => {
+    queue('fav').then((val) => {
+      if (val != null && val['response'] != null) {
+        update(val['response']);
+      }
+    });
+  });
   $('.title').on('click', () => { openSCTab(); });
   $('#artwork').on('click', () => { openSCTab(); });
   $('#repeat').on('click', () => { repeat(); });
