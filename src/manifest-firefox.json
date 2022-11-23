@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "SoundCloud Player",
   "short_name": "SC Player",
   "description": "SoundCloud Popup Player 🔥",
@@ -22,7 +22,7 @@
     ],
     "run_at": "document_end"
   } ],
-  "action": {
+  "browser_action": {
     "default_popup": "popup/popup.html",
     "default_icon": "icon.png"
   },
