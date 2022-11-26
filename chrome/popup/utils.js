@@ -29,6 +29,8 @@ async function queue(request, value) {
 }
 
 async function checkMultipleWindow() {
+  if (typeof loopRequestData != 'function') return;
+
   let views = chrome.extension.getViews(), l = views.length;
   // console.log('hello');
   if (l <= 1 || (l > 1 && views[0] == this)) {
