@@ -44,7 +44,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, callback) {
       break;
     }
     case 'smart-request-data': {
-      response = { 'playing': isPlaying() };
+      response = {};
 
       if (getTitle() != json['title']) {
         await update();
@@ -57,7 +57,6 @@ chrome.runtime.onMessage.addListener(async function(request, sender, callback) {
         response['favorite'] = isLiked();
       }
       if (getVolume() != json['volume'] || getCurrentTime() != json['time']['current']) {
-        response['playing'] = isPlaying();
         response['volume'] = getVolume();
         response['time'] = {};
         response['time']['current'] = getCurrentTime();

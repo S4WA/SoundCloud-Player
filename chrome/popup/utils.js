@@ -12,16 +12,67 @@ async function queue(request, value) {
 
   return r.then((val) => {
 
+    if (val['response'] != null) {
+      val = val['response'];
+    }
+
     let views = chrome.extension.getViews();
     if (views.length > 1) {
       for (let n in views) {
         let windw = views[n];
         if (windw == this) continue;
-        windw.update(val['response'] == null ? val : val['response']);
+        windw.update(val);
       }
     }
     return val;
   });
+}
+
+async function checkMultipleWindow() {
+  let views = chrome.extension.getViews(), l = views.length;
+  // console.log('hello');
+  if (l <= 1 || (l > 1 && views[0] == this)) {
+    console.log('main channel');
+    setInterval(loopRequestData, 1000);
+    if (or) {
+      clearInterval(checkTimer);
+    }
+  } else if (or == false) {
+    console.log('initializing');
+    checkTimer = setInterval(checkMultipleWindow, 1000)
+    or = true;
+  }
+}
+
+async function loopRequestData() {
+  queue('smart-request-data').then((val) => {
+    if (val != null && val != {}) {
+      update(val);
+      // console.log(val);
+        
+      // Controller
+      if (typeof toggleElements === 'function') {
+        toggleElements(true);
+      }
+      keyReady = true;
+      return val;
+    }
+    return {};
+  }).then((val) => {
+    if (val['title'] != null) {
+      sessionStorage.setItem('data', JSON.stringify(json));
+    }
+    for (let key in val) {
+      json[key] = val[key];
+    }
+  });
+
+  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+
+  // If sc tab is closed -> reload the popup.html (itself)
+  if (keyReady && ScTab == null) {
+    location.reload(); // RESET EVERYTHING!
+  }
 }
 
 function getStartPage() {
@@ -208,11 +259,7 @@ function initKeyboardBinds() {
 
         if (cmd == null) return true;
 
-        queue(cmd).then((val) => {
-          if (val != null && val['response'] != null) {
-            update(val['response']);
-          }
-        });
+        queue(cmd).then(update);
         return false;
       }
     }

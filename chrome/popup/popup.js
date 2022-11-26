@@ -1,46 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
-  Promise.all(
-    [
-      init(),
-      checkElements(),
-      setTheme(),
-      registerEvents(),
-      checkDisplayArtwork(),
-      queue('request-data').then((val) => {
-        for (key in val) {
-          json[key] = val[key];
-        }
-        update(val);
-        sessionStorage.setItem('data', JSON.stringify(json));
-      }),
-      checkMultipleWindow(),
-    ]
-  );
+  Promise.all([
+    init(),
+    checkElements(),
+    setTheme(),
+    registerEvents(),
+    checkDisplayArtwork(),
+    queue('request-data').then((val) => {
+      for (key in val) {
+        json[key] = val[key];
+      }
+      update(val);
+      sessionStorage.setItem('data', JSON.stringify(json));
+    }),
+    checkMultipleWindow(),
+  ]);
 });
 
-async function checkMultipleWindow() {
-  let views = chrome.extension.getViews(), l = views.length;
-  // console.log('hello');
-  if (l <= 1 || (l > 1 && views[0] == this)) {
-    console.log('main channel');
-    setInterval(loopRequestData, 1000);
-    if (or) {
-      clearInterval(checkTimer);
-    }
-  } else if (or == false) {
-    console.log('initializing');
-    checkTimer = setInterval(checkMultipleWindow, 1000)
-    or = true;
+// Initialize:
+async function init() {
+  for (key in templates) {
+    let item = localStorage.getItem(key);
+    templates[key] = item;
   }
-}
-
-async function toggleElements(arg) {
-  for (var i of hideList) {
-    if (arg) { // Show? If Yes ->
-      $(i).show();
-    } else {
-      $(i).hide();
-    }
+  // No Duplicate Popout
+  if (isPopout()) {
+    $('#P').hide();
+    $('#settings').attr('href', 'settings.html?p=1');
   }
 }
 
@@ -68,45 +53,13 @@ function setTheme() {
   });
 }
 
-// Initialize:
-async function init() {
-  for (key in templates) {
-    let item = localStorage.getItem(key);
-    templates[key] = item;
-  }
-  // No Duplicate Popout
-  if (isPopout()) {
-    $('#P').hide();
-    $('#settings').attr('href', 'settings.html?p=1');
-  }
-}
-
-async function loopRequestData() {
-  queue('smart-request-data').then((val) => {
-    if (val != null && val != {}) {
-      update(val);
-      // console.log(val);
-        
-      // Controller
-      toggleElements(true);
-      keyReady = true;
-      return val;
+async function toggleElements(arg) {
+  for (var i of hideList) {
+    if (arg) { // Show? If Yes ->
+      $(i).show();
+    } else {
+      $(i).hide();
     }
-    return {};
-  }).then((val) => {
-    if (val['title'] != null) {
-      sessionStorage.setItem('data', JSON.stringify(json));
-    }
-    for (let key in val) {
-      json[key] = val[key];
-    }
-  });
-
-  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
-
-  // If sc tab is closed -> reload the popup.html (itself)
-  if (keyReady && ScTab == null) {
-    location.reload(); // RESET EVERYTHING!
   }
 }
 
@@ -197,64 +150,36 @@ function setCompactTheme() {
 
 function registerAudioButtons() {
   $('#toggle').on('click', () => {
-    queue('toggle').then((val) => {
-      if (val != null && val['response'] != null) {
-        update(val['response']);
-      }
-    });
+    queue('toggle').then(update);
     openSCTab2();
   });
   $('#prev').on('click', () => { queue('prev'); openSCTab2(); });
   $('#next').on('click', () => { queue('next'); openSCTab2(); });
   $('#fav').on('click', () => {
-    queue('fav').then((val) => {
-      if (val != null && val['response'] != null) {
-        update(val['response']);
-      }
-    });
+    queue('fav').then(update);
     openSCTab2();
   });
   $('.title').on('click', () => { openSCTab(); });
   $('#artwork').on('click', () => { openSCTab(); });
   $('#repeat').on('click', () => {
-    queue('repeat').then((val) => {
-      if (val != null && val['response'] != null) {
-        update(val['response']);
-      }
-    });
+    queue('repeat').then(update);
     openSCTab2();
   });
   $('#shuffle').on('click', () => {
-    queue('shuffle').then((val) => {
-      if (val != null && val['response'] != null) {
-        update(val['response']);
-      }
-    });
+    queue('shuffle').then(update);
     openSCTab2();
   });
   $('.title').on('click', () => { return false; });
 
   $('#volume-icon').on('click', () => {
-    queue('mute').then((val) => {
-      if (val != null && val['response'] != null) {
-        update(val['response']);
-      }
-    });
+    queue('mute').then(update);
   });
 
   $('#up').on('click', () => {
-    queue('up').then((val) => {
-      if (val != null && val['response'] != null) {
-        update(val['response']);
-      }
-    });
+    queue('up').then(update);
   });
   $('#down').on('click', () => {
-    queue('down').then((val) => {
-      if (val != null && val['response'] != null) {
-        update(val['response']);
-      }
-    });
+    queue('down').then(update);
   });
 }
 

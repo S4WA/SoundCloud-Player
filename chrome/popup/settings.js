@@ -1,19 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
-  checkIfCompactIsEnabled();
-  initDropdown();
-  initSettings();
-  initTemplates();
-  initInputs();
-  putAllLinks();
-  initDarkmode();
-  checkDuplication();
-  initMarquees();
-  registerEvents();
-  initResetButton();
-  checkDDAnimation();
-  checkDisplayArtwork();
-  initReceiver();
-  initDarkModeAutomation();
+  Promise.all([
+    checkIfCompactIsEnabled(),
+    initDropdown(),
+    initSettings(),
+    initTemplates(),
+    initInputs(),
+    putAllLinks(),
+    initDarkmode(),
+    checkDuplication(),
+    initMarquees(),
+    registerEvents(),
+    initResetButton(),
+    checkDDAnimation(),
+    checkDisplayArtwork(),
+    initReceiver(),
+    checkMultipleWindow(),
+    initDarkModeAutomation(),
+  ]);
 
   if (isPopout()) {
     $('#captureme').attr('href', 'embed.html?p=1');
@@ -35,28 +38,6 @@ async function initReceiver() {
     json = val;
     sessionStorage.setItem('data', JSON.stringify(json));
   });
-
-  setInterval(async() => {
-    queue('smart-request-data').then((val) => {
-      if (val != null && val != {}) {
-        update(val);
-        sessionStorage.setItem('data', JSON.stringify(json));
-        return val;
-      }
-      return {};
-    }).then((val) => {
-      for (key in val) {
-        json[key] = val[key];
-      }
-    });
-
-    let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
-
-    // If sc tab is closed -> reload the popup.html (itself)
-    if (keyReady && ScTab == null) {
-      location.reload(); // RESET EVERYTHING!
-    }
-  }, 500);
 }
 
 async function update(val) {
@@ -122,7 +103,7 @@ async function update(val) {
   }
 }
 
-function initResetButton() {
+async function initResetButton() {
   $('#reset').on('click', function () {
     let a = $('#count'), b = 1;
     if (a.text() != '') {
@@ -142,7 +123,7 @@ function initResetButton() {
   });
 }
 
-function initDropdown() {
+async function initDropdown() {
   // Childs
   $('.dropdown').each(function(i) {
     if ( $(this).attr('closed') != null ) {
@@ -269,7 +250,7 @@ function cheeckTheme() {
   $(`#theme-select option[value='${themeName}']`).attr('selected', 'true');
 }
 
-function initSettings() {
+async function initSettings() {
   // - Track Display
   if (localStorage.getItem('trackdisplay') != null) {
     $('#trackdisplay').val(localStorage.getItem('trackdisplay'));
@@ -285,7 +266,7 @@ function initSettings() {
   }
 }
 
-function initTemplates() {
+async function initTemplates() {
   // Share Templates
   // - init
   if (localStorage.getItem('twitter') != null) {
@@ -296,7 +277,7 @@ function initTemplates() {
   }
 }
 
-function initInputs() {
+async function initInputs() {
   $('#trackdisplay').on('input', function () {
     settings['trackdisplay'] = $(this).val();
     localStorage.setItem('trackdisplay', $(this).val());
@@ -330,7 +311,7 @@ function initInputs() {
   })
 }
 
-function putAllLinks() {
+async function putAllLinks() {
   let linkList = [
     [ '#github', 'https://github.com/S4WA/SoundCloud-Player' ],
     [ '#hp', 'https://akiba.cloud/soundcloud-player/' ],
@@ -349,7 +330,7 @@ function putAllLinks() {
   }
 }
 
-function initDarkmode() {
+async function initDarkmode() {
   if (localStorage.getItem('darkmode') != null) {
     dark = (localStorage.getItem('darkmode') === 'true');
   }
@@ -362,14 +343,9 @@ function initDarkmode() {
   }
 }
 
-function toggle() {
-  if ($('#toggle') == null) return;
-  queue('toggle');
-}
-
 function repeat() {
   if (json['repeat'] == null || $('#repeat') == null) return;
-  queue('repeat');
+  queue('repeat').then(update);
   $('#repeat').attr( 'mode', json['repeat'] );
 }
 
@@ -377,21 +353,15 @@ function goBackToMain() {
   location.href = 'popup.html?' + (isPopout() ? 'p=1' : '');
 }
 
-function registerEvents() {
-  $('#toggle').on('click', () => { toggle(); });
+async function registerEvents() {
+  $('#toggle').on('click', () => { queue('toggle').then(update); });
   $('#prev').on('click', () => { queue('prev'); });
   $('#next').on('click', () => { queue('next'); });
-  $('#fav').on('click', () => {
-    queue('fav').then((val) => {
-      if (val != null && val['response'] != null) {
-        update(val['response']);
-      }
-    });
-  });
+  $('#fav').on('click', () => { queue('fav').then(update); });
   $('.title').on('click', () => { openSCTab(); });
   $('#artwork').on('click', () => { openSCTab(); });
   $('#repeat').on('click', () => { repeat(); });
-  $('#shuffle').on('click', () => { queue('shuffle'); });
+  $('#shuffle').on('click', () => { queue('shuffle').then(update);; });
   $('.title').on('click', () => { return false; });
   $('.copynp').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
@@ -432,11 +402,16 @@ function stopMarquees() {
   $('.maruee').marquee('pause');
 }
 
-function initMarquees() {
-  setTimeout(startMarquees, 50);
+async function initMarquees() {
+  await new Promise((resolve) => {
+    setTimeout(function () {
+      startMarquees();
+      return resolve();
+    }, 50);
+  });
 }
 
-function checkIfCompactIsEnabled() {
+async function checkIfCompactIsEnabled() {
   if (localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true') {
     if (json['playing'] != null) {
       $('#controller-body').css('display', 'inline-block');
@@ -449,19 +424,19 @@ function checkIfCompactIsEnabled() {
   }
 }
 
-function checkDDAnimation() {
+async function checkDDAnimation() {
   if (localStorage.getItem('dropdown-animation') != null && localStorage.getItem('dropdown-animation') == 'true') {
     $('#dropdown-animation').attr('checked', '');
   }
 }
 
-function checkDuplication() {
+async function checkDuplication() {
   if (localStorage.getItem('duplication') != null && localStorage.getItem('duplication') == 'true') {
     $('#duplication').attr('checked', '');
   }
 }
 
-function initDarkModeAutomation() {
+async function initDarkModeAutomation() {
   let auto = settings['darkmode_automation'];
   $('#da').prop('checked', auto['enabled']);
 
@@ -486,4 +461,4 @@ function initDarkModeAutomation() {
 }
 
 var dark = false;
-var json = {};
+var json = {}, or = false, checkTimer = null;
