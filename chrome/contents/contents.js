@@ -4,7 +4,7 @@ window.onload = (async() => {
   // Check if extension is reloaded
   setInterval(async() => {
     try {
-      let shit = await chrome.runtime.getManifest();
+      let shit = await browser.runtime.getManifest();
     } catch {
       // if so -> reload content.js but it can only reload in once
       if (reloading == false) {
@@ -31,7 +31,7 @@ async function update() {
   json['shuffle'] = isShuffling();
 }
 
-chrome.runtime.onMessage.addListener(async function(request, sender, callback) {
+browser.runtime.onMessage.addListener(async function(request) {
   // Debug:
   // if (request.type != 'request-data') console.log('received:', request);
 
@@ -175,7 +175,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, callback) {
     };
   }
 
-  callback(response);
+  return response;
 });
 
 var prefix = '[SoundCloud Player] ', 

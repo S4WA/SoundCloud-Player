@@ -30,7 +30,7 @@ async function init() {
 }
 
 async function checkElements() {
-  let results = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+  let results = await browser.tabs.query({ url: '*://soundcloud.com/*' });
 
   let arg = results.length != 0 && results[0].status == 'complete';
   keyReady = arg;
@@ -203,7 +203,7 @@ async function registerEvents() {
 
   // Link buttons
   $('#store').on('click', () => {
-    openURL('https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej');
+    openURL('https://akiba.cloud/soundcloud-player/');
   });
 
   // Share

@@ -1,12 +1,16 @@
+function isChrome() {
+  return browser.runtime.getURL('').includes('chrome-extension');
+}
+
 async function queue(request, value) {
   let r = new Promise(async(resolve, reject) => {
     request = String(request).toLowerCase();
-    let results = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+    let results = await browser.tabs.query({ url: '*://soundcloud.com/*' });
 
     if (results.length != 0 && results[0].status == 'complete') {
       var jsonRequest = { 'type': request };
       if (value) jsonRequest['value'] = value;
-      chrome.tabs.sendMessage(results[0].id, jsonRequest, resolve);
+      resolve(browser.tabs.sendMessage(results[0].id, jsonRequest));
     }
   });
 
@@ -16,7 +20,7 @@ async function queue(request, value) {
       val = val['response'];
     }
 
-    let views = chrome.extension.getViews();
+    let views = browser.extension.getViews();
     if (views.length > 1) {
       for (let n in views) {
         let windw = views[n];
@@ -31,7 +35,7 @@ async function queue(request, value) {
 async function checkMultipleWindow() {
   if (typeof loopRequestData != 'function') return;
 
-  let views = chrome.extension.getViews(), l = views.length;
+  let views = browser.extension.getViews(), l = views.length;
   // console.log('hello');
   if (l <= 1 || (l > 1 && views[0] == this)) {
     console.log('main channel');
@@ -69,7 +73,7 @@ async function loopRequestData() {
     }
   });
 
-  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
 
   // If sc tab is closed -> reload the popup.html (itself)
   if (keyReady && ScTab == null) {
@@ -82,9 +86,9 @@ function getStartPage() {
 }
 
 async function openSCTab2() {
-  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
   if (!ScTab) {
-    await chrome.tabs.create({ url: getStartPage() });
+    await browser.tabs.create({ url: getStartPage() });
     if (!isPopout()) window.close();
   }
   return;
@@ -92,8 +96,8 @@ async function openSCTab2() {
 
 async function openSCTab() {
   // Search for SoundCloud Tab (true/false)
-  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
-  let [currentTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+  let [currentTab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
 
   if (!currentTab) {
     return;
@@ -101,20 +105,20 @@ async function openSCTab() {
   
   // -> If no Sc Tab, Make one
   if (!ScTab) {
-    await chrome.tabs.create({ url: getStartPage() });
+    await browser.tabs.create({ url: getStartPage() });
     return;
   }
 
   // -> If not same window, focus the window that has sc tab
   if (currentTab.windowId != ScTab.windowId) {
-    await chrome.windows.update(ScTab.windowId, { focused : true });
+    await browser.windows.update(ScTab.windowId, { focused : true });
   }
 
   // -> If current tab is sc tab ->
   //    no  ->  focus the sc tab.
   //    yes ->  queue open (no need to focus)
   if (currentTab.id != ScTab.id) {
-    await chrome.tabs.update(ScTab.id, { active : true });
+    await browser.tabs.update(ScTab.id, { active : true });
   } else {
     await queue('open');
   }
@@ -132,7 +136,7 @@ function fixedEncoder(str) {
 }
 
 function openURL(link) {
-  chrome.tabs.create({ url: link });
+  browser.tabs.create({ url: link });
 }
 
 function copyToClipboard(text) {
@@ -217,7 +221,7 @@ function darkmode(val) {
 }
 
 function popup(mylink, windowname) {
-  chrome.windows.create({
+  browser.windows.create({
     url: mylink,
     type: 'popup',
     width: 290,

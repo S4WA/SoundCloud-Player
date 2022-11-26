@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset='UTF-8'>
+  <script src='../browser-polyfill.min.js'></script>
   <script src='../jquery-3.4.1.min.js'></script>
   <script src='../jquery.marquee.min.js'></script>
   <script src='utils.js'></script>
@@ -233,7 +234,7 @@
     <div class='dd-child'>
       <table id='shortcuts'>
         <tr>
-          <td>Open the Popup<br>(In Chrome Window)</td>
+          <td>Open the Popup<br>(In Browser Window)</td>
           <th>CMD + SHIFT + S</th>
         </tr>
         <tr>
@@ -286,7 +287,7 @@
         </tr>
       </table>
       <br>
-      <a id='eshortcuts' href='#'>To change the shortcut for opening popup, click this or access 'chrome://extensions/shortcuts' manually.</a><br>
+      <a id='eshortcuts' href='#'></a><br>
       <hr>
     </div>
   </div>
