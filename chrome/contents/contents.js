@@ -16,7 +16,7 @@ window.onload = (async() => {
   }, 10000);
 });
 
-function update() {
+async function update() {
   json['title'] = getTitle();
   json['artist'] = getArtist();
   json['artwork'] = getArtwork();
@@ -44,46 +44,34 @@ chrome.runtime.onMessage.addListener(async function(request, sender, callback) {
       break;
     }
     case 'smart-request-data': {
-      let temp = { 'playing': isPlaying() };
+      response = { 'playing': isPlaying() };
 
       if (getTitle() != json['title']) {
-        temp['title'] = getTitle();
-        update();
-        temp = json;
-      }
-      if (getArtist() != json['artist']) {
-        temp['artist'] = getArtist();
-      }
-      if (getArtwork() != json['artwork']) {
-        temp['artwork'] = getArtwork();
-      }
-      if (getLink() != json['link']) {
-        temp['link'] = getLink();
+        await update();
+        response = json;
       }
       if (isPlaying() != json['playing']) {
-        temp['playing'] = isPlaying();
+        response['playing'] = isPlaying();
       }
       if (isLiked() != json['favorite']) {
-        temp['favorite'] = isLiked();
+        response['favorite'] = isLiked();
       }
       if (getVolume() != json['volume'] || getCurrentTime() != json['time']['current']) {
-        temp['playing'] = isPlaying();
-        temp['volume'] = getVolume();
-        temp['time'] = {};
-        temp['time']['current'] = getCurrentTime();
-        temp['time']['end'] = getEndTime();
+        response['playing'] = isPlaying();
+        response['volume'] = getVolume();
+        response['time'] = {};
+        response['time']['current'] = getCurrentTime();
+        response['time']['end'] = getEndTime();
       }
       if (isMuted() != json['mute']) {
-        temp['mute'] = isMuted();
+        response['mute'] = isMuted();
       }
       if (getRepeatMode() != json['repeat']) {
-        temp['repeat'] = getRepeatMode();
+        response['repeat'] = getRepeatMode();
       }
       if (isShuffling() != json['shuffle']) {
-        temp['shuffle'] = isShuffling();
+        response['shuffle'] = isShuffling();
       }
-
-      response = temp;
       break;
     }
     case 'open': {

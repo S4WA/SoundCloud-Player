@@ -1,18 +1,26 @@
 async function queue(request, value) {
-  return new Promise((resolve, reject) => {
+  let r = new Promise(async(resolve, reject) => {
     request = String(request).toLowerCase();
-    chrome.tabs.query({ url: '*://soundcloud.com/*' }, (results) => {
-      if (results.length != 0 && results[0].status == 'complete') {
-        var jsonRequest = { 'type': request }
+    let results = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
 
-        if (value) jsonRequest['value'] = value;
+    if (results.length != 0 && results[0].status == 'complete') {
+      var jsonRequest = { 'type': request };
+      if (value) jsonRequest['value'] = value;
+      chrome.tabs.sendMessage(results[0].id, jsonRequest, resolve);
+    }
+  });
 
-        chrome.tabs.sendMessage(results[0].id, jsonRequest, function(res) {
-          // console.log(res);
-          resolve(res);
-        });
+  return r.then((val) => {
+
+    let views = chrome.extension.getViews();
+    if (views.length > 1) {
+      for (let n in views) {
+        let windw = views[n];
+        if (windw == this) continue;
+        windw.update(val['response'] == null ? val : val['response']);
       }
-    });
+    }
+    return val;
   });
 }
 
@@ -173,81 +181,39 @@ function initKeyboardBinds() {
   $('input,select,textarea').keydown(function(e) {
     e.stopPropagation();
   });
+  const list = {
+    // keycode, queue cmd, shift? 
+    32: { 'false':  'toggle' },
+    38: { 'true' :      'up' },
+    40: { 'true' :    'down' },
+    77: { 'false':    'mute' },
+    76: { 'true' :  'repeat' },
+    76: { 'false':     'fav' },
+    83: { 'true' : 'shuffle' },
+    37: { 'true' : 'prev', 'false': 'seekb' },
+    39: { 'true' : 'next', 'false': 'seekf' },
+  };
+
   $('body').keydown(function (e) {
     if (keyReady == false) return true;
     switch (e.keyCode) {
-      case 32: { // Space
-        queue('toggle').then((val) => {
+      case 81: { // Q Key
+        openSCTab();
+        break;
+      }
+      default: { // Arrow Right
+        if (list[e.keyCode] == null) return true;
+
+        let cmd = list[e.keyCode][e.shiftKey ? 'true' : 'false'];
+
+        if (cmd == null) return true;
+
+        queue(cmd).then((val) => {
           if (val != null && val['response'] != null) {
             update(val['response']);
           }
         });
         return false;
-      }
-      case 81: { // Q Key
-        openSCTab();
-        break;
-      }
-      case 38: { // Arrow Up
-        if (e.shiftKey) {
-          queue('up').then((val) => {
-            if (val != null && val['response'] != null) {
-              update(val['response']);
-            }
-          });
-        }
-        break;
-      }
-      case 40: { // Arrow Down
-        if (e.shiftKey) { 
-          queue('down').then((val) => {
-            if (val != null && val['response'] != null) {
-              update(val['response']);
-            }
-          });
-        }
-        break;
-      }
-      case 77: { // M Key
-        queue('mute').then((val) => {
-          if (val != null && val['response'] != null) {
-            update(val['response']);
-          }
-        });
-        break;
-      }
-      case 76: { // L Key
-        queue(e.shiftKey ? 'repeat' : 'fav').then((val) => {
-          if (val != null && val['response'] != null) {
-            update(val['response']);
-          }
-        });
-        break;
-      }
-      case 83: { // S Key
-        if (!e.shiftKey) return;
-        queue('shuffle').then((val) => {
-          if (val != null && val['response'] != null) {
-            update(val['response']);
-          }
-        });
-        break;
-      }
-      case 37: { // Arrow Left
-        queue(e.shiftKey ? 'prev' : 'seekb').then((val) => {
-          if (val != null && val['response'] != null) {
-            update(val['response']);
-          }
-        });
-        break;
-      }
-      case 39: { // Arrow Right
-        queue(e.shiftKey ? 'next' : 'seekf').then((val) => {
-          if (val != null && val['response'] != null) {
-            update(val['response']);
-          }
-        });
-        break;
       }
     }
   });

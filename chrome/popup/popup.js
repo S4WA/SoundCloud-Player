@@ -13,10 +13,26 @@ document.addEventListener('DOMContentLoaded', () => {
         update(val);
         sessionStorage.setItem('data', JSON.stringify(json));
       }),
-      setInterval(loopRequestData, 500),
+      checkMultipleWindow(),
     ]
   );
 });
+
+async function checkMultipleWindow() {
+  let views = chrome.extension.getViews(), l = views.length;
+  // console.log('hello');
+  if (l <= 1 || (l > 1 && views[0] == this)) {
+    console.log('main channel');
+    setInterval(loopRequestData, 1000);
+    if (or) {
+      clearInterval(checkTimer);
+    }
+  } else if (or == false) {
+    console.log('initializing');
+    checkTimer = setInterval(checkMultipleWindow, 1000)
+    or = true;
+  }
+}
 
 async function toggleElements(arg) {
   for (var i of hideList) {
@@ -62,7 +78,7 @@ async function init() {
   if (isPopout()) {
     $('#P').hide();
     $('#settings').attr('href', 'settings.html?p=1');
-  } 
+  }
 }
 
 async function loopRequestData() {
@@ -193,7 +209,7 @@ function registerAudioButtons() {
       if (val != null && val['response'] != null) {
         update(val['response']);
       }
-    }); 
+    });
     openSCTab2();
   });
   $('.title').on('click', () => { openSCTab(); });
@@ -319,8 +335,7 @@ function shareLink(social) {
 }
 
 // Variables
-var dark = false, 
-  marqueeReady = false, 
+var dark = false, marqueeReady = false, or = false, checkTimer = null,
   hideList = ['#close', '#second', '#controller-body[mode="compact"] #hyphen', '.marquee .title'],
   links = {
     'twitter': 'https://twitter.com/intent/tweet?text=%text%&hashtags=NowPlaying',
