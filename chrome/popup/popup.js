@@ -29,7 +29,7 @@ async function toggleElements(arg) {
 }
 
 async function checkElements() {
-  let results = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+  let results = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
 
   let arg = results.length != 0 && results[0].status == 'complete';
   keyReady = arg;
@@ -84,7 +84,7 @@ async function loopRequestData() {
     sessionStorage.setItem('data', JSON.stringify(json));
   });
 
-  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
 
   // If sc tab is closed -> reload the popup.html (itself)
   if (keyReady && ScTab == null) {
@@ -260,7 +260,7 @@ async function registerEvents() {
 
   // Link buttons
   $('#store').on('click', () => {
-    openURL(getStoreLink());
+    openURL('https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej');
   });
 
   // Share
@@ -274,7 +274,7 @@ async function registerEvents() {
     let check = $('#share_with_time').prop('checked');
     shareSettings['share_with_time'] = check;
 
-    let copyLink = check ? json['link'] : `${json['link']}'#t=${json['time']['current']}`;
+    let copyLink = check ? json['link'] : `${json['link']}#t=${json['time']['current']}`;
     $('#copy').val(copyLink);
   });
 

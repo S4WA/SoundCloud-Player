@@ -2,7 +2,6 @@
 <html>
 <head>
   <meta charset='UTF-8'>
-  <script src='../browser-polyfill.min.js'></script>
   <script src='../jquery-3.4.1.min.js'></script>
   <script src='../jquery.marquee.min.js'></script>
   <script src='utils.js'></script>
@@ -234,7 +233,7 @@
     <div class='dd-child'>
       <table id='shortcuts'>
         <tr>
-          <td>Open the Popup<br>(In Browser Window)</td>
+          <td>Open the Popup<br>(In Chrome Window)</td>
           <th>CMD + SHIFT + S</th>
         </tr>
         <tr>
@@ -287,7 +286,7 @@
         </tr>
       </table>
       <br>
-      <span id='eshortcuts' href='#'></span><br>
+      <a id='eshortcuts' href='#'>To change the shortcut for opening popup, click this or access 'chrome://extensions/shortcuts' manually.</a><br>
       <hr>
     </div>
   </div>
@@ -297,22 +296,13 @@
     </div>
     <hr>
     <div class='dd-child'>
-      <span class='bold'>[Updates]</span><br>
-      Added
-      <ul>
-        <li>Start Page Option</li>
-        <li>Dark Mode Automation</li>
-      </ul>
-      Fixed
-      <ul>
-        <li>Couple minor bugs.</li>
-        <li>The error: Unchecked runtime.lastError</li>
-      </ul>
       <span class='bold'>[Message]</span><br>
       <span class='gray' style='line-break: anywhere;'>
-        <i>Ported to the Web Extension.<br>Hi Firefox, Opera and Edge users!
+        <i><s>Ported to the Web Extension.</s>
         <br><br>
-        11 Nov 2022.
+        Nvm.
+        <br><br>
+        26 Nov 2022.
         </i>
       </span>
       <hr>
@@ -342,7 +332,7 @@
         - <a class='wiki clickable'>Wiki</a><br>
       </span>
       <span>
-        - <a id='c-twitter' class='clickable'>Twitter</a><br>
+        - <a id='hp' class='clickable'>Homepage</a><br>
       </span>
       <span>
         - <a id='github' class='clickable'>Source Code</a><br>
@@ -356,9 +346,6 @@
       <span>
         - <a id='yt' class='clickable'>Quick Tutorial Video</a><br>
       </span>
-      <span>
-        - <a id='store' class='clickable'>Review This Extension</a><br>
-      </span>
       <hr>
     </div>
   </div>
@@ -371,7 +358,6 @@
       </span>
     </div>
     <div class='right'>
-      <span style='display: none;' id='small-msg'>Multiple popup/popout is currently<br>unstable due to migration.<br></span>
       <a id='captureme' class='clickable' href=''></a>
       <a id='captureguide' class='clickable'></a>
     </div>

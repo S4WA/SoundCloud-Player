@@ -1,0 +1,114 @@
+body {
+  /*2: 450px;*/
+  width: 250px;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  font-family: var(--custom-font);
+  font-size: var(--font-size);
+}
+
+:root {
+  --theme-color:#FF5500;
+  --bg-color:#3F3F3F;
+  --custom-font:'Meiryo';
+  --font-size:12px;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+a:hover, body[dark='true'] a:hover span {
+  color: var(--theme-color);
+}
+
+#track {
+  word-break: break-all;
+}
+
+hr {
+  margin-top: 0;
+}
+
+hr:last-child {
+  margin-bottom: 0;
+}
+
+input[type='text'] {
+  display: inline-block;
+  padding: 1px 2px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  transition: border-color .1s;
+}
+
+input[type='checkbox'] {
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  color: var(--theme-color);
+}
+
+/* Utils */
+.floating .left, .floating .right {
+  display: inline-block;
+}
+
+.floating .right {
+  float: right;
+  text-align: right;
+}
+
+/* Marquee */
+.marquee {
+  overflow: hidden;
+}
+
+/* Second Elements Icon */
+/*.box {
+  border: 1px solid #a5a5a5;
+  border-radius: 3px;
+  position: relative;
+}*/
+
+/* Icons */
+.icon {
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center center;
+  transform: translateY(15%);
+}
+
+#toggle_darkmode[dark='true'] {
+  background-color: var(--theme-color);
+  -webkit-mask: url('../assets/solid-moon.svg');
+  -webkit-mask-size: cover;
+}
+
+#toggle_darkmode[dark='false'], #toggle_darkmode[dark=''] {
+  background-image: url('../assets/regular-moon.svg');
+}
+
+
+body[dark='false'] .gray, body[dark=''] .gray {
+  color: gray;
+}
+
+body[dark='true'] .gray {
+  color: #bbbbbb;
+}

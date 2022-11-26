@@ -27,10 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#video').on('click', function() {
     $(this).siblings('.dd-child').html('<iframe width="100%" src="https://www.youtube.com/embed/hIJyF2u3-RY" title="Quick Tutorial for SoundCloud Player 1.3.0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
   });
-
-  if (browser.extension.getViews().length > 1) {
-    $('#small-msg').css('display', 'block');
-  }
 });
 
 async function initReceiver() {
@@ -54,7 +50,7 @@ async function initReceiver() {
       }
     });
 
-    let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+    let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
 
     // If sc tab is closed -> reload the popup.html (itself)
     if (keyReady && ScTab == null) {
@@ -337,12 +333,12 @@ function initInputs() {
 function putAllLinks() {
   let linkList = [
     [ '#github', 'https://github.com/S4WA/SoundCloud-Player' ],
-    [ '#store', getStoreLink() ],
+    [ '#hp', 'https://akiba.cloud/soundcloud-player/' ],
     [ '#yt', 'https://youtu.be/hIJyF2u3-RY' ],
     [ '#feedback', 'https://forms.gle/oG2DvmK7HXhq8q8ZA' ],
-    [ '#c-twitter', 'https://twitter.com/evildaimyoh' ],
     [ '#support', 'https://ko-fi.com/sawanese' ], 
-    [ '.wiki', 'https://github.com/S4WA/SoundCloud-Player/wiki' ]
+    [ '.wiki', 'https://github.com/S4WA/SoundCloud-Player/wiki' ],
+    [ '#eshortcuts' , 'chrome://extensions/shortcuts' ]
   ];
   for (var i = 0; i < linkList.length; i++) {
     (function(n) {
@@ -351,7 +347,6 @@ function putAllLinks() {
       });
     })(i);
   }
-  $('#eshortcuts').text(`To change the shortcut for opening popup, access '${shortcutPage()}' manually.`);
 }
 
 function initDarkmode() {
