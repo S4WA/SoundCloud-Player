@@ -35,6 +35,11 @@ async function checkElements() {
   let arg = results.length != 0 && results[0].status == 'complete';
   keyReady = arg;
   toggleElements(arg);
+
+  if (settings['simple-label']) {
+    $('#store').text('SC PLYR');
+    $('#share_btn,#settings').contents().each(function() { if (this.nodeType === Node.TEXT_NODE) this.remove(); });
+  }
 }
 
 function setTheme() {

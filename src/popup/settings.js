@@ -7,12 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initInputs(),
     putAllLinks(),
     initDarkmode(),
-    checkDuplication(),
     initMarquees(),
     registerEvents(),
     initResetButton(),
-    checkDDAnimation(),
-    checkDisplayArtwork(),
     initReceiver(),
     checkMultipleWindow(),
     initDarkModeAutomation(),
@@ -217,11 +214,11 @@ function checkCustomColors() {
   //     $('#trackdisplay').blur();
   //   }
   // })
-  $('#themecolor').on('change', function() {
+  $('#themecolor').change(function() {
     $('#current-theme').val(`${ $(this).val().toUpperCase() }`);
     updateThemeColor($(this).val());
   });
-  $('#current-theme').on('change', function() {
+  $('#current-theme').change(function() {
     $('#themecolor').val(`${ $(this).val().toUpperCase() }`);
     updateThemeColor($(this).val());
   });
@@ -236,11 +233,11 @@ function checkCustomColors() {
       $('#bgcolor').val( $(':root').css('--bg-color') );
     }, 100);
   }
-  $('#bgcolor').on('change', function() {
+  $('#bgcolor').change(function() {
     $('#current-bgcolor').val(`${ $(this).val().toUpperCase() }`);
     updateBGcolor($(this).val());
   });
-  $('#current-bgcolor').on('change', function() {
+  $('#current-bgcolor').change(function() {
     $('#bgcolor').val(`${ $(this).val().toUpperCase() }`);
     updateBGcolor($(this).val());
   });
@@ -280,41 +277,49 @@ async function initTemplates() {
 }
 
 async function initInputs() {
-  $('#trackdisplay').on('input', function () {
-    settings['trackdisplay'] = $(this).val();
-    localStorage.setItem('trackdisplay', $(this).val());
-  });
   $('#fontlist').on('input', function () {
     updateFont($(this).val());
   });
-  $('#theme-select').on('change', function () {
-    settings['theme'] = $(this).val();
-    localStorage.setItem('theme', $(this).val());
-  });
-  $('#font-size').on('change', function() {
+  $('#font-size').change(function() {
     updateFontSize($(this).val() + 'px')
   });
-  $('#duration,#pause').on('change', function() {
-    let name = $(this).attr('id');
-    localStorage.setItem(name, Number( $(this).val() ));
-    $('.marquee').marquee()
-  });
 
-  $('#twitter').on('input', function () {
-    localStorage.setItem('twitter', $(this).val());
-  });
+  const list = [
+    [ '#duration' , 'duration' ],
+    [ '#pause', 'pause' ],
+    [ '#twitter', 'twitter' ],
+    [ '#copy', 'copy' ],
+    [ '#startpage', 'startpage' ],
+    [ '#theme-select', 'theme' ],
+    [ '#trackdisplay', 'trackdisplay' ]
+  ], checkboxes = [
+    [ '#simple-label', 'simple-label' ],
+    [ '#display-artwork', 'display-artwork' ],
+    [ '#toggle-compact', 'compact_in_settings' ],
+    [ '#duplication', 'duplication' ],
+    [ '#dropdown-animation', 'dropdown-animation' ],
+    [  ]
+  ];
 
-  $('#copy').on('input', function () {
-    localStorage.setItem('copy', $(this).val());
-  });
+  for (let i = 0; i < list.length; i++) {
+    (function(n) {
+      $(list[n][0]).on('input', function() { localStorage.setItem(list[n][1], $(this).val()); });
+    })(i);
+  }
 
-  $('#startpage').on('input', function () {
-    localStorage.setItem('startpage', $(this).val());
-  })
+  for (let i = 0; i < checkboxes.length; i++) {
+    (function(n) {
+      $(checkboxes[n][0]).change(function() { localStorage.setItem(checkboxes[n][1], this.checked); });
+
+      if (localStorage.getItem( checkboxes[n][1] ) != null && localStorage.getItem( checkboxes[n][1] ) == 'true' ) {
+        $(checkboxes[n][0]).attr('checked', '');
+      }
+    })(i);
+  }
 }
 
 async function putAllLinks() {
-  let linkList = [
+  const linkList = [
     [ '#github', 'https://github.com/S4WA/SoundCloud-Player' ],
     [ '#hp', 'https://akiba.cloud/soundcloud-player/' ],
     [ '#yt', 'https://youtu.be/hIJyF2u3-RY' ],
@@ -323,11 +328,9 @@ async function putAllLinks() {
     [ '.wiki', 'https://github.com/S4WA/SoundCloud-Player/wiki' ],
     [ '#eshortcuts' , 'chrome://extensions/shortcuts' ]
   ];
-  for (var i = 0; i < linkList.length; i++) {
+  for (let i = 0; i < linkList.length; i++) {
     (function(n) {
-      $(linkList[n][0]).on('click', function() {
-        openURL(linkList[n][1]);
-      });
+      $(linkList[n][0]).on('click', function() { openURL(linkList[n][1]); });
     })(i);
   }
 }
@@ -369,35 +372,22 @@ async function registerEvents() {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
   $('#toggle-compact').change(function () {
-    if ( $(this).prop('checked') ) {
+    if (this.checked) {
       if ($('.marquee.js-marquee-wrapper').css('animation') == null) {
         startMarquees();
       }
-
       $('#controller-body').css('display', 'inline-block');
-      localStorage.setItem('compact_in_settings', 'true');
       $('.maruee').marquee('resume');
-      keyReady = true;
     } else {
       stopMarquees();
-
       $('#controller-body').css('display', 'none');
-      localStorage.setItem('compact_in_settings', 'false');
-      keyReady = false;
     }
+    keyReady = this.checked;
   });
   $('#dropdown-animation').change(function() {
     localStorage.setItem('dropdown-animation', $(this).prop('checked') ? 'true' : 'false');
   });
-  $('#display-artwork').change(function() {
-    let val = $(this).prop('checked');
-    toggleArtwork(val);
-    localStorage.setItem('display-artwork', String(val));
-  });
-
-  $('#duplication').change(function () {
-    localStorage.setItem('duplication', duplicated = $(this).prop('checked'));
-  })
+  $('#display-artwork').change(function() { toggleArtwork(this.checked); });
 }
 
 function stopMarquees() {
@@ -414,28 +404,8 @@ async function initMarquees() {
 }
 
 async function checkIfCompactIsEnabled() {
-  if (localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true') {
-    if (json['playing'] != null) {
-      $('#controller-body').css('display', 'inline-block');
-    } else {
-      $('#controller-body').css('display', 'none');
-    }
-    $('#toggle-compact').attr('checked', '');
-  } else {
-    $('#controller-body').css('display', 'none');
-  }
-}
-
-async function checkDDAnimation() {
-  if (localStorage.getItem('dropdown-animation') != null && localStorage.getItem('dropdown-animation') == 'true') {
-    $('#dropdown-animation').attr('checked', '');
-  }
-}
-
-async function checkDuplication() {
-  if (localStorage.getItem('duplication') != null && localStorage.getItem('duplication') == 'true') {
-    $('#duplication').attr('checked', '');
-  }
+  let e = localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true' && json['title'] != null;
+  $('#controller-body').css('display', e ? 'inline-block' : 'none');
 }
 
 async function initDarkModeAutomation() {

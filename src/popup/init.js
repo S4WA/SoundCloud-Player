@@ -49,5 +49,6 @@ var prefix = '[SoundCloud Player]', json = {}, settings = {
     'enabled': false,
     'range-start': [ 17, 0 ],
     'range-end': [ 5, 0 ]
-  }
+  },
+  'simple-label': false
 }
