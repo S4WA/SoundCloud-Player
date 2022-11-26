@@ -94,10 +94,12 @@ async function loopRequestData() {
     }
     return {};
   }).then((val) => {
+    if (val['title'] != null) {
+      sessionStorage.setItem('data', JSON.stringify(json));
+    }
     for (let key in val) {
       json[key] = val[key];
     }
-    sessionStorage.setItem('data', JSON.stringify(json));
   });
 
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
