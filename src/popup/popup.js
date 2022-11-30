@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('data', JSON.stringify(json));
     }),
     checkMultipleWindow(),
-  ]);
+  ])
 });
 
 // Initialize:
@@ -68,6 +68,9 @@ async function toggleElements(arg) {
   }
 }
 
+let minmax = (v, min = v, max = v) =>
+  v < min ? min : v > max ? max : v
+
 async function update(val) {
   // if value is null or isn't json, return. 
   if (val == null || typeof val !== 'object') return;
@@ -81,7 +84,23 @@ async function update(val) {
   if (val['title'] != null) {
     $('.title').text( replaceText( localStorage.getItem('trackdisplay'), val) );
 
+    $('.title').each((i,el) => {
+      let width = el.clientWidth,
+      containerWidth = el.parentElement.clientWidth,
+      offset = width - containerWidth
+
+      if(offset > 0){
+        el.style.setProperty('--max-offset', offset + 'px')
+        el.style.setProperty('--anime-duration', minmax(offset * 100, 2000,10000) + 'ms')
+        el.classList.add('c-marquee')
+      }
+      else {
+        el.style.removeProperty('--max-offset', offset + 'px')
+        el.classList.remove('c-marquee')
+      }
+    })
     if (marqueeReady == false) {
+      console.log('update title2')
       marqueeReady = true;
       startMarquees();
     }
@@ -295,8 +314,10 @@ var dark = false, marqueeReady = false, or = false, checkTimer = null,
 
     <div style='padding-bottom: 6.5px;'>
       <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
-      <a class='title clickable' title='Open SoundCloud Tab' href=''>
-      </a>
+      <div class="title-mask">
+        <a class='title clickable' title='Open SoundCloud Tab' href=''>
+        </a>
+      </div>
     </div>
     <hr/>`,
   compactController = `<div class='floating'>
@@ -304,9 +325,8 @@ var dark = false, marqueeReady = false, or = false, checkTimer = null,
       <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
     </div>
     <div id='controller' class='right'>
-      <div class='children marquee'>
-        <a class='title clickable' title='' href=''>
-        </a>
+      <div class="title-mask">
+        <a class='title clickable' title='' href=''></a>
       </div>
       <div class='children'>
         <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
@@ -327,3 +347,4 @@ var dark = false, marqueeReady = false, or = false, checkTimer = null,
     </div>
     <hr style='margin-top: 5px;'>
   </div>`;
+  
