@@ -39,7 +39,7 @@ browser.runtime.onMessage.addListener(async function(request) {
 
   switch (request.type) {
     case 'request-data': {
-      update();
+      await update();
       response = json;
       break;
     }
@@ -56,11 +56,15 @@ browser.runtime.onMessage.addListener(async function(request) {
       if (isLiked() != json['favorite']) {
         response['favorite'] = isLiked();
       }
-      if (getVolume() != json['volume'] || getCurrentTime() != json['time']['current']) {
+      if (getVolume() != json['volume']) {
         response['volume'] = getVolume();
-        response['time'] = {};
-        response['time']['current'] = getCurrentTime();
-        response['time']['end'] = getEndTime();
+        response['mute'] = isMuted();
+      }
+      if (getCurrentTime() != json['time']['current']) {
+        response['time'] = {
+          'current': getCurrentTime(),
+          'end': getEndTime()
+        };
       }
       if (isMuted() != json['mute']) {
         response['mute'] = isMuted();
@@ -87,14 +91,16 @@ browser.runtime.onMessage.addListener(async function(request) {
       response = {'response': { 'playing': json['playing'], 'volume': json['volume'] } };
       break;
     }
-    case 'prev': { // MEMO: 'prev', 'next' 共にcallbackのコードを付けるとカクつく = 曲が始まった時音が ダブって聞こえる/プツっとなる
+    case 'prev': {
       $('.playControls__prev')[0].click();
-      // callback( {'response': {'code': 'song-changed'} } );
+      await update();
+      response = json;
       break;
     }
     case 'next': {
       $('.playControls__next')[0].click();
-      // callback( {'response': {'code': 'song-changed'} } );
+      await update();
+      response = json;
       break;
     }
     case 'unfav':
@@ -103,7 +109,7 @@ browser.runtime.onMessage.addListener(async function(request) {
       btn.click();
       json['favorite'] = btn.title == "Unlike";
 
-      response = {'response': {'favorite': json['favorite']} };
+      response = { 'response': {'favorite': json['favorite']} };
       break;
     }
     case 'repeat': {
@@ -111,7 +117,7 @@ browser.runtime.onMessage.addListener(async function(request) {
       btn.click();
       json['repeat'] = getRepeatMode(); // none -> one -> all
 
-      response = {'response': {'repeat': json['repeat']} };
+      response = { 'response': {'repeat': json['repeat']} };
       break;
     }
     case 'shuffle': {
@@ -127,21 +133,17 @@ browser.runtime.onMessage.addListener(async function(request) {
       $('.volume button[type="button"]')[0].click();
       json['mute'] = $('.volume')[0].className.includes('muted');
 
-      response = {'response': {'mute': json['mute']} };
+      response = { 'response': {'mute': json['mute']} };
       break;
     }
     case 'up':
     case 'down': { // volume up/down
-      if (request.type == 'up') {
-        volumeUp();
-      } else if (request.type == 'down') {
-        volumeDown();
-      }
+      request.type == 'up' ? volumeUp() : volumeDown();
       json['volume'] = getVolume();
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
 
-      response = {'response': { 'time': json['time'], 'volume': json['volume'] } };
+      response = { 'response': { 'time': json['time'], 'volume': json['volume'] } };
       break;
     }
     case 'seekb':
@@ -154,7 +156,7 @@ browser.runtime.onMessage.addListener(async function(request) {
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
 
-      response = {'response': { 'time': json['time'] } };
+      response = { 'response': { 'time': json['time'] } };
       break;
     }
     case 'ap': { // add to playlist

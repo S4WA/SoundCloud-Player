@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.title = 'SoundCloud Player Embed';
 
-  $('#title').on('click', function() {
+  $('.title,.breathing').on('click', function() {
     return false;
   });
 });
@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize:
 async function init() {
   queue('request-data').then((val) => {
-    update(val);
     json = val;
     sessionStorage.setItem('data', JSON.stringify(json));
   });
@@ -30,13 +29,10 @@ async function update(val) {
 
   // set title (text)
   if (val['artwork'] != null) {
-    $('#title').text(val['title']);
+    $('.title,.breathing').text(val['title']);
 
-    if (marqueeReady == false) {
-      marqueeReady = true;
-      startMarquees();
-    }
-    $('#title').attr('href', val['link']);
+    startMarquees();
+    $('.title,.breathing').attr('href', val['link']);
     $('#artist').text(val['artist']);
   }
 
@@ -46,4 +42,4 @@ async function update(val) {
   }
 }
 
-var marqueeReady = false, or = false, checkTimer = null;
+var or = false, checkTimer = null;

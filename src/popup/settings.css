@@ -27,12 +27,16 @@ textarea {
   padding: 5px 5px;
 }
 
-.options-table th:not(.ignore) {
+.options-table th:not(.ignore th) {
   width: 150px !important;
 }
 
-.options-table td:not(.ignore) {
+.options-table td:not(.ignore th) {
   width: 100px !important;
+}
+
+.ignore td {
+  display: inline-block;
 }
 
 #trackdisplay {
@@ -166,11 +170,11 @@ body[dark=true] #controller-body {
   margin-top: 15px;
 }
 
-.children.marquee {
+.body.marquee {
   padding-left: 10px;
 }
 
-#controller .children:not(.marquee) {
+#controller .body:not(.marquee) {
   margin-right: auto;
   margin-left: auto;
   width: 100%;

@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initInputs(),
     putAllLinks(),
     initDarkmode(),
-    initMarquees(),
     registerEvents(),
     initResetButton(),
     initReceiver(),
@@ -18,9 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (isPopout()) {
     $('#captureme').attr('href', 'embed.html?p=1');
     $('#captureme').text('Capture Me');
-    $('#captureguide').on('click', function() {
-      openURL('https://github.com/S4WA/SoundCloud-Player/wiki/For-Streamers-and-Gamers#using-the-green-screen-soundcloud-player-embed');
-    });
     $('#captureguide').text('(Guide)');
   }
 
@@ -33,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initReceiver() {
   queue('request-data').then((val) => {
-    update(val);
     json = val;
     sessionStorage.setItem('data', JSON.stringify(json));
   });
@@ -53,18 +48,20 @@ async function update(val) {
   // set artwork (text)
   if (val['artwork'] != null) {
   // set artwork (text)
+    toggleArtwork(settings['display-artwork']);
     $('#artwork').css('background-image', val['artwork']);
   }
 
   // set title (text)
   if (val['title'] != null) {
-    $('.title').text( replaceText( localStorage.getItem('trackdisplay'), val) );
-    $('.title').attr( 'title', replaceText( localStorage.getItem('trackdisplay'), val) );
+    $('.title,.breathing').text( replaceText( localStorage.getItem('trackdisplay'), val) );
+    $('.title,.breathing').attr( 'title', replaceText( localStorage.getItem('trackdisplay'), val) );
+    startMarquees();
   }
 
   // set link (text)
   if (val['link'] != null) {
-    $('.title').attr( 'href', val['link'] );
+    $('.title,.breathing').attr( 'href', val['link'] );
   }
   
   // set playing status (true/false)
@@ -281,7 +278,7 @@ async function initInputs() {
     updateFont($(this).val());
   });
   $('#font-size').change(function() {
-    updateFontSize($(this).val() + 'px')
+    updateFontSize($(this).val() + 'px');
   });
 
   const list = [
@@ -298,7 +295,9 @@ async function initInputs() {
     [ '#toggle-compact', 'compact_in_settings' ],
     [ '#duplication', 'duplication' ],
     [ '#dropdown-animation', 'dropdown-animation' ],
-    [  ]
+    [ '#popout-dupe', 'popout-dupe' ],
+    [ '#backnforth', 'back-and-forth' ],
+    [ '#apply_marquee_to_default', 'apply_marquee_to_default' ],
   ];
 
   for (let i = 0; i < list.length; i++) {
@@ -326,12 +325,11 @@ async function putAllLinks() {
     [ '#feedback', 'https://forms.gle/oG2DvmK7HXhq8q8ZA' ],
     [ '#support', 'https://ko-fi.com/sawanese' ], 
     [ '.wiki', 'https://github.com/S4WA/SoundCloud-Player/wiki' ],
-    [ '#eshortcuts' , 'chrome://extensions/shortcuts' ]
+    [ '#eshortcuts' , 'chrome://extensions/shortcuts' ],
+    [ '#captureguide', 'https://github.com/S4WA/SoundCloud-Player/wiki/For-Streamers-and-Gamers#using-the-green-screen-soundcloud-player-embed' ],
   ];
   for (let i = 0; i < linkList.length; i++) {
-    (function(n) {
-      $(linkList[n][0]).on('click', function() { openURL(linkList[n][1]); });
-    })(i);
+    $(linkList[i][0]).on('click', () => { openURL(linkList[i][1]); });
   }
 }
 
@@ -359,27 +357,22 @@ function goBackToMain() {
 }
 
 async function registerEvents() {
-  $('#toggle').on('click', () => { queue('toggle').then(update); });
+  $('#fav').on('click', () => { queue('fav'); });
   $('#prev').on('click', () => { queue('prev'); });
   $('#next').on('click', () => { queue('next'); });
-  $('#fav').on('click', () => { queue('fav').then(update); });
-  $('.title').on('click', () => { openSCTab(); });
-  $('#artwork').on('click', () => { openSCTab(); });
+  $('.title,.breathing').on('click', () => { openSCTab(); return false; });
   $('#repeat').on('click', () => { repeat(); });
-  $('#shuffle').on('click', () => { queue('shuffle').then(update);; });
-  $('.title').on('click', () => { return false; });
+  $('#toggle').on('click', () => { queue('toggle'); });
+  $('#artwork').on('click', () => { openSCTab(); });
+  $('#shuffle').on('click', () => { queue('shuffle'); });
   $('.copynp').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
   $('#toggle-compact').change(function () {
     if (this.checked) {
-      if ($('.marquee.js-marquee-wrapper').css('animation') == null) {
-        startMarquees();
-      }
+      startMarquees();
       $('#controller-body').css('display', 'inline-block');
-      $('.maruee').marquee('resume');
     } else {
-      stopMarquees();
       $('#controller-body').css('display', 'none');
     }
     keyReady = this.checked;
@@ -388,19 +381,6 @@ async function registerEvents() {
     localStorage.setItem('dropdown-animation', $(this).prop('checked') ? 'true' : 'false');
   });
   $('#display-artwork').change(function() { toggleArtwork(this.checked); });
-}
-
-function stopMarquees() {
-  $('.maruee').marquee('pause');
-}
-
-async function initMarquees() {
-  await new Promise((resolve) => {
-    setTimeout(function () {
-      startMarquees();
-      return resolve();
-    }, 50);
-  });
 }
 
 async function checkIfCompactIsEnabled() {

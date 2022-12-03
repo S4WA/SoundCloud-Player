@@ -5,9 +5,9 @@
   <script src='../browser-polyfill.min.js'></script>
   <script src='../jquery-3.4.1.min.js'></script>
   <script src='../jquery.marquee.min.js'></script>
-  <script src='utils.js'></script>
-  <script src='init.js'></script>
-  <script src='settings.js'></script>
+  <script defer src='utils.js'></script>
+  <script defer src='init.js'></script>
+  <script defer src='settings.js'></script>
 
   <link rel='stylesheet' type='text/css' href='style.css'>
   <link rel='stylesheet' type='text/css' href='settings.css'>
@@ -18,11 +18,11 @@
       <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
     </div>
     <div id='controller' class='right'>
-      <div class='children marquee'>
+      <div class='body marquee'>
         <a class='title' title=''>
         </a>
       </div>
-      <div class='children'>
+      <div class='body'>
         <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
         <div>
           <span id='current' style='float: left;'></span>
@@ -31,7 +31,7 @@
         </div>
         <button id='repeat' class='clickable' title='Repeat' mode=''></button>
       </div>
-      <div class='children'>
+      <div class='body'>
         <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
         <button id='prev' class='clickable' title='Prev'></button>
         <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
@@ -137,6 +137,10 @@
         <div class='dd-child'>
           <table class='options-table'>
             <tr>
+              <th>Enable this on default theme.</th>
+              <td><input id='apply_marquee_to_default' type='checkbox'></td>
+            </tr>
+            <tr>
               <th>Speed for title text scrolling</th>
               <td><input id='duration' type='number' step='500' style='width: 45px; height: 14px;'> ms</td>
             </tr>
@@ -146,7 +150,16 @@
             </tr>
             <tr>
               <th>Duplicate Scrolling Text</th>
-              <td><input type='checkbox' name='duplication' id='duplication'></td>
+              <td><input type='checkbox' id='duplication'></td>
+            </tr>
+          </table>
+          <br>
+          Ignore All settings above for text scrolling and enable breathing mode.
+          <br>
+          <table class='options-table'>
+            <tr>
+              <th>Breathing <span title='Different version of text scrolling. Goes left and right repeatedly. Big shout out to apades!'>(?)</span></th>
+              <td><input type='checkbox' id='backnforth'></td>
             </tr>
           </table>
         </div>
@@ -171,23 +184,27 @@
             Enabled: <input id='da' type='checkbox'>
             <hr>
             Range:
-            <table id='range'>
+            <table class='range ignore'>
               <tr>  
-                <th class='ignore' width='20%'>Start</th>
-                <td class='ignore'>
+                <th>Start</th>
+                <td>
                   <input id='da-sh' type='number' step='1' min='0' max='23' style='width: 30px; height: 14px;'>：
                   <input id='da-sm' type='number' step='1' min='0' max='59' style='width: 30px; height: 14px;'>
                 </td>
               </tr>
               <tr>
-                <th class='ignore' width='20%'>End</th>
-                <td class='ignore'>
+                <th>End</th>
+                <td>
                   <input id='da-eh' type='number' step='1' min='0' max='23' style='width: 30px; height: 14px;'>：
                   <input id='da-em' type='number' step='1' min='0' max='59' style='width: 30px; height: 14px;'>
                 </td>
               </tr>
             </table>
           </td>
+        </tr>
+        <tr>
+          <th>Popout Duplication <span title='If you uncheck this, when you click the pop-out button again, it will open the one window you already have.'>(?)</span></th>
+          <td><input type='checkbox' id='popout-dupe'></td>
         </tr>
       </table>
       <hr>

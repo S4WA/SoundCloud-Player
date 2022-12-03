@@ -3,6 +3,8 @@ function isChrome() {
 }
 
 async function queue(request, value) {
+  if (!request) return null;
+
   let r = new Promise(async(resolve, reject) => {
     request = String(request).toLowerCase();
     let results = await browser.tabs.query({ url: '*://soundcloud.com/*' });
@@ -15,18 +17,14 @@ async function queue(request, value) {
   });
 
   return r.then((val) => {
-
     if (val['response'] != null) {
       val = val['response'];
     }
 
     let views = browser.extension.getViews();
-    if (views.length > 1) {
-      for (let n in views) {
-        let windw = views[n];
-        if (windw == this) continue;
-        windw.update(val);
-      }
+    for (let n in views) {
+      if (typeof views[n].update != 'function') continue;
+      views[n].update(val);
     }
     return val;
   });
@@ -37,7 +35,7 @@ async function checkMultipleWindow() {
 
   let views = browser.extension.getViews(), l = views.length;
   // console.log('hello');
-  if (l <= 1 || (l > 1 && views[0] == this)) {
+  if (l == 1 || (l > 1 && views[0] == this)) {
     console.log('main channel');
     setInterval(loopRequestData, 1000);
     if (or) {
@@ -53,7 +51,6 @@ async function checkMultipleWindow() {
 async function loopRequestData() {
   queue('smart-request-data').then((val) => {
     if (val != null && val != {}) {
-      update(val);
       // console.log(val);
         
       // Controller
@@ -65,11 +62,11 @@ async function loopRequestData() {
     }
     return {};
   }).then((val) => {
-    if (val['title'] != null) {
-      sessionStorage.setItem('data', JSON.stringify(json));
-    }
     for (let key in val) {
       json[key] = val[key];
+    }
+    if (val['title'] != null) {
+      sessionStorage.setItem('data', JSON.stringify(json));
     }
   });
 
@@ -100,25 +97,25 @@ async function openSCTab() {
   let [currentTab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
 
   if (!currentTab) {
-    return;
+    return false;
   }
   
   // -> If no Sc Tab, Make one
   if (!ScTab) {
     await browser.tabs.create({ url: getStartPage() });
-    return;
+    return false;
   }
 
   // -> If not same window, focus the window that has sc tab
   if (currentTab.windowId != ScTab.windowId) {
-    await browser.windows.update(ScTab.windowId, { focused : true });
+    await browser.windows.update(ScTab.windowId, { focused: true });
   }
 
   // -> If current tab is sc tab ->
   //    no  ->  focus the sc tab.
   //    yes ->  queue open (no need to focus)
   if (currentTab.id != ScTab.id) {
-    await browser.tabs.update(ScTab.id, { active : true });
+    await browser.tabs.update(ScTab.id, { active: true });
   } else {
     await queue('open');
   }
@@ -126,7 +123,7 @@ async function openSCTab() {
   if (!isPopout()) {
     window.close();
   }
-  return;
+  return true;
 }
 
 function fixedEncoder(str) {
@@ -220,8 +217,8 @@ function darkmode(val) {
   return val;
 }
 
-function popup(mylink, windowname) {
-  browser.windows.create({
+async function popup(mylink, windowname) {
+  await browser.windows.create({
     url: mylink,
     type: 'popup',
     width: 290,
@@ -231,7 +228,11 @@ function popup(mylink, windowname) {
 }
 
 function isPopout() {
-  return location.href.includes('p=1');
+  return loc('p=1');
+}
+
+function loc(val) {
+  return location.href.includes(val);
 }
 
 function initKeyboardBinds() {
@@ -273,29 +274,42 @@ function initKeyboardBinds() {
 }
 
 function startMarquees() {
-  if (!$().marquee) return;
-  $('.marquee').bind('finished', () => {
-    if (isDuplicationEnabled() == true) {
-      $('.marquee').marquee('pause');
-      setTimeout(() => {
-        $('.marquee').marquee('resume');
-      }, getPauseTime());
-    } else {
+  if (!$().marquee || ( (!settings['apply_marquee_to_default'] && getThemeName() == 'default') && loc('popup.html') )) return;
+  if (!settings['back-and-forth']) {
+    $('.marquee').bind('finished', () => {
       setTimeout(() => {
         $('.marquee').marquee('pause');
-      }, getTextVisibleDuration());
+      }, isDuplicationEnabled() ? 0 : getPauseTime());
       setTimeout(() => {
         $('.marquee').marquee('resume');
-      }, getTextVisibleDuration() + getPauseTime());
-    }
-  }).marquee({
-    direction: 'left', 
-    duration: getTextVisibleDuration(),
-    pauseOnHover: location.href.includes('embed') ? false : true,
-    startVisible: true,
-    pauseOnCycle: true,
-    duplicated: isDuplicationEnabled()
-  });
+      }, isDuplicationEnabled() ? getPauseTime() : getTextVisibleDuration() + getPauseTime());
+    }).marquee({
+      direction: 'left', 
+      duration: getTextVisibleDuration(),
+      pauseOnHover: loc('embed') ? false : true,
+      startVisible: true,
+      pauseOnCycle: true,
+      duplicated: isDuplicationEnabled()
+    });
+  } else {
+    $('.title').wrap('<div class="title-mask"></div>').addClass('breathing').removeClass('title');
+    $('.breathing').each((i,el) => {
+      let width = el.clientWidth,
+        containerWidth = el.parentElement.clientWidth,
+        offset = width - containerWidth;
+
+      $(el.parentElement).css('-webkit-mask-image', width < containerWidth*1.2 ? 'none' : 'linear-gradient(90deg,transparent 0,#000 6px,#000 calc(100% - 12px),transparent)');
+
+      if (offset > 0) {
+        el.style.setProperty('--max-offset', offset + 'px');
+        el.style.setProperty('--anime-duration', minmax(offset * 100, 2000, 10000) + 'ms');
+        el.classList.add('c-marquee');
+      } else {
+        el.style.removeProperty('--max-offset', offset + 'px');
+        el.classList.remove('c-marquee');
+      }
+    });
+  }
 }
 
 function getTextVisibleDuration() {
@@ -312,21 +326,17 @@ function isDuplicationEnabled() {
   return Bool(localStorage.getItem('duplication'));
 }
 
-function areWeInSettingsPage() {
-  return location.href.includes('settings.html');
-}
-
 async function checkDisplayArtwork() {
   let available = Bool( localStorage.getItem('display-artwork') );
   toggleArtwork(available);
-  if (areWeInSettingsPage() && available) $('#display-artwork').attr('checked', '');
+  if (loc('settings.html') && available) $('#display-artwork').attr('checked', '');
 }
 
 function toggleArtwork(val) {
   if (val == null) return;
 
   let hidden = (val == false), 
-    isCompactInSettingsPage = (areWeInSettingsPage() && localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true');
+    isCompactInSettingsPage = (loc('settings.html') && localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true');
   if (getThemeName() == 'compact' || isCompactInSettingsPage) {
     $('#controller').css('width', hidden ? '250px' : '200px');
     $('#controller').css('height', hidden ? (isCompactInSettingsPage ? '75px' : '65px') : '50px');
@@ -369,4 +379,5 @@ function nightTime(hour, minute) {
   return (hrs > valSH || (hrs == valSH && mins >= valSM)) || (hrs < valEH || (hrs == valEH && mins <= valEM));
 }
 
-var keyReady = false, duplicated = false;
+var marqueeReady = false, keyReady = false, duplicated = false;
+let minmax = (v, min = v, max = v) => v < min ? min : v > max ? max : v;

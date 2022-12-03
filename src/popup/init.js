@@ -50,5 +50,8 @@ var prefix = '[SoundCloud Player]', json = {}, settings = {
     'range-start': [ 17, 0 ],
     'range-end': [ 5, 0 ]
   },
-  'simple-label': false
+  'simple-label': false,
+  'popout-dupe': true,
+  'back-and-forth': false,
+  'apply_marquee_to_default': false,
 }
