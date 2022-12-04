@@ -245,11 +245,10 @@ function initKeyboardBinds() {
     38: { 'true' :      'up' },
     40: { 'true' :    'down' },
     77: { 'false':    'mute' },
-    76: { 'true' :  'repeat' },
-    76: { 'false':     'fav' },
+    76: { 'true' :  'repeat', 'false':   'fav' },
     83: { 'true' : 'shuffle' },
-    37: { 'true' : 'prev', 'false': 'seekb' },
-    39: { 'true' : 'next', 'false': 'seekf' },
+    37: { 'true' :    'prev', 'false': 'seekb' },
+    39: { 'true' :    'next', 'false': 'seekf' },
   };
 
   $('body').keydown(function (e) {

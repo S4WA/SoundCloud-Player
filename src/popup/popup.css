@@ -243,8 +243,8 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   white-space: nowrap;
 }
 
-.body.marquee {
-  padding-left: 10px;
+.marquee {
+  padding-left: 0.1em;
 }
 
 #controller-body[mode='compact'] #side {
