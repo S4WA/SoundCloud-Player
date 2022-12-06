@@ -244,7 +244,7 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
 }
 
 .marquee {
-  padding-left: 0.1em;
+  padding-left: 0.05em;
 }
 
 #controller-body[mode='compact'] #side {

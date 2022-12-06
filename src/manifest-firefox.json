@@ -3,12 +3,16 @@
   "name": "SoundCloud Player",
   "short_name": "SC Player",
   "description": "SoundCloud Popup Player 🔥",
-  "version": "1.3.6.4",
+  "version": "1.3.7",
   "homepage_url": "https://akiba.cloud/soundcloud-player/",
   "permissions": [
     "tabs",
     "clipboardWrite"
   ],
+  "background": {
+    "scripts": [ "background/bg.js" ],
+    "persistent": false
+  },
   "content_scripts": [ {
     "all_frames": true,
     "js": [
@@ -32,6 +36,42 @@
     "128": "icon.png"
   },
   "commands": {
+    "open": {
+      "description": "Open the tab."
+    },
+    "toggle": {
+      "description": "Toggle the audio."
+    },
+    "prev": {
+      "description": "Play previous track"
+    },
+    "next": {
+      "description": "Play next track"
+    },
+    "fav": {
+      "description": "Add/Remove current track to the favorite list."
+    },
+    "repeat": {
+      "description": "Shift change the repeat mode. (order: SINGLE, ALL, NONE)"
+    },
+    "shuffle": {
+      "description": "Toggle shuffle mode."
+    },
+    "mute": {
+      "description": "Toggle mute."
+    },
+    "up": {
+      "description": "Audio volume up"
+    },
+    "down": {
+      "description": "Audio volume down"
+    },
+    "seekb": {
+      "description": "Seek a bit backward."
+    },
+    "seekf": {
+      "description": "Seek a bit forward."
+    },
     "_execute_action": {
       "suggested_key": {
         "default": "Ctrl+Alt+S"
