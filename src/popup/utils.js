@@ -275,7 +275,7 @@ function initKeyboardBinds() {
 function startMarquees() {
   if (!$().marquee || ( (!settings['apply_marquee_to_default'] && getThemeName() == 'default') && loc('popup.html') )) return;
   if (!settings['back-and-forth']) {
-    $('.marquee').bind('finished', () => {
+    $('.marquee').marquee('destroy').bind('finished', () => {
       setTimeout(() => {
         $('.marquee').marquee('pause');
       }, isDuplicationEnabled() ? 0 : getPauseTime());
