@@ -297,7 +297,7 @@ function startMarquees() {
         containerWidth = el.parentElement.clientWidth,
         offset = width - containerWidth;
 
-      $(el.parentElement).css('-webkit-mask-image', width < containerWidth*1.2 ? 'none' : 'linear-gradient(90deg,transparent 0,#000 6px,#000 calc(100% - 12px),transparent)');
+      $(el.parentElement).css('-webkit-mask-image', width < containerWidth ? 'none' : 'linear-gradient(90deg,transparent 0,#000 6px,#000 calc(100% - 12px),transparent)');
 
       if (offset > 0) {
         el.style.setProperty('--max-offset', offset + 'px');
@@ -342,11 +342,7 @@ function toggleArtwork(val) {
     $('.children.marquee').css('padding-left', hidden ? '5px' : '10px');
   }
 
-  // if (hidden) {
-  //   $('#artwork').attr('hidden', '')
-  // } else {
-  //   $('#artwork').removeAttr('hidden')
-  // }
+  $('.title,.breathing').css('padding-left', hidden ? '0' : '1em').css('padding-right', hidden ? '0' : '1em');
   $('#artwork').css('display', val ? 'inline-block' : 'none');
 }
 

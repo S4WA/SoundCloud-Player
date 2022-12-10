@@ -37,6 +37,8 @@ browser.runtime.onMessage.addListener(async function(request) {
 
   let response = {};
 
+  $(document).click();
+
   switch (request.type) {
     case 'request-data': {
       await update();

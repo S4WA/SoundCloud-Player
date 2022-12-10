@@ -190,11 +190,11 @@ async function registerEvents() {
   $('#P').on('click', async () => {
     let t = chrome.runtime.getURL(''); // 'chrome-extension://<extension-id>/'
     await browser.tabs.query({active:true, url: `${t + (t.endsWith('/') ? '' : '/')}popup/*.html?p=1`}).then(async (val) => {
-        if (val[0] == null || (localStorage['popout-dupe'] != null && localStorage['popout-dupe'] == 'false')) {
-          await popup('../popup/popup.html?p=1', 'a');
-          return;
-        }
-        await browser.windows.update(val[0].windowId, {focused: true});
+      if (val[0] == null || (localStorage['popout-dupe'] != null && localStorage['popout-dupe'] == 'true')) {
+        await popup('../popup/popup.html?p=1', 'a');
+        return;
+      }
+      await browser.windows.update(val[0].windowId, {focused: true});
     });
     window.close();
   });
