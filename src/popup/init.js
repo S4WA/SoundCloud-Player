@@ -3,8 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
   new Promise((resolve, reject) => {
     for (key in settings) {
       if (localStorage.getItem(key) == null) {
-        let value = (typeof settings[key] == 'string' || typeof settings[key] == 'number' || typeof settings[key] == 'boolean') ? 
-                    settings[key] : JSON.stringify(settings[key]);
+        let value = (typeof settings[key] == 'string'
+          || typeof settings[key] == 'number'
+          || typeof settings[key] == 'boolean'
+          ) ? settings[key] : JSON.stringify(settings[key]);
         localStorage.setItem(key, value);
       } else {
         let o = isJsonString(localStorage.getItem(key));
@@ -26,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (settings['darkmode_automation'] != null && settings['darkmode_automation']['enabled']) {
     darkmode(nightTime());
-    // console.log(prefix, 'darkmode automation:', nightTime());
   }
 });
 

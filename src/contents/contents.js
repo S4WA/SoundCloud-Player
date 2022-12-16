@@ -161,24 +161,7 @@ browser.runtime.onMessage.addListener(async function(request) {
       response = { 'response': { 'time': json['time'] } };
       break;
     }
-    case 'ap': { // add to playlist
-      focus();
-      new Promise((resolve) => {
-        $('.sc-button-more.sc-button-secondary.sc-button.sc-button-medium.sc-button-responsive')[0].click();
-        console.log('1');
-        resolve();
-      }).then(() => {
-        console.log('2');
-        $('.sc-button-addtoset.sc-button.moreActions__button.sc-button-medium.sc-button-tertiary')[0].click();
-      });
-      break;
-    }
-    default: {
-      // console.log('default:', request);
-      break;
-    };
   }
-
   return response;
 });
 

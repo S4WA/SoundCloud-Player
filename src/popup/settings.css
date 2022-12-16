@@ -170,10 +170,6 @@ body[dark=true] #controller-body {
   margin-top: 15px;
 }
 
-.body.marquee {
-  padding-left: 10px;
-}
-
 #controller .body:not(.marquee) {
   margin-right: auto;
   margin-left: auto;

@@ -44,7 +44,6 @@ async function update(val) {
   $('#controller-body').css('display', 'inline-block');
   keyReady = true;
 
-
   // set artwork (text)
   if (val['artwork'] != null) {
   // set artwork (text)
@@ -412,5 +411,4 @@ async function initDarkModeAutomation() {
   }
 }
 
-var dark = false;
-var json = {}, or = false, checkTimer = null;
+var json = {}, or = false, dark = false, checkTimer = null;

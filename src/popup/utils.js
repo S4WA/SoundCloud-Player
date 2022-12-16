@@ -1,7 +1,3 @@
-function isChrome() {
-  return browser.runtime.getURL('').includes('chrome-extension');
-}
-
 async function queue(request, value) {
   if (!request) return null;
 
@@ -34,7 +30,6 @@ async function checkMultipleWindow() {
   if (typeof loopRequestData != 'function') return;
 
   let views = browser.extension.getViews(), l = views.length;
-  // console.log('hello');
   if (l == 1 || (l > 1 && views[0] == this)) {
     console.log('main channel');
     setInterval(loopRequestData, 1000);
@@ -227,6 +222,10 @@ async function popup(mylink, windowname) {
   });
 }
 
+function isChrome() {
+  return browser.runtime.getURL('').includes('chrome-extension');
+}
+
 function isPopout() {
   return loc('p=1');
 }
@@ -291,7 +290,7 @@ function startMarquees() {
       duplicated: isDuplicationEnabled()
     });
   } else {
-    $('.title').wrap('<div class="title-mask"></div>').addClass('breathing').removeClass('title');
+    $('.title').wrap('<div class="title-mask"></div>').addClass('breathing').removeClass('title').css('padding-right', '1em');
     $('.breathing').each((i,el) => {
       let width = el.clientWidth,
         containerWidth = el.parentElement.clientWidth,
@@ -335,14 +334,17 @@ function toggleArtwork(val) {
   if (val == null) return;
 
   let hidden = (val == false), 
-    isCompactInSettingsPage = (loc('settings.html') && localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true');
+    isCompactInSettingsPage = (
+      loc('settings.html')
+      && localStorage.getItem('compact_in_settings') != null
+      && localStorage.getItem('compact_in_settings') == 'true'
+    );
   if (getThemeName() == 'compact' || isCompactInSettingsPage) {
     $('#controller').css('width', hidden ? '250px' : '200px');
     $('#controller').css('height', hidden ? (isCompactInSettingsPage ? '75px' : '65px') : '50px');
-    $('.children.marquee').css('padding-left', hidden ? '5px' : '10px');
+    $('.title,.breathing').css('padding-left', hidden ? '0' : '1em');
   }
 
-  $('.title,.breathing').css('padding-left', hidden ? '0' : '1em').css('padding-right', hidden ? '0' : '1em');
   $('#artwork').css('display', val ? 'inline-block' : 'none');
 }
 
