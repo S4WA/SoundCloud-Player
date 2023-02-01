@@ -326,6 +326,7 @@ async function putAllLinks() {
     [ '.wiki', 'https://github.com/S4WA/SoundCloud-Player/wiki' ],
     [ '#eshortcuts' , 'chrome://extensions/shortcuts' ],
     [ '#captureguide', 'https://github.com/S4WA/SoundCloud-Player/wiki/For-Streamers-and-Gamers#using-the-green-screen-soundcloud-player-embed' ],
+    [ '#privacy', 'https://akiba.cloud/soundcloud-player/privacy-policy' ]
   ];
   for (let i = 0; i < linkList.length; i++) {
     $(linkList[i][0]).on('click', () => { openURL(linkList[i][1]); });
