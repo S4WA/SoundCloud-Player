@@ -29,6 +29,7 @@ async function update() {
   json['mute'] = isMuted();
   json['repeat'] = getRepeatMode();
   json['shuffle'] = isShuffling();
+  json['following'] = isFollowing();
 }
 
 browser.runtime.onMessage.addListener(async function(request) {
@@ -161,6 +162,12 @@ browser.runtime.onMessage.addListener(async function(request) {
       response = { 'response': { 'time': json['time'] } };
       break;
     }
+    case 'follow': {
+      $('.playbackSoundBadge .sc-button-follow')[0].click();
+      json['following'] = isFollowing();
+      response = { 'response' : { 'following': json['following'] } }
+      break;
+    }
   }
   return response;
 });
@@ -179,6 +186,7 @@ var prefix = '[SoundCloud Player] ',
       'end': null
     },
     'volume': 0,
-    'mute': false
+    'mute': false,
+    'following': false,
     // , "playlist": []
   };

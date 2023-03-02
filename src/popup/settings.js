@@ -95,6 +95,11 @@ async function update(val) {
       $('#end').text(timeJson['end']);
     }
   }
+
+  // follow button
+  if (val['following'] != null) {
+    $('#follow_icon').attr('followed', val['following']);
+  }
 }
 
 async function initResetButton() {
@@ -292,13 +297,13 @@ async function initInputs() {
 
   for (let i = 0; i < list.length; i++) {
     (function(n) {
-      $(list[n][0]).on('input', function() { localStorage.setItem(list[n][1], $(this).val()); });
+      $(list[n][0]).off('input').on('input', function() { localStorage.setItem(list[n][1], $(this).val()); });
     })(i);
   }
 
   for (let i = 0; i < checkboxes.length; i++) {
     (function(n) {
-      $(checkboxes[n][0]).change(function() { localStorage.setItem(checkboxes[n][1], this.checked); });
+      $(checkboxes[n][0]).off('change').change(function() { localStorage.setItem(checkboxes[n][1], this.checked); });
 
       if (localStorage.getItem( checkboxes[n][1] ) != null && localStorage.getItem( checkboxes[n][1] ) == 'true' ) {
         $(checkboxes[n][0]).attr('checked', '');
@@ -348,18 +353,18 @@ function goBackToMain() {
 }
 
 async function registerEvents() {
-  $('#fav').on('click', () => { queue('fav'); });
-  $('#prev').on('click', () => { queue('prev'); });
-  $('#next').on('click', () => { queue('next'); });
-  $('.title,.breathing').on('click', () => { openSCTab(); return false; });
-  $('#repeat').on('click', () => { repeat(); });
-  $('#toggle').on('click', () => { queue('toggle'); });
-  $('#artwork').on('click', () => { openSCTab(); });
-  $('#shuffle').on('click', () => { queue('shuffle'); });
-  $('.copynp').on('click', () => {
+  $('#fav').off('click').on('click', () => { queue('fav'); });
+  $('#prev').off('click').on('click', () => { queue('prev'); });
+  $('#next').off('click').on('click', () => { queue('next'); });
+  $('#artwork,.title,.breathing').off('click').on('click', () => { openSCTab(); return false; });
+  $('#repeat').off('click').on('click', () => { repeat(); });
+  $('#toggle').off('click').on('click', () => { queue('toggle'); });
+  $('#shuffle').off('click').on('click', () => { queue('shuffle'); });
+  $('#follow_icon').off('click').on('click', () => { queue('follow'); })
+  $('.copynp').off('click').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
-  $('#toggle-compact').change(function () {
+  $('#toggle-compact').off('change').change(function () {
     console.log(this.checked)
     if (this.checked) {
       queue('request-data');
@@ -367,11 +372,11 @@ async function registerEvents() {
     }
     $('#controller-body').css('display', (keyReady = this.checked) ? 'inline-block' : 'none');
   });
-  $('#dropdown-animation').change(function() {
+  $('#dropdown-animation').off('change').change(function() {
     localStorage.setItem('dropdown-animation', $(this).prop('checked') ? 'true' : 'false');
   });
-  $('#display-artwork').change(function() { toggleArtwork(this.checked); });
-  $('#tsTheme').change(function() { refreshTSo( $(this).val() ); });
+  $('#display-artwork').off('change').change(function() { toggleArtwork(this.checked); });
+  $('#tsTheme').off('change').change(function() { refreshTSo( $(this).val() ); });
 }
 
 async function checkIfCompactIsEnabled() {
@@ -403,7 +408,7 @@ async function initDarkModeAutomation() {
   }
 }
 
-function refreshTSo(name) {
+function refreshTSo(name, inital) {
   name = name.toLowerCase();
 
   $('#tsOptions').html('').html($(tsOptions + (name == 'marquee' ? mqOptions : '')));

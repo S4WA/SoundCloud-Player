@@ -88,6 +88,10 @@ function seekForward() {
   input(39, 'ArrowRight');
 }
 
+function isFollowing() {
+  return $('.playbackSoundBadge .sc-button-follow')[0].getAttribute('aria-label').includes('Unfollow');
+}
+
 function input(keyCode, name, shiftKey) {
   document.dispatchEvent(
     new KeyboardEvent('keydown', {

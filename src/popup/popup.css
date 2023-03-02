@@ -192,10 +192,12 @@ body > div {
 /* Share */
 body[dark='false'] #share_icon {
   background-image: url('../assets/share/share.svg');
+  background-size: 120%;
 }
 
 body[dark='true'] #share_icon {
   background-image: url('../assets/share/share_dark.svg');
+  background-size: 120%;
 }
 
 #social .twitter {
@@ -218,7 +220,7 @@ body[dark='true'] #social .clipboard {
   background-color: white;
 }
 
-body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']) {
+body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']):not([followed='true']) {
   filter: invert(1);
 }
 
@@ -293,6 +295,16 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
 
 #popout_icon {
   background-image: url('../assets/popout.svg');
+}
+
+#follow_icon[followed='true'] {
+  -webkit-mask: url('../assets/followed.svg');
+  background-color: var(--theme-color);
+  -webkit-mask-size: cover;
+}
+
+#follow_icon[followed='false'] {
+  background-image: url('../assets/not-following.svg');
 }
 
 body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down, body[dark='true'] #volume-icon, body[dark='true'] #hyphen {

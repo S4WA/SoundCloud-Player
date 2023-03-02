@@ -126,6 +126,11 @@ async function update(val) {
     val['mute'] ? $('#volume-icon').addClass('muted') : $('#volume-icon').removeClass('muted');
   }
 
+  // follow button
+  if (val['following'] != null) {
+    $('#follow_icon').attr('followed', val['following']);
+  }
+
   setShareLink(val);
 }
 
@@ -151,8 +156,7 @@ function registerAudioButtons() {
     queue('fav');
     openSCTab2();
   });
-  $('.title,.breathing').on('click', () => { openSCTab(); });
-  $('#artwork').on('click', () => { openSCTab(); });
+  $('#artwork,.title,.breathing').on('click', () => { openSCTab(); return false; });
   $('#repeat').on('click', () => {
     queue('repeat');
     openSCTab2();
@@ -161,7 +165,6 @@ function registerAudioButtons() {
     queue('shuffle');
     openSCTab2();
   });
-  $('.title,.breathing').on('click', () => { return false; });
 
   $('#volume-icon').on('click', () => {
     queue('mute');
@@ -172,6 +175,9 @@ function registerAudioButtons() {
   });
   $('#down').on('click', () => {
     queue('down');
+  });
+  $('#follow_icon').on('click', () => {
+    queue('follow');
   });
 }
 
@@ -285,6 +291,7 @@ var dark = false, or = false, checkTimer = null, share_with_time = false,
         <button id='next' class='clickable' title='Next'></button>
       </div>
       <div class='right'>
+        <button id='follow_icon' class='clickable' title='Follow/Unfollow' followed=''></button>
         <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
         <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
         <button id='repeat' class='clickable' title='Repeat' mode=''></button>
@@ -322,6 +329,7 @@ var dark = false, or = false, checkTimer = null, share_with_time = false,
         <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
         <button id='next' class='clickable' title='Next'></button>
         <button class='copynp clickable' title='Copy Title & URL'></button>
+        <button id='follow_icon' class='clickable' title='Follow/Unfollow' followed=''></button>
       </div>
     </div>
     <hr style='margin-top: 5px;'>

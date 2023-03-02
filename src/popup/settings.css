@@ -288,7 +288,7 @@ body[dark=true] #controller-body {
   font-weight: bold;
 }
 
-body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']), body[dark='true'] #hyphen {
+body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']):not([followed='true']), body[dark='true'] #hyphen {
   background-color: transparent;
   filter: invert(1);
 }
@@ -307,4 +307,14 @@ select, select option, input, textarea {
   height: 50px;
   margin: 0 0 ;
   background-size: contain;
+}
+
+#follow_icon[followed='true'] {
+  -webkit-mask: url('../assets/followed.svg');
+  background-color: var(--theme-color);
+  -webkit-mask-size: cover;
+}
+
+#follow_icon[followed='false'] {
+  background-image: url('../assets/not-following.svg');
 }
