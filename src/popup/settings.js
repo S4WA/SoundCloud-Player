@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initReceiver(),
     checkMultipleWindow(),
     initDarkModeAutomation(),
+    refreshTSo(localStorage['back-and-forth'] == 'true' ? 'breathing' : 'marquee'),
   ]);
-
   if (isPopout()) {
     $('#captureme').attr('href', 'embed.html?p=1');
     $('#captureme').text('Capture Me');
@@ -53,8 +53,7 @@ async function update(val) {
 
   // set title (text)
   if (val['title'] != null) {
-    $('.title,.breathing').text( replaceText( localStorage.getItem('trackdisplay'), val) );
-    $('.title,.breathing').attr( 'title', replaceText( localStorage.getItem('trackdisplay'), val) );
+    $('.title,.breathing').text( replaceText( localStorage.getItem('trackdisplay'), val) ).attr( 'title', replaceText( localStorage.getItem('trackdisplay'), val) );
     startMarquees();
   }
 
@@ -203,13 +202,6 @@ function checkCustomColors() {
       $('#themecolor').val( $(':root').css('--theme-color') );
     }, 100);
   }
-  // $('#themecolor').parents('.dropdown').on('click', function() {
-  //   if ($(this).attr('closed') == 'false') {
-  //     $('#themecolor').focus();
-  //     $('#trackdisplay').focus();
-  //     $('#trackdisplay').blur();
-  //   }
-  // })
   $('#themecolor').change(function() {
     $('#current-theme').val(`${ $(this).val().toUpperCase() }`);
     updateThemeColor($(this).val());
@@ -295,7 +287,6 @@ async function initInputs() {
     [ '#duplication', 'duplication' ],
     [ '#dropdown-animation', 'dropdown-animation' ],
     [ '#popout-dupe', 'popout-dupe' ],
-    [ '#backnforth', 'back-and-forth' ],
     [ '#apply_marquee_to_default', 'apply_marquee_to_default' ],
   ];
 
@@ -369,18 +360,18 @@ async function registerEvents() {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
   $('#toggle-compact').change(function () {
+    console.log(this.checked)
     if (this.checked) {
+      queue('request-data');
       startMarquees();
-      $('#controller-body').css('display', 'inline-block');
-    } else {
-      $('#controller-body').css('display', 'none');
     }
-    keyReady = this.checked;
+    $('#controller-body').css('display', (keyReady = this.checked) ? 'inline-block' : 'none');
   });
   $('#dropdown-animation').change(function() {
     localStorage.setItem('dropdown-animation', $(this).prop('checked') ? 'true' : 'false');
   });
   $('#display-artwork').change(function() { toggleArtwork(this.checked); });
+  $('#tsTheme').change(function() { refreshTSo( $(this).val() ); });
 }
 
 async function checkIfCompactIsEnabled() {
@@ -412,4 +403,42 @@ async function initDarkModeAutomation() {
   }
 }
 
-var json = {}, or = false, dark = false, checkTimer = null;
+function refreshTSo(name) {
+  name = name.toLowerCase();
+
+  $('#tsOptions').html('').html($(tsOptions + (name == 'marquee' ? mqOptions : '')));
+  localStorage['back-and-forth'] = String(name == 'breathing');
+  $(`#tsTheme option[value='${ localStorage['back-and-forth'] == 'true' ? 'breathing' : 'marquee' }']`).attr('selected', 'true');
+
+  initInputs();
+  registerEvents();
+  checkMarqueesDurations();
+}
+
+var json = {}, or = false, dark = false, checkTimer = null, tsA = false,
+  // text-scrolling, marquee, 
+  tsOptions = `<tr>
+    <th>Enable Text Scrolling on the default theme.</th>
+    <td><input id='apply_marquee_to_default' type='checkbox'></td>
+  </tr>
+  <tr>
+    <th>Theme</th>
+    <td>
+      <select id='tsTheme'>
+        <option value='marquee'>Marquee</option>
+        <option value='breathing'>Breathing</option>
+      </select>
+    </td>
+  </tr>`,
+  mqOptions = `<tr>
+      <th>Speed for title text scrolling</th>
+      <td><input id='duration' type='number' step='500' style='width: 45px; height: 14px;'> ms</td>
+    </tr>
+    <tr>
+      <th>Pause length</th>
+      <td><input id='pause' type='number' step='500' style='width: 45px; height: 14px;'> ms</td>
+    </tr>
+    <tr>
+      <th>Duplication</th>
+      <td><input type='checkbox' id='duplication'></td>
+    </tr>`;

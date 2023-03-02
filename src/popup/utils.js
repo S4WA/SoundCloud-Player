@@ -239,15 +239,15 @@ function initKeyboardBinds() {
     e.stopPropagation();
   });
   const list = {
-    // keycode, queue cmd, shift? 
-    32: { 'false':  'toggle' },
-    38: { 'true' :      'up' },
-    40: { 'true' :    'down' },
-    77: { 'false':    'mute' },
-    76: { 'true' :  'repeat', 'false':   'fav' },
+  // keycode: { queue cmd, shift }
+    32: { 'false': 'toggle'  },
+    38: { 'true' : 'up'      },
+    40: { 'true' : 'down'    },
+    77: { 'false': 'mute'    },
+    76: { 'true' : 'repeat', 'false':   'fav' },
     83: { 'true' : 'shuffle' },
-    37: { 'true' :    'prev', 'false': 'seekb' },
-    39: { 'true' :    'next', 'false': 'seekf' },
+    37: { 'true' : 'prev',   'false': 'seekb' },
+    39: { 'true' : 'next',   'false': 'seekf' },
   };
 
   $('body').keydown(function (e) {
@@ -274,6 +274,7 @@ function initKeyboardBinds() {
 function startMarquees() {
   if (!$().marquee || ( (!settings['apply_marquee_to_default'] && getThemeName() == 'default') && loc('popup.html') )) return;
   if (!settings['back-and-forth']) {
+    $('.marquee').css('padding-left', '0.3em');
     $('.marquee').marquee('destroy').bind('finished', () => {
       setTimeout(() => {
         $('.marquee').marquee('pause');
