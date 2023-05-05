@@ -16,7 +16,7 @@
     "all_frames": true,
     "js": [
       "browser-polyfill.min.js",
-      "jquery-3.4.1.min.js",
+      "jquery-3.6.4.min.js",
       "contents/contents.js",
       "contents/utils.js"
     ],
