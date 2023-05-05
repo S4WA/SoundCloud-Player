@@ -297,13 +297,13 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   background-image: url('../assets/popout.svg');
 }
 
-#follow_icon[followed='true'] {
+#follow[followed='true'] {
   -webkit-mask: url('../assets/followed.svg');
   background-color: var(--theme-color);
   -webkit-mask-size: cover;
 }
 
-#follow_icon[followed='false'] {
+#follow[followed=''], #follow[followed='false'] {
   background-image: url('../assets/not-following.svg');
 }
 

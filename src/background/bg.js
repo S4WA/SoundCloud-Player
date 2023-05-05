@@ -28,9 +28,9 @@ browser.commands.onCommand.addListener(async (command) => {
     if (!currentTab) {
       return;
     }
-    
+
     if (!ScTab) {
-      await browser.tabs.create({ url: "https://soundcloud.com/" });
+      await browser.tabs.create({ url: 'https://soundcloud.com/' });
       return;
     }
 

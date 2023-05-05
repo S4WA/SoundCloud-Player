@@ -128,7 +128,7 @@ async function update(val) {
 
   // follow button
   if (val['following'] != null) {
-    $('#follow_icon').attr('followed', val['following']);
+    $('#follow').attr('followed', val['following']);
   }
 
   setShareLink(val);
@@ -146,38 +146,25 @@ function setCompactTheme() {
 }
 
 function registerAudioButtons() {
-  $('#toggle').on('click', () => {
-    queue('toggle');
-    openSCTab2();
-  });
-  $('#prev').on('click', () => { queue('prev'); openSCTab2(); });
-  $('#next').on('click', () => { queue('next'); openSCTab2(); });
-  $('#fav').on('click', () => {
-    queue('fav');
-    openSCTab2();
-  });
-  $('#artwork,.title,.breathing').on('click', () => { openSCTab(); return false; });
-  $('#repeat').on('click', () => {
-    queue('repeat');
-    openSCTab2();
-  });
-  $('#shuffle').on('click', () => {
-    queue('shuffle');
-    openSCTab2();
-  });
+  let obj = ['toggle', 'prev', 'next', 'fav', 'repeat', 'shuffle', 'follow'];
+  for (let i = 0; i < obj.length; i++) {
+    (function(n) {
+      $('#' + obj[n]).on('click', () => { 
+        queue(obj[n]);
+        openSCTab2();
+      });
+    })(i);
+  }
 
+  $('#artwork,.title,.breathing').on('click', () => { openSCTab(); return false; });
   $('#volume-icon').on('click', () => {
     queue('mute');
   });
-
   $('#up').on('click', () => {
     queue('up');
   });
   $('#down').on('click', () => {
     queue('down');
-  });
-  $('#follow_icon').on('click', () => {
-    queue('follow');
   });
 }
 
@@ -291,7 +278,7 @@ var dark = false, or = false, checkTimer = null, share_with_time = false,
         <button id='next' class='clickable' title='Next'></button>
       </div>
       <div class='right'>
-        <button id='follow_icon' class='clickable' title='Follow/Unfollow' followed=''></button>
+        <button id='follow' class='clickable' title='Follow/Unfollow' followed=''></button>
         <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
         <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
         <button id='repeat' class='clickable' title='Repeat' mode=''></button>
@@ -329,7 +316,7 @@ var dark = false, or = false, checkTimer = null, share_with_time = false,
         <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
         <button id='next' class='clickable' title='Next'></button>
         <button class='copynp clickable' title='Copy Title & URL'></button>
-        <button id='follow_icon' class='clickable' title='Follow/Unfollow' followed=''></button>
+        <button id='follow' class='clickable' title='Follow/Unfollow' followed=''></button>
       </div>
     </div>
     <hr style='margin-top: 5px;'>

@@ -11,8 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initResetButton(),
     initReceiver(),
     checkMultipleWindow(),
-    initDarkModeAutomation(),
-    refreshTSo(localStorage['back-and-forth'] == 'true' ? 'breathing' : 'marquee'),
   ]);
   if (isPopout()) {
     $('#captureme').attr('href', 'embed.html?p=1');
@@ -98,7 +96,7 @@ async function update(val) {
 
   // follow button
   if (val['following'] != null) {
-    $('#follow_icon').attr('followed', val['following']);
+    $('#follow').attr('followed', val['following']);
   }
 }
 
@@ -297,13 +295,13 @@ async function initInputs() {
 
   for (let i = 0; i < list.length; i++) {
     (function(n) {
-      $(list[n][0]).off('input').on('input', function() { localStorage.setItem(list[n][1], $(this).val()); });
+      $(list[n][0]).on('input', function() { localStorage.setItem(list[n][1], $(this).val()); });
     })(i);
   }
 
   for (let i = 0; i < checkboxes.length; i++) {
     (function(n) {
-      $(checkboxes[n][0]).off('change').change(function() { localStorage.setItem(checkboxes[n][1], this.checked); });
+      $(checkboxes[n][0]).change(function() { localStorage.setItem(checkboxes[n][1], this.checked); });
 
       if (localStorage.getItem( checkboxes[n][1] ) != null && localStorage.getItem( checkboxes[n][1] ) == 'true' ) {
         $(checkboxes[n][0]).attr('checked', '');
@@ -353,18 +351,18 @@ function goBackToMain() {
 }
 
 async function registerEvents() {
-  $('#fav').off('click').on('click', () => { queue('fav'); });
-  $('#prev').off('click').on('click', () => { queue('prev'); });
-  $('#next').off('click').on('click', () => { queue('next'); });
-  $('#artwork,.title,.breathing').off('click').on('click', () => { openSCTab(); return false; });
-  $('#repeat').off('click').on('click', () => { repeat(); });
-  $('#toggle').off('click').on('click', () => { queue('toggle'); });
-  $('#shuffle').off('click').on('click', () => { queue('shuffle'); });
-  $('#follow_icon').off('click').on('click', () => { queue('follow'); })
-  $('.copynp').off('click').on('click', () => {
+  $('#fav').on('click', () => { queue('fav'); });
+  $('#prev').on('click', () => { queue('prev'); });
+  $('#next').on('click', () => { queue('next'); });
+  $('#artwork,.title,.breathing').on('click', () => { openSCTab(); return false; });
+  $('#repeat').on('click', () => { repeat(); });
+  $('#toggle').on('click', () => { queue('toggle'); });
+  $('#shuffle').on('click', () => { queue('shuffle'); });
+  $('#follow').on('click', () => { queue('follow'); })
+  $('.copynp').on('click', () => {
     copyToClipboard( replaceText(localStorage.getItem('copy')) );
   });
-  $('#toggle-compact').off('change').change(function () {
+  $('#toggle-compact').change(function () {
     console.log(this.checked)
     if (this.checked) {
       queue('request-data');
@@ -372,11 +370,18 @@ async function registerEvents() {
     }
     $('#controller-body').css('display', (keyReady = this.checked) ? 'inline-block' : 'none');
   });
-  $('#dropdown-animation').off('change').change(function() {
+  $('#dropdown-animation').change(function() {
     localStorage.setItem('dropdown-animation', $(this).prop('checked') ? 'true' : 'false');
   });
-  $('#display-artwork').off('change').change(function() { toggleArtwork(this.checked); });
-  $('#tsTheme').off('change').change(function() { refreshTSo( $(this).val() ); });
+  $('#display-artwork').change(function() { toggleArtwork(this.checked); });
+
+  $('#tsTheme').change(function() { 
+    let breathing = $(this).val() == 'breathing';
+    localStorage['back-and-forth'] = breathing;
+    $('#tsOptions tr').slice(2).css('display', breathing ? 'none' : '');
+  });
+  $(`#tsTheme option[value='${ localStorage['back-and-forth'] == 'true' ? 'breathing' : 'marquee' }']`).attr('selected', 'true');
+  $('#tsOptions tr').slice(2).css('display', localStorage['back-and-forth'] == 'true' ? 'none' : '');
 }
 
 async function checkIfCompactIsEnabled() {
@@ -384,66 +389,4 @@ async function checkIfCompactIsEnabled() {
   $('#controller-body').css('display', e ? 'inline-block' : 'none');
 }
 
-async function initDarkModeAutomation() {
-  let auto = settings['darkmode_automation'];
-  $('#da').prop('checked', auto['enabled']);
-
-  $('#da').change(function() {
-    auto['enabled'] = $(this).prop('checked');
-    localStorage.setItem('darkmode_automation', JSON.stringify(auto));
-  });
-
-  $('#da-sh').val(auto['range-start'][0]);
-  $('#da-sm').val(auto['range-start'][1]);
-  $('#da-eh').val(auto['range-end'][0]);
-  $('#da-em').val(auto['range-end'][1]);
-
-  let el = $('#range').find('input');
-  for (var i = 0; i < el.length; i++) {
-    $( el[i] ).on('input', function() {
-      let o = $(this)[0].id, head = o.includes('s') ? 'range-start' : 'range-end', num = o.includes('h') ? 0 : 1, z = Number( $(this).val() );
-      auto[head][num] = z;
-      localStorage['darkmode_automation'] = JSON.stringify(auto);
-    });
-  }
-}
-
-function refreshTSo(name, inital) {
-  name = name.toLowerCase();
-
-  $('#tsOptions').html('').html($(tsOptions + (name == 'marquee' ? mqOptions : '')));
-  localStorage['back-and-forth'] = String(name == 'breathing');
-  $(`#tsTheme option[value='${ localStorage['back-and-forth'] == 'true' ? 'breathing' : 'marquee' }']`).attr('selected', 'true');
-
-  initInputs();
-  registerEvents();
-  checkMarqueesDurations();
-}
-
-var json = {}, or = false, dark = false, checkTimer = null, tsA = false,
-  // text-scrolling, marquee, 
-  tsOptions = `<tr>
-    <th>Enable Text Scrolling on the default theme.</th>
-    <td><input id='apply_marquee_to_default' type='checkbox'></td>
-  </tr>
-  <tr>
-    <th>Theme</th>
-    <td>
-      <select id='tsTheme'>
-        <option value='marquee'>Marquee</option>
-        <option value='breathing'>Breathing</option>
-      </select>
-    </td>
-  </tr>`,
-  mqOptions = `<tr>
-      <th>Speed for title text scrolling</th>
-      <td><input id='duration' type='number' step='500' style='width: 45px; height: 14px;'> ms</td>
-    </tr>
-    <tr>
-      <th>Pause length</th>
-      <td><input id='pause' type='number' step='500' style='width: 45px; height: 14px;'> ms</td>
-    </tr>
-    <tr>
-      <th>Duplication</th>
-      <td><input type='checkbox' id='duplication'></td>
-    </tr>`;
+var json = {}, or = false, dark = false, checkTimer = null, tsA = false;

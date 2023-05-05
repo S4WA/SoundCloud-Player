@@ -291,7 +291,7 @@ function startMarquees() {
       duplicated: isDuplicationEnabled()
     });
   } else {
-    $('.title').wrap('<div class="title-mask"></div>').addClass('breathing').removeClass('title').css('padding-right', '1em');
+    $('.title').wrap('<div class="title-mask"></div>').addClass('breathing').removeClass('title').css('padding-right', '0.5em');
     $('.breathing').each((i,el) => {
       let width = el.clientWidth,
         containerWidth = el.parentElement.clientWidth,
@@ -363,18 +363,6 @@ function isJsonString(str) {
     return null;
   }
   return o;
-}
-
-function nightTime(hour, minute) {
-  let auto = settings['darkmode_automation'];
-  if (auto == null || auto['enabled'] == null || auto['enabled'] == false) {
-    return -1;
-  }
-
-  let valSH = auto['range-start'][0], valSM = auto['range-start'][1], valEH = auto['range-end'][0], valEM = auto['range-end'][1];
-  let date = new Date(), hrs = hour ? hour : date.getHours(), mins = minute ? minute : date.getMinutes();
-
-  return (hrs > valSH || (hrs == valSH && mins >= valSM)) || (hrs < valEH || (hrs == valEH && mins <= valEM));
 }
 
 var marqueeReady = false, keyReady = false, duplicated = false;

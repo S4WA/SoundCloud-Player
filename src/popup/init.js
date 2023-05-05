@@ -23,12 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }).then(() => {
     initKeyboardBinds();
   });
-
   $('#version').text('v' + browser.runtime.getManifest().version);
-
-  if (settings['darkmode_automation'] != null && settings['darkmode_automation']['enabled']) {
-    darkmode(nightTime());
-  }
 });
 
 var prefix = '[SoundCloud Player]', json = {}, settings = {
@@ -46,11 +41,6 @@ var prefix = '[SoundCloud Player]', json = {}, settings = {
   'dropdown-animation': true,
   'display-artwork': true,
   'startpage': 'https://soundcloud.com',
-  'darkmode_automation': {
-    'enabled': false,
-    'range-start': [ 17, 0 ],
-    'range-end': [ 5, 0 ]
-  },
   'simple-label': false,
   'popout-dupe': true,
   'back-and-forth': false,

@@ -37,7 +37,7 @@
         <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
         <button id='next' class='clickable' title='Next'></button>
         <button class='copynp clickable' title='Copy Title & URL'></button>
-        <button id='follow_icon' class='clickable' title='Follow/Unfollow' followed=''></button>
+        <button id='follow' class='clickable' title='Follow/Unfollow' followed=''></button>
       </div>
     </div>
     <hr>
@@ -137,6 +137,31 @@
         </div>
         <div class='dd-child'>
           <table class='options-table' id='tsOptions'>
+            <tr>
+              <th>Enable Text Scrolling on the default theme.</th>
+              <td><input id='apply_marquee_to_default' type='checkbox'></td>
+            </tr>
+            <tr>
+              <th>Theme</th>
+              <td>
+                <select id='tsTheme'>
+                  <option value='marquee'>Marquee</option>
+                  <option value='breathing'>Breathing</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th>Speed for title text scrolling</th>
+              <td><input id='duration' type='number' step='500' style='width: 45px; height: 14px;'> ms</td>
+            </tr>
+            <tr>
+              <th>Pause length</th>
+              <td><input id='pause' type='number' step='500' style='width: 45px; height: 14px;'> ms</td>
+            </tr>
+            <tr>
+              <th>Duplication</th>
+              <td><input type='checkbox' id='duplication'></td>
+            </tr>
           </table>
         </div>
       </div>
@@ -155,31 +180,7 @@
           <td><textarea id='startpage'></textarea></td>
         </tr>
         <tr>
-          <th>Dark Mode Automation</th>
-          <td>
-            Enabled: <input id='da' type='checkbox'>
-            <hr>
-            Range:
-            <table class='range ignore'>
-              <tr>  
-                <th>Start</th>
-                <td>
-                  <input id='da-sh' type='number' step='1' min='0' max='23' style='width: 30px; height: 14px;'>：
-                  <input id='da-sm' type='number' step='1' min='0' max='59' style='width: 30px; height: 14px;'>
-                </td>
-              </tr>
-              <tr>
-                <th>End</th>
-                <td>
-                  <input id='da-eh' type='number' step='1' min='0' max='23' style='width: 30px; height: 14px;'>：
-                  <input id='da-em' type='number' step='1' min='0' max='59' style='width: 30px; height: 14px;'>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <th>Popout Duplication <span title='If you uncheck this, when you click the pop-out button again, it will open the window that already exists.'>(?)</span></th>
+          <th>Popout Duplication <span title="If you uncheck this option, clicking the pop-out button again will open the window that already exists.">(?)</span></th>
           <td><input type='checkbox' id='popout-dupe'></td>
         </tr>
       </table>
@@ -299,6 +300,12 @@
       <ul>
         <li>
           Follow Button.
+        </li>
+      </ul>
+      Removed
+      <ul>
+        <li>
+          Dark Mode Automation
         </li>
       </ul>
       Changed
