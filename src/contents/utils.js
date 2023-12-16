@@ -56,6 +56,7 @@ function getEndTime() {
 }
 
 function getVolume() {
+  if (document.querySelector('.volume__sliderWrapper') == null) return 0;
   return Number($('.volume__sliderWrapper')[0].getAttribute('aria-valuenow'))*100;
 }
 
@@ -89,6 +90,10 @@ function seekForward() {
 }
 
 function isFollowing() {
+  // why not TRUE OR FALSE? 
+  // if it's null then popup.html can tell that it's myself. 
+  // SoundCloud hides the follow button if it's a track from oneself. makes sense right?
+  if (document.querySelector('.playbackSoundBadge .sc-button-follow') == null) return 'self';
   return $('.playbackSoundBadge .sc-button-follow')[0].getAttribute('aria-label').includes('Unfollow');
 }
 

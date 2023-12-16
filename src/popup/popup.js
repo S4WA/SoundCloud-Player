@@ -127,8 +127,11 @@ async function update(val) {
   }
 
   // follow button
-  if (val['following'] != null) {
+  if (val['following'] != null && val['following'] != 'self') {
+    $('#follow').show();
     $('#follow').attr('followed', val['following']);
+  } else if (val['following'] == 'self') {
+    $('#follow').hide();
   }
 
   setShareLink(val);
