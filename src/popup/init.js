@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }).then(() => {
     initKeyboardBinds();
   });
-  $('#version').text('v' + browser.runtime.getManifest().version);
+  $('#version').text('v' + chrome.runtime.getManifest().version);
 });
 
 var prefix = '[SoundCloud Player]', json = {}, settings = {

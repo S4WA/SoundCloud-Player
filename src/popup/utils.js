@@ -1,35 +1,40 @@
 async function queue(request, value) {
   if (!request) return null;
 
-  let r = new Promise(async(resolve, reject) => {
-    request = String(request).toLowerCase();
-    let results = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+  request = String(request).toLowerCase();
+  const results = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
 
-    if (results.length != 0 && results[0].status == 'complete') {
-      var jsonRequest = { 'type': request };
-      if (value) jsonRequest['value'] = value;
-      resolve(browser.tabs.sendMessage(results[0].id, jsonRequest));
-    }
-  });
+  if (results.length === 0 || results[0].status !== 'complete') {
+    return null;
+  }
 
-  return r.then((val) => {
-    if (val['response'] != null) {
-      val = val['response'];
+  const jsonRequest = { type: request };
+  if (value) jsonRequest.value = value;
+
+  const val = await chrome.tabs.sendMessage(results[0].id, jsonRequest);
+
+  console.log(val)
+
+  if (val) {
+    const views = chrome.extension.getViews();
+
+    for (const view of views) {
+      if (typeof view.update === 'function') {
+        console.log(val);
+        view.update(val);
+      }
     }
 
-    let views = browser.extension.getViews();
-    for (let n in views) {
-      if (typeof views[n].update != 'function') continue;
-      views[n].update(val);
-    }
     return val;
-  });
+  }
+
+  return null;
 }
 
 async function checkMultipleWindow() {
   if (typeof loopRequestData != 'function') return;
 
-  let views = browser.extension.getViews(), l = views.length;
+  let views = chrome.extension.getViews(), l = views.length;
   if (l == 1 || (l > 1 && views[0] == this)) {
     console.log('main channel');
     setInterval(loopRequestData, 1000);
@@ -44,7 +49,7 @@ async function checkMultipleWindow() {
 }
 
 async function loopRequestData() {
-  queue('smart-request-data').then((val) => {
+  queue('request-data').then((val) => {
     if (val != null && val != {}) {
       // console.log(val);
         
@@ -65,7 +70,7 @@ async function loopRequestData() {
     }
   });
 
-  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
 
   // If sc tab is closed -> reload the popup.html (itself)
   if (keyReady && ScTab == null) {
@@ -78,9 +83,9 @@ function getStartPage() {
 }
 
 async function openSCTab2() {
-  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
   if (!ScTab) {
-    await browser.tabs.create({ url: getStartPage() });
+    await chrome.tabs.create({ url: getStartPage() });
     if (!isPopout()) window.close();
   }
   return;
@@ -88,8 +93,8 @@ async function openSCTab2() {
 
 async function openSCTab() {
   // Search for SoundCloud Tab (true/false)
-  let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
-  let [currentTab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+  let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+  let [currentTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
 
   if (!currentTab) {
     return false;
@@ -97,20 +102,20 @@ async function openSCTab() {
   
   // -> If no Sc Tab, Make one
   if (!ScTab) {
-    await browser.tabs.create({ url: getStartPage() });
+    await chrome.tabs.create({ url: getStartPage() });
     return false;
   }
 
   // -> If not same window, focus the window that has sc tab
   if (currentTab.windowId != ScTab.windowId) {
-    await browser.windows.update(ScTab.windowId, { focused: true });
+    await chrome.windows.update(ScTab.windowId, { focused: true });
   }
 
   // -> If current tab is sc tab ->
   //    no  ->  focus the sc tab.
   //    yes ->  queue open (no need to focus)
   if (currentTab.id != ScTab.id) {
-    await browser.tabs.update(ScTab.id, { active: true });
+    await chrome.tabs.update(ScTab.id, { active: true });
   } else {
     await queue('open');
   }
@@ -128,7 +133,7 @@ function fixedEncoder(str) {
 }
 
 function openURL(link) {
-  browser.tabs.create({ url: link });
+  chrome.tabs.create({ url: link });
 }
 
 function copyToClipboard(text) {
@@ -213,7 +218,7 @@ function darkmode(val) {
 }
 
 async function popup(mylink, windowname) {
-  await browser.windows.create({
+  await chrome.windows.create({
     url: mylink,
     type: 'popup',
     width: 290,
@@ -223,7 +228,7 @@ async function popup(mylink, windowname) {
 }
 
 function isChrome() {
-  return browser.runtime.getURL('').includes('chrome-extension');
+  return chrome.runtime.getURL('').includes('chrome-extension');
 }
 
 function isPopout() {

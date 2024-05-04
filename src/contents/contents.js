@@ -4,7 +4,7 @@ window.onload = (async() => {
   // Check if extension is reloaded
   setInterval(async() => {
     try {
-      let shit = await browser.runtime.getManifest();
+      let shit = await chrome.runtime.getManifest();
     } catch {
       // if so -> reload content.js but it can only reload in once
       if (reloading == false) {
@@ -32,7 +32,7 @@ async function update() {
   json['following'] = isFollowing();
 }
 
-browser.runtime.onMessage.addListener(async function(request) {
+chrome.runtime.onMessage.addListener(async function(request, sender, sendResponse) {
   // Debug:
   // if (request.type != 'request-data') console.log('received:', request);
 
@@ -41,12 +41,18 @@ browser.runtime.onMessage.addListener(async function(request) {
   $(document).click();
 
   switch (request.type) {
+    case 'get-element': {
+      response['value'] = $(`${request.value}`).length;
+      break;
+    }
     case 'request-data': {
+      if (getTitle() == null) return;
       await update();
-      response = json;
+      sendResponse(json);
       break;
     }
     case 'smart-request-data': {
+      if (getTitle() == null) return;
       response = {};
 
       if (getTitle() != json['title']) {
@@ -78,6 +84,7 @@ browser.runtime.onMessage.addListener(async function(request) {
       if (isShuffling() != json['shuffle']) {
         response['shuffle'] = isShuffling();
       }
+      sendResponse(response);
       break;
     }
     case 'open': {
@@ -87,56 +94,67 @@ browser.runtime.onMessage.addListener(async function(request) {
     case 'play':
     case 'pause':
     case 'toggle': {
-      let elem = $('.playControl.sc-ir.playControls__control.playControls__play')[0];
+      let elem = $('.playControls__elements > .playControl');
+      if (!elem) return;
       elem.click();
-      json['playing'] = elem.title.includes('Pause');
+      json['playing'] = elem.attr('title').includes('Pause');
 
       response = {'response': { 'playing': json['playing'], 'volume': json['volume'] } };
+      sendResponse(response);
       break;
     }
     case 'prev': {
-      $('.playControls__prev')[0].click();
+      $('.playControls__prev').click();
       await update();
       response = json;
+      sendResponse(response);
       break;
     }
     case 'next': {
-      $('.playControls__next')[0].click();
+      $('.playControls__next').click();
       await update();
       response = json;
+      sendResponse(response);
       break;
     }
     case 'unfav':
     case 'fav': {
-      let btn = $('.playbackSoundBadge__like')[0];
+      let btn = $('.playbackSoundBadge__like');
+      if (!btn) return;
       btn.click();
-      json['favorite'] = btn.title == "Unlike";
+      json['favorite'] = btn.attr('title') == "Unlike";
 
       response = { 'response': {'favorite': json['favorite']} };
+      sendResponse(response);
       break;
     }
     case 'repeat': {
-      let btn = $('.repeatControl')[0];
+      let btn = $('.repeatControl');
+      if (!btn) return;
       btn.click();
       json['repeat'] = getRepeatMode(); // none -> one -> all
 
       response = { 'response': {'repeat': json['repeat']} };
+      sendResponse(response);
       break;
     }
     case 'shuffle': {
-      let btn = $('.shuffleControl')[0];
+      let btn = $('.shuffleControl');
+      if (!btn) return;
       btn.click();
       json['shuffle'] = isShuffling();
 
       response = {'response': {'shuffle': json['shuffle']} };
+      sendResponse(response);
       break;
     }
     case 'mute':
     case 'unmute': {
-      $('.volume button[type="button"]')[0].click();
-      json['mute'] = $('.volume')[0].className.includes('muted');
+      $('.volume button[type="button"]').click();
+      json['mute'] = $('.volume').attr('class').includes('muted');
 
       response = { 'response': {'mute': json['mute']} };
+      sendResponse(response);
       break;
     }
     case 'up':
@@ -147,6 +165,7 @@ browser.runtime.onMessage.addListener(async function(request) {
       json['time']['end'] = getEndTime();
 
       response = { 'response': { 'time': json['time'], 'volume': json['volume'] } };
+      sendResponse(response);
       break;
     }
     case 'seekb':
@@ -160,16 +179,18 @@ browser.runtime.onMessage.addListener(async function(request) {
       json['time']['end'] = getEndTime();
 
       response = { 'response': { 'time': json['time'] } };
+      sendResponse(response);
       break;
     }
     case 'follow': {
-      $('.playbackSoundBadge .sc-button-follow')[0].click();
+      $('.playbackSoundBadge .sc-button-follow').click();
       json['following'] = isFollowing();
       response = { 'response' : { 'following': json['following'] } }
+      sendResponse(response);
       break;
     }
   }
-  return response;
+  console.log(response)
 });
 
 var prefix = '[SoundCloud Player] ', 

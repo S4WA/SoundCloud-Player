@@ -1,18 +1,18 @@
 function focus() {
-  $('.playbackSoundBadge__titleLink.sc-truncate')[0].click();
+  $('.playbackSoundBadge__titleLink.sc-truncate').click();
 }
 
 function isPlaying() {
   let cls = '.playControl';
-  return $(cls).length != 0 ? $(cls)[0].title == 'Pause current' : false;
+  return $(cls).length != 0 ? $(cls).attr('title') == 'Pause current' : false;
 }
 
 function getTitle() {
-  return $('a.playbackSoundBadge__titleLink')[0].title;
+  return $('a.playbackSoundBadge__titleLink').attr('title');
 }
 
 function getArtist() {
-  return $('a.playbackSoundBadge__lightLink')[0].title;
+  return $('a.playbackSoundBadge__lightLink').attr('title');
 }
 
 function getArtwork() {
@@ -31,7 +31,7 @@ function getLink() {
 
   if ($(cls).length == 0) return null;
 
-  let url = new URL($(cls)[0].href), params = url.searchParams, in_system_playlist = params.get('in_system_playlist') != null;
+  let url = new URL(location.origin + $(cls).attr('href')), params = url.searchParams, in_system_playlist = params.get('in_system_playlist') != null;
 
   if (in_system_playlist) {
     params.delete('in_system_playlist');
@@ -44,7 +44,7 @@ function getLink() {
 
 function isLiked() {
   let cls = '.playControls__soundBadge .sc-button-like';
-  return $(cls).length != 0 ? $(cls)[0].title == 'Unlike' : false;
+  return $(cls).length != 0 ? $(cls).attr('title') == 'Unlike' : false;
 }
 
 function getCurrentTime() {
@@ -57,20 +57,26 @@ function getEndTime() {
 
 function getVolume() {
   if (document.querySelector('.volume__sliderWrapper') == null) return 0;
-  return Number($('.volume__sliderWrapper')[0].getAttribute('aria-valuenow'))*100;
+  return Number($('.volume__sliderWrapper').attr('aria-valuenow'))*100;
 }
 
 function isMuted() {
   let cls = '.volume';
-  return $(cls).length != 0 ? $(cls)[0].className.includes('muted') : false;
+  return $(cls).length != 0 ? $(cls).attr('class').includes('muted') : false;
 }
 
 function getRepeatMode() {
-  return $('.repeatControl')[0].className.replace('repeatControl sc-ir m-', '').toLowerCase();
+  if ($('.repeatControl').length == 0) {
+    return 'none';
+  }
+  return $('.repeatControl').attr('class').replace('repeatControl sc-ir m-', '').toLowerCase();
 }
 
 function isShuffling() {
-  return $('.shuffleControl')[0].className.includes('m-shuffling');
+  if ($('.shuffleControl').length == 0) {
+    return false;
+  }
+  return $('.shuffleControl').attr('class').includes('m-shuffling');
 }
 
 function volumeDown() {
@@ -94,7 +100,7 @@ function isFollowing() {
   // if it's null then popup.html can tell that it's myself. 
   // SoundCloud hides the follow button if it's a track from oneself. makes sense right?
   if (document.querySelector('.playbackSoundBadge .sc-button-follow') == null) return 'self';
-  return $('.playbackSoundBadge .sc-button-follow')[0].getAttribute('aria-label').includes('Unfollow');
+  return $('.playbackSoundBadge .sc-button-follow').attr('aria-label').includes('Unfollow');
 }
 
 function input(keyCode, name, shiftKey) {

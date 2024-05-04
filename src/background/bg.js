@@ -17,29 +17,29 @@ const names = [
   'seekf' 
 ];
 
-browser.commands.onCommand.addListener(async (command) => {
+chrome.commands.onCommand.addListener(async (command) => {
   command = command.toLowerCase();
   if (!names.includes(command)) return;
   // console.log(command);
   if (command == 'open') {
-    let [ScTab] = await browser.tabs.query({ url: '*://soundcloud.com/*' });
-    let [currentTab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+    let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
+    let [currentTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
 
     if (!currentTab) {
       return;
     }
 
     if (!ScTab) {
-      await browser.tabs.create({ url: 'https://soundcloud.com/' });
+      await chrome.tabs.create({ url: 'https://soundcloud.com/' });
       return;
     }
 
     if (currentTab.windowId != ScTab.windowId) {
-      await browser.windows.update(ScTab.windowId, { focused: true });
+      await chrome.windows.update(ScTab.windowId, { focused: true });
     }
 
     if (currentTab.id != ScTab.id) {
-      await browser.tabs.update(ScTab.id, { active: true });
+      await chrome.tabs.update(ScTab.id, { active: true });
     } else {
       await queue('open');
     }
@@ -50,9 +50,9 @@ browser.commands.onCommand.addListener(async (command) => {
 
 async function queue(command) {
   return new Promise(async(resolve, reject) => {
-    let results = await browser.tabs.query({ url: '*://soundcloud.com/*' });
+    let results = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
     if (results != null && results.length != 0 && results[0].status == 'complete') {
-      resolve(browser.tabs.sendMessage(results[0].id, {'type': command}));
+      resolve(chrome.tabs.sendMessage(results[0].id, {'type': command}));
     }
   });
 } 
