@@ -13,15 +13,12 @@ async function queue(request, value) {
 
   const val = await chrome.tabs.sendMessage(results[0].id, jsonRequest);
 
-  console.log(val)
-
   if (val) {
     const views = chrome.extension.getViews();
 
     for (const view of views) {
       if (typeof view.update === 'function') {
-        console.log(val);
-        view.update(val);
+        view.update(val['response'] ? val['response'] : val);
       }
     }
 
@@ -49,10 +46,8 @@ async function checkMultipleWindow() {
 }
 
 async function loopRequestData() {
-  queue('request-data').then((val) => {
-    if (val != null && val != {}) {
-      // console.log(val);
-        
+  queue('smart-request-data').then((val) => {
+    if (val != null && val != {}) {        
       // Controller
       if (typeof toggleElements === 'function') {
         toggleElements(true);

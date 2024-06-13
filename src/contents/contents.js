@@ -95,11 +95,11 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
     case 'pause':
     case 'toggle': {
       let elem = $('.playControls__elements > .playControl');
-      if (!elem) return;
+      if (!elem || !elem.attr('title')) return;
       elem.click();
       json['playing'] = elem.attr('title').includes('Pause');
 
-      response = {'response': { 'playing': json['playing'], 'volume': json['volume'] } };
+      response = { 'response': { 'playing': json['playing'] } };
       sendResponse(response);
       break;
     }
@@ -144,7 +144,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       btn.click();
       json['shuffle'] = isShuffling();
 
-      response = {'response': {'shuffle': json['shuffle']} };
+      response = { 'response': {'shuffle': json['shuffle']} };
       sendResponse(response);
       break;
     }
@@ -153,7 +153,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       $('.volume button[type="button"]').click();
       json['mute'] = $('.volume').attr('class').includes('muted');
 
-      response = { 'response': {'mute': json['mute']} };
+      response = { 'response': {'mute': json['mute'], 'volume': json['volume'] } };
       sendResponse(response);
       break;
     }
@@ -190,7 +190,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       break;
     }
   }
-  console.log(response)
+  console.log(response);
 });
 
 var prefix = '[SoundCloud Player] ', 
