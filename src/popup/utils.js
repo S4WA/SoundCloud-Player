@@ -91,32 +91,40 @@ async function openSCTab() {
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
   let [currentTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
 
+  console.log('osct: 1');
   if (!currentTab) {
+    console.log('osct: 1: returning false');
     return false;
   }
   
+  console.log('osct: 2');
   // -> If no Sc Tab, Make one
   if (!ScTab) {
     await chrome.tabs.create({ url: getStartPage() });
+    console.log('osct: 2: returning false');
     return false;
   }
 
+  console.log('osct: 3');
   // -> If not same window, focus the window that has sc tab
   if (currentTab.windowId != ScTab.windowId) {
     await chrome.windows.update(ScTab.windowId, { focused: true });
   }
 
+  console.log('osct: 4');
   // -> If current tab is sc tab ->
   //    no  ->  focus the sc tab.
   //    yes ->  queue open (no need to focus)
   if (currentTab.id != ScTab.id) {
+    console.log('osct: 4is....!');
     await chrome.tabs.update(ScTab.id, { active: true });
   } else {
+    console.log('osct: 4is....OPENING!');
     await queue('open');
   }
 
   if (!isPopout()) {
-    window.close();
+    // window.close();
   }
   return true;
 }
@@ -239,7 +247,13 @@ function initKeyboardBinds() {
     e.stopPropagation();
   });
   const list = {
-  // keycode: { queue cmd, shift }
+    /*
+      keycode: { withShiftKey: "command name" }
+
+      What's withShiftKey?:
+        It enables the user to do max 2 diff things with the same keycode.
+        e.g.) using the key "L" alone (without pressing shift key), would act as liking/unliking the current track. Whereas "L" + shift will cycle the repeat modes.
+    */
     32: { 'false': 'toggle'  },
     38: { 'true' : 'up'      },
     40: { 'true' : 'down'    },

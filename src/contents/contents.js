@@ -190,7 +190,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       break;
     }
   }
-  console.log(response);
+  // console.log(response);
 });
 
 var prefix = '[SoundCloud Player] ', 

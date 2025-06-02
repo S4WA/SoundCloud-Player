@@ -1,5 +1,5 @@
 function focus() {
-  $('.playbackSoundBadge__titleLink.sc-truncate').click();
+  document.querySelector(".playbackSoundBadge__titleLink.sc-truncate").click();
 }
 
 function isPlaying() {
@@ -69,7 +69,8 @@ function getRepeatMode() {
   if ($('.repeatControl').length == 0) {
     return 'none';
   }
-  return $('.repeatControl').attr('class').replace('repeatControl sc-ir m-', '').toLowerCase();
+  // atp I wanna rewrite everytihng with jqeury
+  return Array.from(document.querySelector("button.repeatControl").classList).filter(className => className.startsWith('m-')).join(' ').replace("m-", "");
 }
 
 function isShuffling() {

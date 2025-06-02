@@ -31,6 +31,8 @@ var prefix = '[SoundCloud Player]', json = {}, settings = {
   'themecolor': '#FF5500',
   'bgcolor': '#3F3F3F',
   'twitter': '%title% By %artist% %url%',
+  'threads': '%title% By %artist% %url%',
+  'bsky': '%title% By %artist% %url%',
   'copy': '%title% By %artist% %url%',
   'font': 'Arial',
   'font-size': '12px',

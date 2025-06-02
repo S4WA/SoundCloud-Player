@@ -108,69 +108,11 @@ body[dark='true'], body[dark='true'] input, body[dark='true'] span, body[dark='t
 }
 
 /* */
-
 body > div {
   padding-bottom: 6.5px;
 }
 
 /* Audio */
-#prev {
-  background-image: url('../assets/audio/prev.svg');
-}
-
-#toggle[playing='true'] {
-  background-image: url('../assets/audio/pause.svg');
-}
-
-#toggle[playing='false'], #toggle[playing=''] {
-  background-image: url('../assets/audio/play.svg');
-}
-
-#next {
-  background-image: url('../assets/audio/next.svg');
-}
-
-#fav[favorite='true'] {
-  background-color: var(--theme-color);
-
-  -webkit-mask: url('../assets/audio/unFav.svg');
-  -webkit-mask-size: cover;
-}
-
-#fav[favorite='false'], #fav[favorite=''] {
-  background-image: url('../assets/audio/fav.svg');
-  background-size: cover;
-}
-
-#shuffle[shuffle='true'] {
-  background-color: var(--theme-color);
-
-  -webkit-mask: url('../assets/audio/shuffled.svg');
-  -webkit-mask-size: cover;
-}
-
-#shuffle[shuffle='false'], #shuffle[shuffle=''] {
-  background-image: url('../assets/audio/shuffle.svg');
-}
-
-#repeat[mode=''], #repeat[mode='none'] {
-  background-image: url('../assets/audio/repeat.svg');
-}
-
-#repeat[mode='one'] {
-  background-color: var(--theme-color);
-
-  -webkit-mask: url('../assets/audio/repeat_one.svg');
-  -webkit-mask-size: cover;
-}
-
-#repeat[mode='all'] {
-  background-color: var(--theme-color);
-
-  -webkit-mask: url('../assets/audio/repeat_all.svg');
-  -webkit-mask-size: cover;
-}
-
 #volume-icon {
   background-image: url('../assets/audio/volume.svg');
   background-size: 130%;
@@ -202,6 +144,15 @@ body[dark='true'] #share_icon {
 
 #social .twitter {
   background-image: url('../assets/share/twitter.svg');
+}
+
+#social .threads {
+  background-image: url('../assets/share/threads.svg');
+}
+
+#social .bsky {
+  background-color: #ffffff00;
+  background-image: url('../assets/share/bsky.svg');
 }
 
 #social .clipboard {

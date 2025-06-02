@@ -259,11 +259,11 @@ async function initSettings() {
 async function initTemplates() {
   // Share Templates
   // - init
-  if (localStorage.getItem('twitter') != null) {
-    $('#twitter').val( localStorage.getItem('twitter') );
-  }
-  if (localStorage.getItem('copy') != null) {
-    $('#copy').val( localStorage.getItem('copy') );
+  const keys = ['twitter', 'copy', 'threads', 'bsky'];
+  for (let key of keys) {
+    if (localStorage.getItem(key) != null) {
+      $(`#${key}`).val(localStorage.getItem(key));
+    }
   }
 }
 
@@ -279,6 +279,8 @@ async function initInputs() {
     [ '#duration' , 'duration' ],
     [ '#pause', 'pause' ],
     [ '#twitter', 'twitter' ],
+    [ '#threads', 'threads' ],
+    [ '#bsky', 'bsky' ],
     [ '#copy', 'copy' ],
     [ '#startpage', 'startpage' ],
     [ '#theme-select', 'theme' ],

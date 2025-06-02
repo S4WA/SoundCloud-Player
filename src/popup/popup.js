@@ -17,10 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize:
 async function init() {
-  for (key in templates) {
-    let item = localStorage.getItem(key);
-    templates[key] = item;
-  }
   // No Duplicate Popout
   if (isPopout()) {
     $('#P').hide();
@@ -213,7 +209,7 @@ async function registerEvents() {
   });
 
   // Social
-  var socials = ['Twitter'];
+  var socials = ['Twitter', 'Threads', 'Bsky'];
   for (var i in socials) with ({i:i}) {
     var elem = $( '#social .' + socials[i].toLowerCase() );
     elem.on('click', () => {
@@ -223,7 +219,7 @@ async function registerEvents() {
   }
 
   $('#social .clipboard').on('click', () => {
-    let text = replaceText(templates['copy']);
+    let text = replaceText(settings['copy']);
     if (text.includes(json['link']) && share_with_time) {
       text = text.replace(json['link'], json['link'] + '#t=' + json['time']['current']);
     }
@@ -231,7 +227,7 @@ async function registerEvents() {
   });
 
   $('.copynp').on('click', () => {
-    copyToClipboard( replaceText(templates['copy']) );
+    copyToClipboard( replaceText(settings['copy']) );
   });
 
   $('#copy').focus(() => {
@@ -257,7 +253,7 @@ function shareLink(social) {
   social = social.toLowerCase();
   let data = JSON.parse( sessionStorage.getItem('data') ); 
   // console.log(data);
-  let text = replaceText( templates[social] );
+  let text = replaceText( settings[social] );
   if (share_with_time) {
     text = text.replace( data['link'], data['link'] + '#t=' + data['time']['current'] );
   }
@@ -269,10 +265,8 @@ var dark = false, or = false, checkTimer = null, share_with_time = false,
   hideList = ['#close', '#second', '#controller-body[mode="compact"] #hyphen', '.marquee .title'],
   links = {
     'twitter': 'https://twitter.com/intent/tweet?text=%text%&hashtags=NowPlaying',
-  },
-  templates = {
-    'twitter': '%title% By %artist% %url%',
-    'copy': '%title% By %artist% %url%'
+    'threads': 'https://www.threads.com/intent/post?text=%text%',
+    'bsky': 'https://bsky.app/intent/compose?text=%text%'
   },
   defaultController = `<div id='controller' class='floating'>
       <div class='left'>

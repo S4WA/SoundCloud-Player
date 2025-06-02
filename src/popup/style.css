@@ -84,6 +84,64 @@ input[type='checkbox'] {
   position: relative;
 }*/
 
+/* Buttons */
+#prev {
+  background-image: url('../assets/audio/prev.svg');
+}
+
+#toggle[playing='true'] {
+  background-image: url('../assets/audio/pause.svg');
+}
+
+#toggle[playing='false'], #toggle[playing=''] {
+  background-image: url('../assets/audio/play.svg');
+}
+
+#next {
+  background-image: url('../assets/audio/next.svg');
+}
+
+#fav[favorite='true'] {
+  background-color: var(--theme-color);
+
+  -webkit-mask: url('../assets/audio/unFav.svg');
+  -webkit-mask-size: cover;
+}
+
+#fav[favorite='false'], #fav[favorite=''] {
+  background-image: url('../assets/audio/fav.svg');
+  background-size: cover;
+}
+
+#shuffle[shuffle='true'] {
+  background-color: var(--theme-color);
+
+  -webkit-mask: url('../assets/audio/shuffled.svg');
+  -webkit-mask-size: cover;
+}
+
+#shuffle[shuffle='false'], #shuffle[shuffle=''] {
+  background-image: url('../assets/audio/shuffle.svg');
+}
+
+#repeat[mode=''], #repeat[mode='none'], #repeat:not([mode='one']):not([mode="all"]) {
+  background-image: url('../assets/audio/repeat.svg');
+}
+
+#repeat[mode='one'] {
+  background-color: var(--theme-color);
+
+  -webkit-mask: url('../assets/audio/repeat_one.svg');
+  -webkit-mask-size: cover;
+}
+
+#repeat[mode='all'] {
+  background-color: var(--theme-color);
+
+  -webkit-mask: url('../assets/audio/repeat_all.svg');
+  -webkit-mask-size: cover;
+}
+
 /* Icons */
 .icon {
   width: 13px;
