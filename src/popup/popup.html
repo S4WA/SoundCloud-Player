@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <head>
   <meta charset='UTF-8'>
-  <script src='../jquery-3.7.1.min.js'></script>
-  <script src='../jquery.marquee.min.js'></script>
   <script defer src='utils.js'></script>
   <script defer src='init.js'></script>
+  <script defer src='player.js'></script>
   <script defer src='popup.js'></script>
 
   <link rel='stylesheet' type='text/css' href='style.css'>
@@ -68,9 +67,9 @@
 
     <div id='social' class='floating'>
       <div class='left'>
-        <button class='twitter clickable'></button>
-        <button class='threads clickable'></button>
-        <button class='bsky clickable'></button>
+        <button id='twitter' class='clickable'></button>
+        <button id='threads' class='clickable'></button>
+        <button id='bsky' class='clickable'></button>
       </div>
       <div class='right'>
         <button class='clipboard clickable' title='Copy'></button>

@@ -2,45 +2,16 @@
 <html>
 <head>
   <meta charset='UTF-8'>
-  <script src='../jquery-3.7.1.min.js'></script>
-  <script src='../jquery.marquee.min.js'></script>
   <script defer src='utils.js'></script>
   <script defer src='init.js'></script>
+  <script defer src='player.js'></script>
   <script defer src='settings.js'></script>
 
   <link rel='stylesheet' type='text/css' href='style.css'>
   <link rel='stylesheet' type='text/css' href='settings.css'>
 </head>
 <body dark='' mode='default'>
-  <div id='controller-body' class='floating'>
-    <div class='left'>
-      <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
-    </div>
-    <div id='controller' class='right'>
-      <div class='body marquee'>
-        <a class='title' title=''>
-        </a>
-      </div>
-      <div class='body'>
-        <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
-        <div>
-          <span id='current' style='float: left;'></span>
-          <span id='hyphen' class='icon'></span>
-          <span id='end' style='float: right;'></span>
-        </div>
-        <button id='repeat' class='clickable' title='Repeat' mode=''></button>
-      </div>
-      <div class='body'>
-        <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
-        <button id='prev' class='clickable' title='Prev'></button>
-        <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
-        <button id='next' class='clickable' title='Next'></button>
-        <button class='copynp clickable' title='Copy Title & URL'></button>
-        <button id='follow' class='clickable' title='Follow/Unfollow' followed=''></button>
-      </div>
-    </div>
-    <hr>
-  </div>
+  <div id='controller-body'></div>
   <div class='floating'>
     <div class='right'>
       <a id='back' class='clickable' title='Go back to track menu' href='popup.html'>
@@ -48,8 +19,8 @@
       </a>
     </div>
   </div>
-  <div class='dropdown' closed='true'>
-    <div class='dd-parent' id='video'>
+  <div class='dropdown' closed='true' id='video'>
+    <div class='dd-parent'>
       <span class='icon'></span>How to Use
     </div>
     <hr>
@@ -63,9 +34,7 @@
     <hr>
     <div class='dd-child'>
       <span>
-        SoundCloud Player By Sawa.<br><br>
-        Settings will automatically saved when the value has changed.<br><br>
-        <a class='wiki clickable' href='#'>[ Check out The New Wiki ]</a><br>
+        Settings will automatically saved when the value has changed.
       </span>
       <hr>
     </div>
@@ -182,6 +151,10 @@
           <th>Popout Duplication <span title="If you uncheck this option, clicking the pop-out button again will open the window that already exists.">(?)</span></th>
           <td><input type='checkbox' id='popout-dupe'></td>
         </tr>
+        <tr>
+          <th>Remember window size</th>
+          <td><input type="checkbox" id='remember-window-size'></input></td>
+        </tr>
       </table>
       <hr>
     </div>
@@ -296,26 +269,24 @@
       <hr>
     </div>
   </div>
-  <div class='dropdown' closed='true'>
-    <div class='dd-parent'>
-      <span class='icon'></span>Announcement
+  <div class="dropdown" closed="true">
+    <div class="dd-parent">
+      <span class="icon"></span>Profiles/Import/Export
     </div>
     <hr>
-    <div class='dd-child'>
-      <span class='bold'>[Update]</span><br>
-      Fixed
-      <ul>
-        <li>
-          A bug that never displays the tracks user self has uploaded.
-        </li>
-      </ul>
-      <span class='bold'>[Message]</span><br>
-      <span class='gray' style='line-break: anywhere;'>
-        <i>Thanks for 13K users, and have a great christmas n new year.
-        <br><br>
-        16 Dec 2023.
-        </i>
-      </span>
+    <div class='dd-child' id=''>
+      <select id=''>
+        <option value=''>-</option>
+      </select>
+      <hr>
+    </div>
+  </div>
+  <div class='dropdown' closed='true'>
+    <div class='dd-parent'>
+      <span class='icon'></span>Changelog
+    </div>
+    <hr>
+    <div class='dd-child' id='announcement'>
       <hr>
     </div>
   </div>
@@ -347,9 +318,6 @@
       </span>
       <span>
         - <a id='github' class='clickable'>Source Code</a><br>
-      </span>
-      <span>
-        - <a id='feedback' class='clickable'>Feedback Form</a><br>
       </span>
       <span>
         - <a id='support' class='clickable'>Buy me a Coffee!!</a><br>

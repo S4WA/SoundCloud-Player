@@ -4,19 +4,19 @@ function focus() {
 
 function isPlaying() {
   let cls = '.playControl';
-  return $(cls).length != 0 ? $(cls).attr('title') == 'Pause current' : false;
+  return document.querySelector(cls) ? document.querySelector(cls).attr('title') == 'Pause current' : false;
 }
 
 function getTitle() {
-  return $('a.playbackSoundBadge__titleLink').attr('title');
+  return document.querySelector('a.playbackSoundBadge__titleLink').attr('title');
 }
 
 function getArtist() {
-  return $('a.playbackSoundBadge__lightLink').attr('title');
+  return document.querySelector('a.playbackSoundBadge__lightLink').attr('title');
 }
 
 function getArtwork() {
-  let a = $('.playbackSoundBadge span.sc-artwork').css('background-image');
+  let a = document.querySelector('.playbackSoundBadge span.sc-artwork').style['backgroundImage'];
   if (a != null && a.includes('120x120')) {
     a = a.replace('120x120', '500x500')
   }
@@ -29,9 +29,9 @@ function getArtwork() {
 function getLink() {
   let cls = '.playbackSoundBadge__titleLink.sc-truncate';
 
-  if ($(cls).length == 0) return null;
+  if (!document.querySelector(cls)) return null;
 
-  let url = new URL(location.origin + $(cls).attr('href')), params = url.searchParams, in_system_playlist = params.get('in_system_playlist') != null;
+  let url = new URL(location.origin + document.querySelector(cls).attr('href')), params = url.searchParams, in_system_playlist = params.get('in_system_playlist') != null;
 
   if (in_system_playlist) {
     params.delete('in_system_playlist');
@@ -44,29 +44,29 @@ function getLink() {
 
 function isLiked() {
   let cls = '.playControls__soundBadge .sc-button-like';
-  return $(cls).length != 0 ? $(cls).attr('title') == 'Unlike' : false;
+  return document.querySelector(cls) ? document.querySelector(cls).attr('title') == 'Unlike' : false;
 }
 
 function getCurrentTime() {
-  return $('.playbackTimeline__timePassed span[aria-hidden]').text();
+  return document.querySelector('.playbackTimeline__timePassed span[aria-hidden]').innerText;
 }
 
 function getEndTime() {
-  return $('.playbackTimeline__duration span[aria-hidden]').text();
+  return document.querySelector('.playbackTimeline__duration span[aria-hidden]').innerText;
 }
 
 function getVolume() {
   if (document.querySelector('.volume__sliderWrapper') == null) return 0;
-  return Number($('.volume__sliderWrapper').attr('aria-valuenow'))*100;
+  return Number(document.querySelector('.volume__sliderWrapper').attr('aria-valuenow'))*100;
 }
 
 function isMuted() {
   let cls = '.volume';
-  return $(cls).length != 0 ? $(cls).attr('class').includes('muted') : false;
+  return document.querySelector(cls) ? document.querySelector(cls).attr('class').includes('muted') : false;
 }
 
 function getRepeatMode() {
-  if ($('.repeatControl').length == 0) {
+  if (!document.querySelector('.repeatControl')) {
     return 'none';
   }
   // atp I wanna rewrite everytihng with jqeury
@@ -74,10 +74,10 @@ function getRepeatMode() {
 }
 
 function isShuffling() {
-  if ($('.shuffleControl').length == 0) {
+  if (!document.querySelector('.shuffleControl')) {
     return false;
   }
-  return $('.shuffleControl').attr('class').includes('m-shuffling');
+  return document.querySelector('.shuffleControl').attr('class').includes('m-shuffling');
 }
 
 function volumeDown() {
@@ -97,11 +97,11 @@ function seekForward() {
 }
 
 function isFollowing() {
-  // why not TRUE OR FALSE? 
-  // if it's null then popup.html can tell that it's myself. 
-  // SoundCloud hides the follow button if it's a track from oneself. makes sense right?
+  // why not TRUE OR FALSE?
+  // if it's returning 'self' then popup.js can tell that the current track is uploaded by the user themself.
+  // This is because SoundCloud hides the follow button in such case, so SC-Player tries to imitate it.
   if (document.querySelector('.playbackSoundBadge .sc-button-follow') == null) return 'self';
-  return $('.playbackSoundBadge .sc-button-follow').attr('aria-label').includes('Unfollow');
+  return document.querySelector('.playbackSoundBadge .sc-button-follow').attr('aria-label').includes('Unfollow');
 }
 
 function input(keyCode, name, shiftKey) {
@@ -111,7 +111,17 @@ function input(keyCode, name, shiftKey) {
       keyCode: keyCode, 
       code: name,
       which: keyCode,
-      shiftKey: !shiftKey ? false : shiftKey,
+      shiftKey: shiftKey ?? false,
     })
   );
 }
+
+// added attr() in order to avoid replacing every attr function from jquery to vanilla js's setAttribute().
+Element.prototype.attr = function(name, value) {
+  if (value === undefined) {
+    return this.getAttribute(name);
+  } else {
+    this.setAttribute(name, value);
+    return this;
+  }
+};

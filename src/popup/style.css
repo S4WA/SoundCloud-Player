@@ -72,11 +72,6 @@ input[type='checkbox'] {
   text-align: right;
 }
 
-/* Marquee */
-.marquee {
-  overflow: hidden;
-}
-
 /* Second Elements Icon */
 /*.box {
   border: 1px solid #a5a5a5;
@@ -162,7 +157,79 @@ input[type='checkbox'] {
   background-image: url('../assets/regular-moon.svg');
 }
 
+#hyphen {
+  background-size: auto;
+  background-image: url('../assets/audio/minus.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
+.copynp {
+  background-size: 60% 60%;
+  background-image: url('../assets/share/copy-solid.svg');
+  background-repeat: no-repeat;
+}
+
+#up {
+  background-image: url('../assets/audio/plus.svg');
+}
+
+#down {
+  background-image: url('../assets/audio/minus.svg');
+}
+
+#follow[followed='true'] {
+  -webkit-mask: url('../assets/followed.svg');
+  background-color: var(--theme-color);
+  -webkit-mask-size: cover;
+}
+
+#follow[followed=''], #follow[followed='false'] {
+  background-image: url('../assets/not-following.svg');
+}
+
+/* Compact Mode */
+#controller-body[mode='compact'] #controller {
+  width: 200px;
+  height: 50px;
+}
+
+#controller-body[mode='compact'] #artwork {
+  width: 50px;
+  height: 50px;
+  margin: 0 0 ;
+  background-size: contain;
+}
+
+#controller-body[mode='compact'] #current {
+  padding-right: 10px;
+}
+
+#controller-body[mode='compact'] #end {
+  padding-left: 9px;
+}
+
+/* #controller .body is a row components (only used for compact theme) */
+#controller-body[mode='compact'] #controller .body {
+  width: 100%;
+  height: 33%;
+}
+
+#controller-body[mode='compact'] #controller .body:not(.marquee) {
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* has to be marquee in compact */
+#controller-body[mode='compact'] .title { 
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Dark mode */
 body[dark='false'] .gray, body[dark=''] .gray {
   color: gray;
 }
@@ -171,42 +238,80 @@ body[dark='true'] .gray {
   color: #bbbbbb;
 }
 
-.title-mask {
-  -webkit-mask-image: linear-gradient(90deg,transparent 0,#000 6px,#000 calc(100% - 12px),transparent);
-  mask-image: linear-gradient(90deg,transparent 0,#000 6px,#000 calc(100% - 12px),transparent);
+/* 
+ * But popup.css have broader targets.
+ * body[dark='true'] span, body[dark='true'] input
+ */
+body[dark='true'], body[dark='true'] a {
+  background-color: var(--bg-color);
+  color: white;
+}
+
+body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']):not([followed='true']), body[dark='true'] #hyphen {
+  filter: invert(1);
+}
+
+/* Controller Icons */
+#controller button {
+  border: 0;
+  font: 0/0 a;
+  width: 24px;
+  height: 24px;
+  text-shadow: none;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  background-position: center center;
+}
+
+/*#controller button:focus {
+  outline: 0;
+}*/
+
+/* Marquees */
+.marquee[enabled][mode="back-and-forth"], .marquee[enabled="true"][mode="back-and-forth"] {
   overflow: hidden;
   height: 16px;
   position: relative;
 }
 
-.breathing {
-  --text-offset: 2px;
+.marquee[enabled], .marquee[enabled="true"] {
+  overflow: hidden;
+  width: 100%;
   white-space: nowrap;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  line-height: 16px;
-  /* transform: translate(--); */
 }
 
-@keyframes marquee {
-  0%,20%{
-    transform: translateX(calc((var(--max-offset) + var(--text-offset)) * -1));
-  }
-  /* 30%,70%{
-    transform: translateX(calc((var(--max-offset) + var(--text-offset)) * -1));
-  } */
-  80%,100%{
-    transform: translateX(calc(var(--text-offset)));
+@keyframes normal-marquee-first {
+  100% {
+    transform: translateX(calc(var(--title-offset-x)*-1));
   }
 }
 
-.breathing.c-marquee {
-  transform: translateX(calc(var(--text-offset)));
-  animation: marquee var(--anime-duration) linear infinite alternate-reverse;
+@keyframes normal-marquee-second {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
-.breathing.c-marquee:hover{
-  animation-play-state: paused;
+@keyframes back-and-forth {
+  0%, 100% {
+    transform: translateX(0); 
+  }
+  35%, 75% {
+    transform: translateX(calc(-100% + var(--container-width)));
+  }
+}
+
+@keyframes mask-back-and-forth {
+  0%, 100% {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  45%, 55% {
+    -webkit-mask-image: linear-gradient(90deg,transparent 0,#000 6px,#000 calc(100% - 12px),transparent);
+    mask-image: linear-gradient(90deg,transparent 0,#000 6px,#000 calc(100% - 12px),transparent);
+  }
 }

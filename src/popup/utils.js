@@ -8,20 +8,16 @@ async function queue(request, value) {
     return null;
   }
 
-  const jsonRequest = { type: request };
+  let jsonRequest = { type: request };
   if (value) jsonRequest.value = value;
 
   const val = await chrome.tabs.sendMessage(results[0].id, jsonRequest);
 
   if (val) {
-    const views = chrome.extension.getViews();
-
-    for (const view of views) {
-      if (typeof view.update === 'function') {
-        view.update(val['response'] ? val['response'] : val);
-      }
-    }
-
+    // Use function update() in other windows/popups to apply and show same data simultaneously.
+    syncAcrossViews("update", val['response'] ?? val);
+    // same thing to toggleElements().
+    syncAcrossViews("toggleElements", true);
     return val;
   }
 
@@ -29,29 +25,25 @@ async function queue(request, value) {
 }
 
 async function checkMultipleWindow() {
-  if (typeof loopRequestData != 'function') return;
+  if (typeof requestData != 'function') return;
 
-  let views = chrome.extension.getViews(), l = views.length;
+  let views = chrome.extension.getViews(), l = views.length; 
   if (l == 1 || (l > 1 && views[0] == this)) {
-    console.log('main channel');
-    setInterval(loopRequestData, 1000);
+    console.log('this is the parent window.');
+    setInterval(requestData, 1000); // loop
     if (or) {
       clearInterval(checkTimer);
     }
   } else if (or == false) {
-    console.log('initializing');
-    checkTimer = setInterval(checkMultipleWindow, 1000)
+    console.log('initializing...');
+    checkTimer = setInterval(checkMultipleWindow, 1000);
     or = true;
   }
 }
 
-async function loopRequestData() {
+async function requestData() {
   queue('smart-request-data').then((val) => {
-    if (val != null && val != {}) {        
-      // Controller
-      if (typeof toggleElements === 'function') {
-        toggleElements(true);
-      }
+    if (val != null && val != {}) {
       keyReady = true;
       return val;
     }
@@ -67,9 +59,10 @@ async function loopRequestData() {
 
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
 
-  // If sc tab is closed -> reload the popup.html (itself)
+  // If sc tab is closed
   if (keyReady && ScTab == null) {
-    location.reload(); // RESET EVERYTHING!
+    keyReady = false;
+    syncAcrossViews("toggleElements", false);
   }
 }
 
@@ -91,40 +84,32 @@ async function openSCTab() {
   let [ScTab] = await chrome.tabs.query({ url: '*://soundcloud.com/*' });
   let [currentTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
 
-  console.log('osct: 1');
   if (!currentTab) {
-    console.log('osct: 1: returning false');
     return false;
   }
   
-  console.log('osct: 2');
   // -> If no Sc Tab, Make one
   if (!ScTab) {
     await chrome.tabs.create({ url: getStartPage() });
-    console.log('osct: 2: returning false');
     return false;
   }
 
-  console.log('osct: 3');
   // -> If not same window, focus the window that has sc tab
   if (currentTab.windowId != ScTab.windowId) {
     await chrome.windows.update(ScTab.windowId, { focused: true });
   }
 
-  console.log('osct: 4');
   // -> If current tab is sc tab ->
   //    no  ->  focus the sc tab.
   //    yes ->  queue open (no need to focus)
   if (currentTab.id != ScTab.id) {
-    console.log('osct: 4is....!');
     await chrome.tabs.update(ScTab.id, { active: true });
   } else {
-    console.log('osct: 4is....OPENING!');
     await queue('open');
   }
 
   if (!isPopout()) {
-    // window.close();
+    window.close();
   }
   return true;
 }
@@ -140,21 +125,15 @@ function openURL(link) {
 }
 
 function copyToClipboard(text) {
-  var input = $('<input>'), 
-    style = {
-      'position': 'fixed',
-      'opacity': 0
-    };
+  var input = document.createElement('input');
+  input.style.position = 'fixed';
+  input.style.opacity = '0';
+  input.value = text;
 
-  input.css(style);
-  input.val(text);
-
-  $('body').append(input);
-
+  document.body.appendChild(input);
   input.select();
-  document.execCommand('Copy');
-
-  input.remove();
+  document.execCommand('copy');
+  document.body.removeChild(input);
 };
 
 function Bool(string) {
@@ -174,7 +153,7 @@ function updateThemeColor(color) {
   if (color != localStorage.getItem('themecolor')){
     localStorage.setItem('themecolor', color);
   }
-  $(':root').css('--theme-color', color);
+  document.documentElement.style.setProperty('--theme-color', color);
 }
 
 function updateBGcolor(color) {
@@ -184,7 +163,7 @@ function updateBGcolor(color) {
   if (color != localStorage.getItem('bgcolor')){
     localStorage.setItem('bgcolor', color);
   }
-  $(':root').css('--bg-color', color);
+  document.documentElement.style.setProperty('--bg-color', color);
 }
 
 function updateFont(font) {
@@ -193,7 +172,7 @@ function updateFont(font) {
   } else if (font != localStorage.getItem('font')){
     localStorage.setItem('font', font);
   }
-  $(':root').css('--custom-font', font);
+  document.documentElement.style.setProperty('--custom-font', font);
   settings['font'] = font;
 }
 
@@ -204,7 +183,7 @@ function updateFontSize(px) {
     localStorage.setItem('font-size', px);
   }
 
-  $(':root').css('--font-size', px);
+  document.documentElement.style.setProperty('--font-size', px);
   settings['font-size'] = px;
 }
 
@@ -214,18 +193,27 @@ function toggleDarkmode() {
 
 function darkmode(val) {
   if (val == null) return;
-  $('body').attr('dark', val);
-  $('#toggle_darkmode').attr('dark', val); // this attr is for the icons 
+  document.body.attr('dark', val);
+  document.getElementById('toggle_darkmode').attr('dark', val); // this attr is for the icons 
   localStorage.setItem('darkmode', val);
   return val;
+}
+
+async function initDarkmode() {
+  if (!(loc("popup.html") || loc("settings.html"))) return; // if it's embed.html
+  if (localStorage.getItem('darkmode') != null) {
+    dark = (localStorage.getItem('darkmode') === 'true');
+  }
+  darkmode(dark);
+  document.querySelector("#toggle_darkmode").addEventListener('click', () => { toggleDarkmode(); });
 }
 
 async function popup(mylink, windowname) {
   await chrome.windows.create({
     url: mylink,
     type: 'popup',
-    width: 290,
-    height: 400,
+    width: settings['remember-window-size'] ? settings['window-width'] : 290,
+    height: settings['remember-window-size'] ? settings['window-height'] : 400,
     focused: true
   });
 }
@@ -243,9 +231,6 @@ function loc(val) {
 }
 
 function initKeyboardBinds() {
-  $('input,select,textarea').keydown(function(e) {
-    e.stopPropagation();
-  });
   const list = {
     /*
       keycode: { withShiftKey: "command name" }
@@ -264,103 +249,104 @@ function initKeyboardBinds() {
     39: { 'true' : 'next',   'false': 'seekf' },
   };
 
-  $('body').keydown(function (e) {
-    if (keyReady == false) return true;
+  document.body.addEventListener('keydown', function(e) {
+    if (keyReady == false) return;
+    if ([ "input", "select", "option", "textarea" ].includes(e.target.tagName.toLowerCase())) return;
+    if (loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings'])) return;
     switch (e.keyCode) {
       case 81: { // Q Key
         openSCTab();
         break;
       }
-      default: { // Arrow Right
-        if (list[e.keyCode] == null) return true;
+      default: { // Other than Q key
+        if (list[e.keyCode] == null) return;
 
         let cmd = list[e.keyCode][e.shiftKey ? 'true' : 'false'];
 
-        if (cmd == null) return true;
+        if (cmd == null) return;
 
-        queue(cmd).then(update);
-        return false;
+        queue(cmd);
+        e.preventDefault(); // block default browser actions, like page scrolling, when the spacebar is pressed
       }
     }
   });
 }
 
+// startMarquees() will only be called when a new track is played.
 function startMarquees() {
-  if (!$().marquee || ( (!settings['apply_marquee_to_default'] && getThemeName() == 'default') && loc('popup.html') )) return;
-  if (!settings['back-and-forth']) {
-    $('.marquee').css('padding-left', '0.3em');
-    $('.marquee').marquee('destroy').bind('finished', () => {
-      setTimeout(() => {
-        $('.marquee').marquee('pause');
-      }, isDuplicationEnabled() ? 0 : getPauseTime());
-      setTimeout(() => {
-        $('.marquee').marquee('resume');
-      }, isDuplicationEnabled() ? getPauseTime() : getTextVisibleDuration() + getPauseTime());
-    }).marquee({
-      direction: 'left', 
-      duration: getTextVisibleDuration(),
-      pauseOnHover: loc('embed') ? false : true,
-      startVisible: true,
-      pauseOnCycle: true,
-      duplicated: isDuplicationEnabled()
-    });
-  } else {
-    $('.title').wrap('<div class="title-mask"></div>').addClass('breathing').removeClass('title').css('padding-right', '0.5em');
-    $('.breathing').each((i,el) => {
-      let width = el.clientWidth,
-        containerWidth = el.parentElement.clientWidth,
-        offset = width - containerWidth;
+  if ( (!settings['apply_marquee_to_default'] && getThemeName() == 'default') && loc('popup.html') ) return;
 
-      $(el.parentElement).css('-webkit-mask-image', width < containerWidth ? 'none' : 'linear-gradient(90deg,transparent 0,#000 6px,#000 calc(100% - 12px),transparent)');
+  const marquee = document.querySelector(".marquee"), content = marquee.querySelector(".title");
 
-      if (offset > 0) {
-        el.style.setProperty('--max-offset', offset + 'px');
-        el.style.setProperty('--anime-duration', minmax(offset * 100, 2000, 10000) + 'ms');
-        el.classList.add('c-marquee');
-      } else {
-        el.style.removeProperty('--max-offset', offset + 'px');
-        el.classList.remove('c-marquee');
-      }
-    });
+  const isDefault = !settings['back-and-forth'];
+
+  let duration = settings["duration"] ? Number(settings["duration"]) : 5000;
+  const pauseTime = settings["pause"] ? Number(settings["pause"]) : 5000;
+  const totalTime = duration + pauseTime;
+
+  marquee.attr("enabled", "true");
+  marquee.attr("mode", isDefault ? "marquee" : "back-and-forth");
+
+  content.style["display"] = "inline-block";
+
+  const insertNewAnimation = function(el, an) {
+    el.style["animation"] = 'none'; // resetting
+    el.offsetHeight; // forcing a reflow
+    el.style["animation"] = an;
   }
-}
 
-function getTextVisibleDuration() {
-  if (localStorage.getItem('duration')) return Number( localStorage.getItem('duration') );
-  return 5000;
-}
+  const paddingLeft = parseFloat(content.style.paddingLeft) || 0, paddingRight = parseFloat(content.style.paddingRight) || 0;
+  if (content.offsetWidth - paddingLeft - paddingRight < marquee.offsetWidth) return;
 
-function getPauseTime() {
-  if (localStorage.getItem('pause')) return Number( localStorage.getItem('pause') );
-  return 5000;
-}
+  let cssAnimation;
+  if (isDefault) {
+    if (settings['duplication']) {
+    }
 
-function isDuplicationEnabled() {
-  return Bool(localStorage.getItem('duplication'));
+    // only default marquee uses this.
+    content.style.setProperty('--title-offset-x', `${content.offsetWidth}px`);
+
+    // Normal marquee: Placeholder 1 = animation's duration // 2 = animation-delay // 3 = animation's duration // 4 = duration of 1 + 2
+    // - Each part alone is incomplete.
+    // - It divides by two cuz the duration value represents the total duration of the entire animation sequence, and the sequence is split into two equal parts.
+    cssAnimation = `normal-marquee-first ${duration/2}ms ${pauseTime}ms linear forwards, normal-marquee-second ${duration/2}ms ${duration/2 + pauseTime}ms linear forwards`; 
+  } else {
+    // The property "--container-width" will be used only for the breathing mode.
+    content.style.setProperty('--container-width', `calc(${marquee.offsetWidth}px)`);
+
+    // tbh, idk what to do about pauseTime for this
+    cssAnimation = `back-and-forth ${duration + pauseTime}ms ${pauseTime}ms linear forwards`;
+  }
+
+  content.style["animation"] = cssAnimation;
+  content.addEventListener('animationend', () => {
+    setTimeout(() => {
+      insertNewAnimation(content, cssAnimation);
+    }, totalTime);
+  });
 }
 
 async function checkDisplayArtwork() {
   let available = Bool( localStorage.getItem('display-artwork') );
   toggleArtwork(available);
-  if (loc('settings.html') && available) $('#display-artwork').attr('checked', '');
+  if (loc('settings.html') && available) document.querySelector("#display-artwork").attr('checked', '');
 }
 
 function toggleArtwork(val) {
   if (val == null) return;
 
-  let hidden = (val == false), 
-    isCompactInSettingsPage = (
-      loc('settings.html')
-      && localStorage.getItem('compact_in_settings') != null
-      && localStorage.getItem('compact_in_settings') == 'true'
-    );
+  const hidden = (val == false), isCompactInSettingsPage = loc('settings.html') && localStorage['compact_in_settings'] != null && Bool(localStorage['compact_in_settings']);
   if (getThemeName() == 'compact' || isCompactInSettingsPage) {
-    $('#controller').css('width', hidden ? '250px' : '200px');
-    $('#controller').css('height', hidden ? (isCompactInSettingsPage ? '75px' : '65px') : '50px');
-    $('.title,.breathing').css('padding-left', hidden ? '0' : '1em');
+    const con = document.querySelector("#controller");
+    con.style["width"] = `${hidden ? 250 : 200}px`;
+    con.style["height"] = `${hidden ? (isCompactInSettingsPage ? 75 : 65) : 50}px`;
+
+    // adding 1em should be only applied to marquee-container, instead of applying it to #controller as a whole.
+    document.querySelector(".marquee").style["marginLeft"] = hidden ? '0' : '1em';
+    document.querySelector(".marquee").style["width"] = `calc(${hidden ? 250 : 200}px - ${hidden ? '0px' : '1em'})`;
   }
 
-  $('#artwork').css('display', val ? 'inline-block' : 'none');
+  document.querySelector("#artwork").style.display = val ? 'inline-block' : 'none';
 }
 
 function replaceText(text, json) {
@@ -379,5 +365,65 @@ function isJsonString(str) {
   return o;
 }
 
-var marqueeReady = false, keyReady = false, duplicated = false;
-let minmax = (v, min = v, max = v) => v < min ? min : v > max ? max : v;
+
+function slideUp(element) {
+  element.style.overflow = 'hidden';
+  element.style.height = element.offsetHeight + 'px';
+  element.style.transition = 'height 0.3s ease-out';
+    
+    // Force reflow
+  element.offsetHeight;
+    
+  element.style.height = '0px';
+    
+  setTimeout(() => {
+      element.style.display = 'none';
+      element.style.height = '';
+      element.style.overflow = '';
+      element.style.transition = '';
+  }, 300);
+}
+
+function slideDown(element) {
+  element.style.display = 'block';
+  element.style.overflow = 'hidden';
+  element.style.height = '0px';
+  element.style.transition = 'height 0.3s ease-out';
+    
+  // Get the natural height
+  const height = element.scrollHeight + 'px';
+    
+  // Force reflow
+  element.offsetHeight;
+    
+  element.style.height = height;
+    
+  setTimeout(() => {
+      element.style.height = '';
+      element.style.overflow = '';
+      element.style.transition = '';
+  }, 300);
+}
+
+// added attr() in order to avoid replacing every attr function from jquery to vanilla js's setAttribute().
+Element.prototype.attr = function(name, value) {
+  if (value === undefined) {
+    return this.getAttribute(name);
+  } else {
+    this.setAttribute(name, value);
+    return this;
+  }
+};
+
+function syncAcrossViews(fnName, args) {
+  const views = chrome.extension.getViews();
+
+  for (const view of views) {
+    if (typeof view[fnName] === 'function') {
+      args ? view[fnName](args) : view[fnName]();
+    }
+  }
+}
+
+// keyReady: if SC-Player is ready to interact with its main content tab.
+var keyReady = false;

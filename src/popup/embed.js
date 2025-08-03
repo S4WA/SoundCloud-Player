@@ -6,9 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.title = 'SoundCloud Player Embed';
 
-  $('.title,.breathing').on('click', function() {
-    return false;
-  });
+  document.querySelector('.title').addEventListener('click', (e) => { e.preventDefault(); });
 });
 
 // Initialize:
@@ -22,24 +20,29 @@ async function init() {
 async function update(val) {
   if (val == null) return;
 
-  // set artwork (text)
-  if (val['artwork'] != null) {
-    $('#artwork').css('background-image', val['artwork']);
-  }
+  const arr = [
+    {
+      key: "artwork",
+      handler: () => {
+        if (val['artwork'] == null) return;
+        document.querySelector("#artwork").style["backgroundImage"] = val['artwork'];
 
-  // set title (text)
-  if (val['artwork'] != null) {
-    $('.title,.breathing').text(val['title']);
+        document.querySelectorAll(".title").forEach(el => {
+          el.innerText = val['title'];
+          el.attr('href', val['link']);
+        });
 
-    startMarquees();
-    $('.title,.breathing').attr('href', val['link']);
-    $('#artist').text(val['artist']);
-  }
-
-  // set favorite status (true/false)
-  if (val['favorite'] != null) {
-    $('#fav').attr( 'favorite', val['favorite'] );
-  }
+        startMarquees();
+        document.querySelector("#artist").innerText = val['artist'];
+      }
+    },
+    {
+      key: "favorite",
+      handler: () => {
+        document.querySelector("#fav").attr( 'favorite', val['favorite'] );
+      }
+    }
+  ];
 }
 
 var or = false, checkTimer = null;

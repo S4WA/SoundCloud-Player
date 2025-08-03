@@ -3,7 +3,7 @@
   "name": "SoundCloud Player",
   "short_name": "SC Player",
   "description": "SoundCloud Popup Player 🔥",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "homepage_url": "https://akiba.cloud/soundcloud-player/",
   "permissions": [
     "tabs",
@@ -15,7 +15,6 @@
   "content_scripts": [ {
     "all_frames": false, 
     "js": [
-      "jquery-3.7.1.min.js",
       "contents/contents.js",
       "contents/utils.js"
     ],
@@ -73,7 +72,9 @@
     "_execute_action": {
       "suggested_key": {
         "default": "Ctrl+Shift+S",
-        "mac": "Command+Shift+S"
+        "mac": "Command+Shift+S",
+        "windows": "Ctrl+Shift+S",
+        "linux": "Ctrl+Shift+S"
       },
       "description": "Open the popup"
     }

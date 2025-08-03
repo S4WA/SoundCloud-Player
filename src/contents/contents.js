@@ -38,11 +38,9 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
 
   let response = {};
 
-  $(document).click();
-
   switch (request.type) {
     case 'get-element': {
-      response['value'] = $(`${request.value}`).length;
+      response['value'] = document.querySelectorAll(`${request.value}`).length;
       break;
     }
     case 'request-data': {
@@ -94,7 +92,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
     case 'play':
     case 'pause':
     case 'toggle': {
-      let elem = $('.playControls__elements > .playControl');
+      let elem = document.querySelector(".playControls__elements > button.playControl");
       if (!elem || !elem.attr('title')) return;
       elem.click();
       json['playing'] = elem.attr('title').includes('Pause');
@@ -104,14 +102,14 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       break;
     }
     case 'prev': {
-      $('.playControls__prev').click();
+      document.querySelector(".playControls__prev").click();
       await update();
       response = json;
       sendResponse(response);
       break;
     }
     case 'next': {
-      $('.playControls__next').click();
+      document.querySelector(".playControls__next").click();
       await update();
       response = json;
       sendResponse(response);
@@ -119,7 +117,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
     }
     case 'unfav':
     case 'fav': {
-      let btn = $('.playbackSoundBadge__like');
+      let btn = document.querySelector(".playbackSoundBadge__like");
       if (!btn) return;
       btn.click();
       json['favorite'] = btn.attr('title') == "Unlike";
@@ -129,7 +127,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       break;
     }
     case 'repeat': {
-      let btn = $('.repeatControl');
+      let btn = document.querySelector(".repeatControl");
       if (!btn) return;
       btn.click();
       json['repeat'] = getRepeatMode(); // none -> one -> all
@@ -139,7 +137,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       break;
     }
     case 'shuffle': {
-      let btn = $('.shuffleControl');
+      let btn = document.querySelector(".shuffleControl");
       if (!btn) return;
       btn.click();
       json['shuffle'] = isShuffling();
@@ -150,8 +148,8 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
     }
     case 'mute':
     case 'unmute': {
-      $('.volume button[type="button"]').click();
-      json['mute'] = $('.volume').attr('class').includes('muted');
+      document.querySelector('.volume button[type="button"]').click();
+      json['mute'] = document.querySelector('.volume').attr('class').includes('muted');
 
       response = { 'response': {'mute': json['mute'], 'volume': json['volume'] } };
       sendResponse(response);
@@ -183,7 +181,7 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       break;
     }
     case 'follow': {
-      $('.playbackSoundBadge .sc-button-follow').click();
+      document.querySelector('.playbackSoundBadge .sc-button-follow').click();
       json['following'] = isFollowing();
       response = { 'response' : { 'following': json['following'] } }
       sendResponse(response);

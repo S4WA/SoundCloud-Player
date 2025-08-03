@@ -1,28 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
+  setCompactTheme();
+  if (localStorage.getItem('compact_in_settings') != null && !Bool(localStorage.getItem('compact_in_settings')) || json['title'] == null) {
+    document.querySelector("#controller-body").style["display"] = "none";
+  }
+
   Promise.all([
-    checkIfCompactIsEnabled(),
     initDropdown(),
     initSettings(),
     initTemplates(),
     initInputs(),
     putAllLinks(),
-    initDarkmode(),
     registerEvents(),
-    initResetButton(),
+    registerUniversalEvents(),
     initReceiver(),
     checkMultipleWindow(),
+    insertAnnouncement(),
   ]);
+
   if (isPopout()) {
-    $('#captureme').attr('href', 'embed.html?p=1');
-    $('#captureme').text('Capture Me');
-    $('#captureguide').text('(Guide)');
+    document.querySelector('#captureme').attr('href', 'embed.html?p=1');
+    document.querySelector('#captureme').innerText = "Capture Me";
+    document.querySelector('#captureguide').innerText = "(Guide)";
   }
 
-  $('#video').on('click', function() {
-    $(this).siblings('.dd-child').html('<iframe width="100%" src="https://www.youtube.com/embed/hIJyF2u3-RY" title="Quick Tutorial for SoundCloud Player 1.3.0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
+  document.querySelector('#video .dd-parent').addEventListener('click', function() {
+    document.querySelector("#video .dd-child").innerHTML = '<iframe width="100%" src="https://www.youtube.com/embed/hIJyF2u3-RY" title="Quick Tutorial for SoundCloud Player 1.3.0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+    // inserting yt video embed
+    // w/o doing so would ruin its performance (drops fps)
   });
 
-  $('#eshortcuts').text(`To change the shortcut for opening popup, access '${isChrome() ? 'chrome://extensions/shortcuts' : 'about:addons'}' manually.`);
+  document.querySelector('#eshortcuts').innerText = `To change the shortcut for opening popup, access '${isChrome() ? 'chrome://extensions/shortcuts' : 'about:addons'}' manually.`;
 });
 
 async function initReceiver() {
@@ -32,140 +39,60 @@ async function initReceiver() {
   });
 }
 
-async function update(val) {
-  // if value is null or isn't json, return. 
-  if (val == null || typeof val !== 'object') return;
-
-  let compact_enabled = localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true';
-  if (compact_enabled == false) return;
-
-  $('#controller-body').css('display', 'inline-block');
-  keyReady = true;
-
-  // set artwork (text)
-  if (val['artwork'] != null) {
-  // set artwork (text)
-    toggleArtwork(settings['display-artwork']);
-    $('#artwork').css('background-image', val['artwork']);
-  }
-
-  // set title (text)
-  if (val['title'] != null) {
-    $('.title,.breathing').text( replaceText( localStorage.getItem('trackdisplay'), val) ).attr( 'title', replaceText( localStorage.getItem('trackdisplay'), val) );
-    startMarquees();
-  }
-
-  // set link (text)
-  if (val['link'] != null) {
-    $('.title,.breathing').attr( 'href', val['link'] );
-  }
-  
-  // set playing status (true/false)
-  if (val['playing'] != null) {
-    $('#toggle').attr( 'playing', val['playing'] );
-  }
-
-  // set favorite status (true/false)
-  if (val['favorite'] != null) {
-    $('#fav').attr( 'favorite', val['favorite'] );
-  }
-  
-  // set shuffle status (true/false)
-  if (val['shuffle'] != null) {
-    $('#shuffle').attr( 'shuffle', val['shuffle'] );
-  }
-  
-  // set repeat status (one/all/none)
-  if (val['repeat'] != null) {
-    $('#repeat').attr( 'mode', val['repeat'] );
-  }
-
-  // set current time & duration
-  if (val['time'] != null) {
-    let timeJson = val['time'];
-
-    if ($('#current').text() != timeJson['current']) {
-      $('#current').text(timeJson['current']);
-      $('#share_current_time').val(timeJson['current']);
+async function initDropdown() {
+  // Children
+  const dropdowns = document.querySelectorAll('.dropdown');
+  dropdowns.forEach((dropdown) => {
+    const isClosed = dropdown.hasAttribute('closed') ? dropdown.getAttribute('closed') === 'true' : true;
+    if (isClosed) {
+      const child = dropdown.querySelector('.dd-child');
+      if (child) child.style.display = 'none';
     }
-
-    if ($('#end').text() != timeJson['end']) {
-      $('#end').text(timeJson['end']);
-    }
-  }
-
-  // follow button
-  if (val['following'] != null) {
-    $('#follow').attr('followed', val['following']);
-  }
-}
-
-async function initResetButton() {
-  $('#reset').on('click', function () {
-    let a = $('#count'), b = 1;
-    if (a.text() != '') {
-      b = Number(a.text());
-      b++;
-    }
-    if (b > 3) return;
-    a.text(b);
-
-    if (b == 3) { // if it's '>=', it's gonna add elements more than 1. 
-      $('#sure').append($(`<div><br>ARE YOU SURE YOU WANT TO RESET EVERYTHING ? [<span id='yes' class='clickable'>YES</span>] [<span id='no' class='clickable'>NO</span>] </div>`))
-      $('#yes,#no').on('click', function () {
-        if ($(this).attr('id') == 'yes') localStorage.clear(); 
-        location.reload();
-      });
+    if (!dropdown.hasAttribute('closed')) {
+      dropdown.setAttribute('closed', 'true');
     }
   });
-}
-
-async function initDropdown() {
-  // Childs
-  $('.dropdown').each(function(i) {
-    if ( $(this).attr('closed') != null ) {
-      if ( Bool( $(this).attr('closed') ) ) {
-        $(this).children('.dd-child').hide();
-      } 
-    } else {
-      $(this).attr('closed', 'true');
-      $(this).children('.dd-child').hide();
-    }
-  })
 
   // Parents
-  $('.dropdown > .dd-parent').addClass('clickable');
+  const parents = document.querySelectorAll('.dropdown > .dd-parent');
+  parents.forEach((parent) => {
+    parent.classList.add('clickable');
+    parent.addEventListener('click', () => {
+      const dropdown = parent.parentElement;
+      const value = dropdown.getAttribute('closed') === 'true';
+      dropdown.setAttribute('closed', !value);
+      
+      const child = dropdown.querySelector('.dd-child');
+      if (!child) return;
 
-  $('.dropdown > .dd-parent').on('click', function() {
-    let parent = $(this).parent(), value = Bool( parent.attr('closed') );
-
-    parent.attr('closed', !value);
-
-    if (localStorage.getItem('dropdown-animation') == 'true') {
-      if (value) {
-        parent.children('.dd-child').slideDown();
+      if (localStorage.getItem('dropdown-animation') === 'true') {
+        if (value) {
+          slideDown(child);
+        } else {
+          slideUp(child);
+        }
       } else {
-        parent.children('.dd-child').slideUp();
+        child.style.display = value ? 'block' : 'none';
       }
-    } else {
-      parent.children('.dd-child').css('display', value ? 'block' : 'none');
-    }
+    });
   });
 
   // Elements
-  $('.dropdown .dd-child textarea').attr('spellcheck', 'false');
-  $('.dropdown .dd-child input').attr('spellcheck', 'false');
+  const boxes = document.querySelectorAll('.dropdown .dd-child textarea, .dropdown .dd-child input');
+  boxes.forEach((boxes) => {
+    boxes.setAttribute('spellcheck', 'false');
+  });
 }
 
 function checkMarqueesDurations() {
-  $('#duration').val(localStorage.getItem('duration'));
-  $('#pause').val(localStorage.getItem('pause'));
+  document.querySelector('#duration').value = localStorage.getItem('duration');
+  document.querySelector('#pause').value = localStorage.getItem('pause');
 }
 
 function checkFonts() {
   // - Custom Font
   if (localStorage.getItem('font') == null) return;
-  $('#font-size').val( Number( localStorage.getItem('font-size').replace('px', '') ) );
+  document.querySelector("#font-size").value = Number( localStorage.getItem('font-size').replace('px', '') );
 
   const fontCheck = new Set([
     // Windows 10
@@ -175,6 +102,7 @@ function checkFonts() {
     // Font Familiy
     'Times', 'Times New Roman', 'Georgia', 'serif', 'Verdana', 'Arial', 'Helvetica', 'sans-serif', 'cursive', 'fantasy', 'emoji', 'math', 'fangsong', 'Meiryo'
   ].sort());
+  const fontList = document.getElementById('fontlist');
 
   (async() => {
     await document.fonts.ready;
@@ -184,66 +112,79 @@ function checkFonts() {
     for (const font of fontCheck.values()) {
       if (document.fonts.check(`12px '${font}'`)) {
         // fontAvailable.add(font);
-        $('#fontlist').append( $(`<option value='${font}'>${font}</option>`) );
+        const option = document.createElement('option');
+        option.value = font;
+        option.textContent = font;
+        fontList.appendChild(option);
       }
     }
 
     // console.log('Available Fonts:', [...fontAvailable.values()]);
-
-    $(`#fontlist option[value='${localStorage.getItem('font')}']`).attr('selected', 'true');
+    document.querySelector(`#fontlist option[value='${localStorage.getItem('font')}']`).attr('selected', 'true');
   })();
 }
 
 function checkCustomColors() {
+  // #themecolor and #bgcolor are color pickers
+  // #current-theme and #current-bgcolor are input elements
+  const thColorPicker = document.querySelector('#themecolor'), bgColorPicker = document.querySelector('#bgcolor');
+  const thInput = document.querySelector('#current-theme'), bgInput = document.querySelector('#current-bgcolor');
+
   // - Theme Color
   if (localStorage.getItem('themecolor') != null) {
-    $('#themecolor').val( localStorage.getItem('themecolor') );
-    $('#current-theme').val(`${ localStorage.getItem('themecolor').toUpperCase() }`)
+    thColorPicker.value = localStorage.getItem('themecolor');
+    thInput.value = `${ localStorage.getItem('themecolor').toUpperCase() }`;
     updateThemeColor();
   } else {
     setTimeout(function() {
-      $('#themecolor').val( $(':root').css('--theme-color') );
+      thColorPicker.value = document.documentElement.style.getPropertyValue("--theme-color").trim();
     }, 100);
   }
-  $('#themecolor').change(function() {
-    $('#current-theme').val(`${ $(this).val().toUpperCase() }`);
-    updateThemeColor($(this).val());
+
+  // has to cooperate with one another when the other's have changed its value. same with #bgcolor and #current-bgcolor.
+  // when colorpicker changes value, input's value also changes and have to hold the same value.
+  thColorPicker.addEventListener('change', function() {
+    thInput.value = this.value.toUpperCase();
+    updateThemeColor(this.value);
   });
-  $('#current-theme').change(function() {
-    $('#themecolor').val(`${ $(this).val().toUpperCase() }`);
-    updateThemeColor($(this).val());
+  // vice versa. when input changes, colorpicker's value has to hold the same value.
+  thInput.addEventListener('change', function() {
+    thColorPicker.value = this.value.toUpperCase();
+    updateThemeColor(this.value);
   });
 
-  // - Background
-  if (localStorage.getItem('bgcolor') != null) {
-    $('#bgcolor').val( localStorage.getItem('bgcolor') );
-    $('#current-bgcolor').val(`${ localStorage.getItem('bgcolor').toUpperCase() }`)
+  // - Background color
+  if (localStorage.getItem('bgcolor') !== null) {
+    bgColorPicker.value = localStorage.getItem('bgcolor');
+    bgInput.value = localStorage.getItem('bgcolor').toUpperCase();
     updateBGcolor();
   } else {
     setTimeout(function() {
-      $('#bgcolor').val( $(':root').css('--bg-color') );
+        bgColorPicker.value = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
     }, 100);
   }
-  $('#bgcolor').change(function() {
-    $('#current-bgcolor').val(`${ $(this).val().toUpperCase() }`);
-    updateBGcolor($(this).val());
+
+  bgColorPicker.addEventListener('change', function() {
+    bgInput.value = this.value.toUpperCase();
+    updateBGcolor(this.value);
   });
-  $('#current-bgcolor').change(function() {
-    $('#bgcolor').val(`${ $(this).val().toUpperCase() }`);
-    updateBGcolor($(this).val());
+
+  bgInput.addEventListener('change', function() {
+    bgColorPicker.value = this.value.toUpperCase();
+    updateBGcolor(this.value);
   });
 }
 
 function cheeckTheme() {
   if (localStorage.getItem('theme') == null) return;
   let themeName = localStorage.getItem('theme');
-  $(`#theme-select option[value='${themeName}']`).attr('selected', 'true');
+  document.querySelector(`#theme-select option[value='${themeName}']`).attr('selected', 'true');
 }
 
 async function initSettings() {
   // - Track Display
   if (localStorage.getItem('trackdisplay') != null) {
-    $('#trackdisplay').val(localStorage.getItem('trackdisplay'));
+    document.querySelector("#trackdisplay").value = localStorage["trackdisplay"];
   }
 
   cheeckTheme();
@@ -252,7 +193,12 @@ async function initSettings() {
   checkMarqueesDurations();
 
   if (localStorage.getItem('startpage') != null) {
-    $('#startpage').val(localStorage.getItem('startpage'));
+    document.querySelector('#startpage').value = localStorage.getItem('startpage');
+  }
+
+  // No Duplicates
+  if (isPopout()) {
+    document.querySelector('#back').attr('href', 'popup.html?p=1');
   }
 }
 
@@ -262,17 +208,17 @@ async function initTemplates() {
   const keys = ['twitter', 'copy', 'threads', 'bsky'];
   for (let key of keys) {
     if (localStorage.getItem(key) != null) {
-      $(`#${key}`).val(localStorage.getItem(key));
+      document.querySelector(`#${key}`).value = localStorage.getItem(key);
     }
   }
 }
 
 async function initInputs() {
-  $('#fontlist').on('input', function () {
-    updateFont($(this).val());
+  document.querySelector('#fontlist').addEventListener('input', function() {
+    updateFont(this.value);
   });
-  $('#font-size').change(function() {
-    updateFontSize($(this).val() + 'px');
+  document.querySelector('#font-size').addEventListener('change', function() {
+    updateFontSize(this.value + 'px');
   });
 
   const list = [
@@ -293,22 +239,31 @@ async function initInputs() {
     [ '#dropdown-animation', 'dropdown-animation' ],
     [ '#popout-dupe', 'popout-dupe' ],
     [ '#apply_marquee_to_default', 'apply_marquee_to_default' ],
+    [ '#remember-window-size', 'remember-window-size' ],
   ];
 
+  // any number input element OR textarea element OR select element
   for (let i = 0; i < list.length; i++) {
-    (function(n) {
-      $(list[n][0]).on('input', function() { localStorage.setItem(list[n][1], $(this).val()); });
-    })(i);
+    const element = document.querySelector(list[i][0]);
+    if (element) {
+      element.addEventListener('input', function() {
+        localStorage.setItem(list[i][1], this.value);
+        settings[list[i][1]] = this.value;
+      });
+    }
   }
 
   for (let i = 0; i < checkboxes.length; i++) {
-    (function(n) {
-      $(checkboxes[n][0]).change(function() { localStorage.setItem(checkboxes[n][1], this.checked); });
-
-      if (localStorage.getItem( checkboxes[n][1] ) != null && localStorage.getItem( checkboxes[n][1] ) == 'true' ) {
-        $(checkboxes[n][0]).attr('checked', '');
+    const element = document.querySelector(checkboxes[i][0]);
+    if (element) {
+      element.addEventListener('change', function(event) {
+        localStorage.setItem(checkboxes[i][1], this.checked);
+        settings[checkboxes[i][1]] = this.checked;
+      });
+      if (localStorage.getItem(checkboxes[i][1]) != null && localStorage.getItem(checkboxes[i][1]) == 'true') {
+        element.checked = true;
       }
-    })(i);
+    }
   }
 }
 
@@ -317,7 +272,7 @@ async function putAllLinks() {
     [ '#github', 'https://github.com/S4WA/SoundCloud-Player' ],
     [ '#hp', 'https://akiba.cloud/soundcloud-player/' ],
     [ '#yt', 'https://youtu.be/hIJyF2u3-RY' ],
-    [ '#feedback', 'https://forms.gle/oG2DvmK7HXhq8q8ZA' ],
+    // [ '#feedback', 'https://forms.gle/oG2DvmK7HXhq8q8ZA' ],
     [ '#support', 'https://ko-fi.com/sawanese' ], 
     [ '.wiki', 'https://github.com/S4WA/SoundCloud-Player/wiki' ],
     [ '#eshortcuts' , 'chrome://extensions/shortcuts' ],
@@ -325,70 +280,163 @@ async function putAllLinks() {
     [ '#privacy', 'https://akiba.cloud/soundcloud-player/privacy-policy' ]
   ];
   for (let i = 0; i < linkList.length; i++) {
-    $(linkList[i][0]).on('click', () => { openURL(linkList[i][1]); });
+    const elements = document.querySelectorAll(linkList[i][0]);
+    elements.forEach(element => {
+      element.addEventListener('click', () => { 
+        openURL(linkList[i][1]); 
+      });
+    });
   }
-}
-
-async function initDarkmode() {
-  if (localStorage.getItem('darkmode') != null) {
-    dark = (localStorage.getItem('darkmode') === 'true');
-  }
-  darkmode(dark);
-  $('#toggle_darkmode').on('click', () => { toggleDarkmode(); });
-
-  // No Duplicate Popout
-  if (isPopout()) {
-    $('#back').attr('href', 'popup.html?p=1')
-  }
-}
-
-function repeat() {
-  if (json['repeat'] == null || $('#repeat') == null) return;
-  queue('repeat').then(update);
-  $('#repeat').attr( 'mode', json['repeat'] );
 }
 
 function goBackToMain() {
   location.href = 'popup.html?' + (isPopout() ? 'p=1' : '');
 }
 
+// 
 async function registerEvents() {
-  $('#fav').on('click', () => { queue('fav'); });
-  $('#prev').on('click', () => { queue('prev'); });
-  $('#next').on('click', () => { queue('next'); });
-  $('#artwork,.title,.breathing').on('click', () => { openSCTab(); return false; });
-  $('#repeat').on('click', () => { repeat(); });
-  $('#toggle').on('click', () => { queue('toggle'); });
-  $('#shuffle').on('click', () => { queue('shuffle'); });
-  $('#follow').on('click', () => { queue('follow'); })
-  $('.copynp').on('click', () => {
-    copyToClipboard( replaceText(localStorage.getItem('copy')) );
-  });
-  $('#toggle-compact').change(function () {
-    console.log(this.checked)
-    if (this.checked) {
-      queue('request-data');
-      startMarquees();
+  const arr = [
+    {
+      selector: "#toggle-compact",
+      event: "change",
+      handler: () => {
+        const checked = document.querySelector('#toggle-compact').checked;
+        if (checked) {
+          queue('request-data');
+          startMarquees();
+        }
+        document.querySelector("#controller-body").style["display"] = (keyReady = checked) ? 'inline-block' : 'none';
+      }
+    },
+    {
+      selector: '#dropdown-animation',
+      event: "change",
+      handler: () => {
+        localStorage.setItem('dropdown-animation', document.querySelector("#dropdown-animation").checked);
+      }
+    },
+    {
+      selector: '#display-artwork',
+      event: "change",
+      handler: (e) => { toggleArtwork(e.target.checked); }
+    },
+    {
+      selector: "#tsTheme",
+      event: "change",
+      handler: () => { 
+        let breathing = document.querySelector("#tsTheme").value == 'breathing';
+        localStorage['back-and-forth'] = breathing;
+        document.querySelectorAll('#tsOptions tr').forEach((row, index) => {
+          if (index >= 4) {
+            row.style.display = breathing ? 'none' : '';
+          }
+        });
+      }
+    },
+    {
+      selector: "#reset",
+      event: "click",
+      handler: () => {
+        // This handler is from a removed function initResetButton().
+        const countElement = document.querySelector('#count');
+        let count = 1;
+        
+        if (countElement.textContent !== '') {
+          count = Number(countElement.textContent);
+          count++;
+        }
+        
+        if (count > 3) return;
+        countElement.textContent = count;
+
+        if (count === 3) {
+          const sureDiv = document.getElementById('sure');
+          const div = document.createElement('div');
+          div.innerHTML = '<br>ARE YOU SURE YOU WANT TO RESET EVERYTHING ? [<span id="yes" class="clickable">YES</span>] [<span id="no" class="clickable">NO</span>]';
+          sureDiv.appendChild(div);
+
+          const yesNoSpans = document.querySelectorAll('#yes, #no');
+          yesNoSpans.forEach(span => {
+            span.addEventListener('click', (e) => {
+              if (e.target.id === 'yes') localStorage.clear();
+              location.reload();
+            });
+          });
+        }
+      }
     }
-    $('#controller-body').css('display', (keyReady = this.checked) ? 'inline-block' : 'none');
-  });
-  $('#dropdown-animation').change(function() {
-    localStorage.setItem('dropdown-animation', $(this).prop('checked') ? 'true' : 'false');
-  });
-  $('#display-artwork').change(function() { toggleArtwork(this.checked); });
+  ];
 
-  $('#tsTheme').change(function() { 
-    let breathing = $(this).val() == 'breathing';
-    localStorage['back-and-forth'] = breathing;
-    $('#tsOptions tr').slice(2).css('display', breathing ? 'none' : '');
+  arr.forEach(({ selector, event, handler }) => {
+    document.querySelectorAll(selector).forEach(el => {
+      el.addEventListener(event, handler);
+    });
   });
-  $(`#tsTheme option[value='${ localStorage['back-and-forth'] == 'true' ? 'breathing' : 'marquee' }']`).attr('selected', 'true');
-  $('#tsOptions tr').slice(2).css('display', localStorage['back-and-forth'] == 'true' ? 'none' : '');
+
+  document.querySelector(`#tsTheme option[value='${ localStorage['back-and-forth'] == 'true' ? 'breathing' : 'marquee' }']`).attr('selected', 'true');
+  document.querySelectorAll('#tsOptions tr').forEach((tr, index) => {
+    if (index >= 4) {
+      tr.style.display = localStorage.getItem('back-and-forth') === 'true' ? 'none' : '';
+    }
+  });
 }
 
-async function checkIfCompactIsEnabled() {
-  let e = localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true' && json['title'] != null;
-  $('#controller-body').css('display', e ? 'inline-block' : 'none');
+function insertAnnouncement() {
+  // I thought it'd be easier than writing html
+  const an = {
+    updates: [
+      {
+        title: "Fixed",
+        items: [ // bullet points
+          "TEST TEST TEST"
+        ]
+      },
+      {
+        title: "Updated",
+        items: [
+          "A few internal things have changed. The extensions as a whole should work smoother.",
+        ]
+      }
+    ],
+    message: {
+      content: "Hi.",
+      date: "Jun 12, 2025",
+      style: "line-break: anywhere; font-style: italic;",
+      class: "gray"
+    }
+  };
+
+  if (an["updates"]) {
+    const update = an["updates"];
+    for (let i = 0; i < update.length; i++) {
+      const title = update[i]["title"], items = update[i]["items"];
+
+      const body = Object.assign(document.createElement('div'), {
+        innerHTML: `<span class='bold'>[${title}]</span><br>`
+      });
+      const bulletpoints = document.createElement("ul");
+
+      for (const text of items) {
+        bulletpoints.appendChild(
+          Object.assign(document.createElement('li'), { innerText: text })
+          );
+      }
+      body.appendChild(bulletpoints);
+      document.querySelector('#announcement').insertBefore(body, document.querySelector('#announcement hr'));
+    }
+  }
+  if (an["message"]) {
+    const body = Object.assign(document.createElement('div'), {
+      innerHTML: `<span class='bold'>[Message]</span><br>`
+    });
+    body.appendChild(Object.assign(document.createElement('div'), {
+        style: an["message"]["style"],
+        className: an["message"]["class"],
+        innerHTML: `<span>${an["message"]["content"]}<br><br>${an["message"]["date"]}</span>`
+      })
+    );
+    document.querySelector('#announcement').insertBefore(body, document.querySelector('#announcement hr'));
+  }
 }
 
-var json = {}, or = false, dark = false, checkTimer = null, tsA = false;
+var json = {}, or = false, dark = false, checkTimer = null;

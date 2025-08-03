@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   document.title = 'SoundCloud Player';
   new Promise((resolve, reject) => {
-    for (key in settings) {
+    for (const key in settings) {
       if (localStorage.getItem(key) == null) {
-        let value = (typeof settings[key] == 'string'
+        const value = (typeof settings[key] == 'string'
           || typeof settings[key] == 'number'
           || typeof settings[key] == 'boolean'
           ) ? settings[key] : JSON.stringify(settings[key]);
         localStorage.setItem(key, value);
       } else {
-        let o = isJsonString(localStorage.getItem(key));
-        settings[key] = o == null ? localStorage.getItem(key) : o;
+        const obj = isJsonString(localStorage.getItem(key));
+        settings[key] = obj == null ? localStorage.getItem(key) : obj;
       }
     }
     resolve();
@@ -19,12 +19,26 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFont();
     updateBGcolor();
     updateFontSize();
+    initDarkmode();
     return;
   }).then(() => {
     initKeyboardBinds();
   });
-  $('#version').text('v' + chrome.runtime.getManifest().version);
+  if (document.querySelector('#version')) document.querySelector('#version').innerText = `v${chrome.runtime.getManifest().version}`;
 });
+
+function newProfile(name, values) { // values = settings values
+  if (!name) return false;
+
+  if (profiles[name]) return false;
+
+  values = values || settings;
+
+  // saving value
+  profiles[name] = values;
+  // saving same value to the localStorage.
+  let stringfiedJson = JSON.stringify(profiles[name])
+}
 
 var prefix = '[SoundCloud Player]', json = {}, settings = {
   'trackdisplay': '%title% by %artist%',
@@ -47,4 +61,9 @@ var prefix = '[SoundCloud Player]', json = {}, settings = {
   'popout-dupe': true,
   'back-and-forth': false,
   'apply_marquee_to_default': false,
-}
+  'remember-window-size': false,
+  'window-width': 265,
+  'window-height': 340,
+}, profiles = {
+
+};

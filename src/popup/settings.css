@@ -124,11 +124,6 @@ li:last-child {
 }
 
 /* Dark Mode */
-body[dark='true'], body[dark='true'] a { /* body[dark='true'] span, body[dark='true'] input */
-  background-color: var(--bg-color);
-  color: white;
-}
-
 body[dark='true'] .dropdown[closed='true'] > .dd-parent > .icon {
   background-image: url('../assets/dropdown/caret-right_dark.svg');
 }
@@ -150,114 +145,16 @@ body[dark=false] #controller-body {
   background-color: #F6F6F6;
 }
 
-body[dark=true] #controller-body {
-
-}
-
-#controller-body[visible='false'] {
-  display: none;
-}
-
-#controller-body[visible='true'] {
-  display: inline-block;
-}
-
-#controller {
-  width: 200px;
-}
-
 #controller-body hr {
   margin-top: 15px;
 }
 
-#controller .body:not(.marquee) {
-  margin-right: auto;
-  margin-left: auto;
-  width: 100%;
-  height: 33%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#title {
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-#hyphen {
-  background-size: auto;
-  background-image: url('../assets/audio/minus.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-/* Icons */
-.copynp {
-  background-size: 60% 60%;
-  background-image: url('../assets/share/copy-solid.svg');
-  background-repeat: no-repeat;
-}
-
-#up {
-  background-image: url('../assets/audio/plus.svg');
-}
-
-#down {
-  background-image: url('../assets/audio/minus.svg');
-}
-
-#current {
-  padding-right: 10px;
-}
-
-#end {
-  padding-left: 9px;
-}
-
-#controller button {
-  border: 0;
-  font: 0/0 a;
-  width: 24px;
-  height: 24px;
-  text-shadow: none;
-  color: transparent;
-  text-shadow: none;
-  background-color: transparent;
-  background-position: center center;
-}
-
+/* Misc */
 .bold {
   font-weight: bold;
 }
 
-body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']):not([mode='one']):not([mode='all']):not([followed='true']), body[dark='true'] #hyphen {
-  background-color: transparent;
-  filter: invert(1);
-}
-/* Icons End */
 select, select option, input, textarea {
+  /* if not Arial options could be too messy and unreadable */
   font-family: Arial;
-}
-
-#side {
-  width: 50px;
-  height: 50px;
-}
-
-#artwork {
-  width: 50px;
-  height: 50px;
-  margin: 0 0 ;
-  background-size: contain;
-}
-
-#follow[followed='true'] {
-  -webkit-mask: url('../assets/followed.svg');
-  background-color: var(--theme-color);
-  -webkit-mask-size: cover;
-}
-
-#follow[followed=''], #follow[followed='false'] {
-  background-image: url('../assets/not-following.svg');
 }

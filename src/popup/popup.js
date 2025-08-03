@@ -1,12 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
   Promise.all([
+    // initialization (checks if the page itself is a window or a popup)
     init(),
+    // checks if popup itself is ready to show elements 
+    // (they're unnecessary when there's no sc tab.)
     checkElements(),
+    // checks which theme is selected & sets appropriate theme
     setTheme(),
+    // adds event listeners for each buttons.
     registerEvents(),
+    registerUniversalEvents(),
     checkDisplayArtwork(),
     queue('request-data').then((val) => {
-      for (key in val) {
+      for (const key in val) {
         json[key] = val[key];
       }
       sessionStorage.setItem('data', JSON.stringify(json));
@@ -19,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function init() {
   // No Duplicate Popout
   if (isPopout()) {
-    $('#P').hide();
-    $('#settings').attr('href', 'settings.html?p=1');
+    document.querySelector("#P").style.display = "none";
+    document.querySelector("#settings").attr("href", "settings.html?p=1");
   }
 }
 
@@ -31,207 +37,216 @@ async function checkElements() {
   keyReady = arg;
   toggleElements(arg);
 
+  // if simple-label is enabled, all of .innerText will be emptied.
   if (settings['simple-label']) {
-    $('#store').text('SC PLYR');
-    $('#share_btn,#settings,#thelink > div.right > div:nth-child(1) > span').contents().each(function() { if (this.nodeType === Node.TEXT_NODE) this.remove(); });
-  }
-}
-
-function setTheme() {
-  return new Promise((resolve, reject) => {
-    switch (getThemeName()) {
-      case 'default': {
-        setDefaultTheme();
-        break;
-      }
-      case 'compact': {
-        setCompactTheme();
-        break;
-      }
-    }
-    resolve();
-  });
-}
-
-async function toggleElements(arg) {
-  for (var i of hideList) {
-    if (arg) { // Show? If Yes ->
-      $(i).show();
-    } else {
-      $(i).hide();
-    }
-  }
-}
-
-async function update(val) {
-  // if value is null or isn't json, return. 
-  if (val == null || typeof val !== 'object') return;
-
-  // set artwork (text)
-  if (val['artwork'] != null) {
-    $('#artwork').css('background-image', val['artwork']);
-  }
-
-  // set title (text)
-  if (val['title'] != null) {
-    $('.title,.breathing').text(replaceText(localStorage.getItem('trackdisplay'), val));
-    startMarquees();
-    $('.title,.breathing').attr('href', val['link']);
-  }
-
-  // set current time & duration
-  if (val['time'] != null) {
-    let timeJson = val['time'];
-
-    if ($('#current').text() != timeJson['current']) {
-      $('#current').text(timeJson['current']);
-      $('#share_current_time').val(timeJson['current']);
-    }
-    if ($('#end').text() != timeJson['end']) {
-      $('#end').text(timeJson['end']);
-    }
-  }
-
-  // set playing status (true/false)
-  if (val['playing'] != null) {
-    $('#toggle').attr( 'playing', val['playing'] );
-  }
-
-  // set favorite status (true/false)
-  if (val['favorite'] != null) {
-    $('#fav').attr( 'favorite', val['favorite'] );
-  }
-  
-  // set shuffle status (true/false)
-  if (val['shuffle'] != null) {
-    $('#shuffle').attr( 'shuffle', val['shuffle'] );
-  }
-  
-  // set repeat status (one/all/none)
-  if (val['repeat'] != null) {
-    $('#repeat').attr( 'mode', val['repeat'] );
-  }
-
-  // set current volume (X%)
-  if (val['volume'] != null) {
-    $('#current-volume').text( Math.floor(val['volume']) + ' %' );
-  }
-
-  // set mute (true/false)
-  if (val['mute'] != null) {
-    val['mute'] ? $('#volume-icon').addClass('muted') : $('#volume-icon').removeClass('muted');
-  }
-
-  // follow button
-  if (val['following'] != null && val['following'] != 'self') {
-    $('#follow').show();
-    $('#follow').attr('followed', val['following']);
-  } else if (val['following'] == 'self') {
-    $('#follow').hide();
-  }
-
-  setShareLink(val);
-}
-
-function setDefaultTheme() {
-  $('#controller-body')[0].innerHTML = defaultController;
-  $('#controller-body').attr('mode', 'default');
-}
-
-function setCompactTheme() {
-  $('#time').remove();
-  $('#controller-body')[0].innerHTML = compactController;
-  $('#controller-body').attr('mode', 'compact');
-}
-
-function registerAudioButtons() {
-  let obj = ['toggle', 'prev', 'next', 'fav', 'repeat', 'shuffle', 'follow'];
-  for (let i = 0; i < obj.length; i++) {
-    (function(n) {
-      $('#' + obj[n]).on('click', () => { 
-        queue(obj[n]);
-        openSCTab2();
+    document.querySelector("#store").innerText = "SC PLYR";
+    // $('#share_btn,#settings,#thelink > div.right > div:nth-child(1) > span').contents().each(function() { if (this.nodeType === Node.TEXT_NODE) this.remove(); });
+    const elements = document.querySelectorAll('#share_btn, #settings, .thelink > .right > div:nth-child(1) > span');
+    elements.forEach(element => {
+      Array.from(element.childNodes).forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.remove();
+        }
       });
-    })(i);
+    });
   }
-
-  $('#artwork,.title,.breathing').on('click', () => { openSCTab(); return false; });
-  $('#volume-icon').on('click', () => {
-    queue('mute');
-  });
-  $('#up').on('click', () => {
-    queue('up');
-  });
-  $('#down').on('click', () => {
-    queue('down');
-  });
 }
 
-async function registerEvents() { 
-  // Dark Mode
-  if (localStorage.getItem('darkmode') != null) {
-    dark = (localStorage.getItem('darkmode') === 'true');
-  }
-  darkmode(dark);
-  $('#toggle_darkmode').on('click', () => { toggleDarkmode(); });
-
-  // Audio
-  registerAudioButtons();
-
-  // Popout
-  $('#P').on('click', async () => {
-    let t = chrome.runtime.getURL(''); // 'chrome-extension://<extension-id>/'
-    await chrome.tabs.query({active:true, url: `${t + (t.endsWith('/') ? '' : '/')}popup/*.html?p=1`}).then(async (val) => {
-      if (val[0] == null || (localStorage['popout-dupe'] != null && localStorage['popout-dupe'] == 'true')) {
-        await popup('../popup/popup.html?p=1', 'a');
-        return;
+// they are hidden when there's no sc-tab.
+async function toggleElements(visibility) {
+  const hideList = [
+    /*
+      style: {
+        "property name": [
+          "value when the argument is true", "value when false"
+        ],
+        "property-2": "singular = only when it's false, the property needs value replacement; otherwise remain the value."
       }
-      await chrome.windows.update(val[0].windowId, {focused: true});
-    });
-    window.close();
-  });
-
-  // Link buttons
-  $('#store').on('click', () => {
-    openURL('https://akiba.cloud/soundcloud-player/');
-  });
-
-  // Share
-  $('#share_btn').on('click', () => {
-    var share = $('#share');
-    // share.is(':visible') ? share.slideUp() : share.slideDown();
-    share.is(':visible') ? share.hide() : share.show();
-  });
-
-  $('#share_with_time').on('input', () => {
-    share_with_time = $('#share_with_time').prop('checked');
-    setShareLink(json);
-  });
-
-  // Social
-  var socials = ['Twitter', 'Threads', 'Bsky'];
-  for (var i in socials) with ({i:i}) {
-    var elem = $( '#social .' + socials[i].toLowerCase() );
-    elem.on('click', () => {
-      openURL( shareLink(socials[i]) );
-    });
-    elem.attr('title', 'Share on ' + socials[i])
-  }
-
-  $('#social .clipboard').on('click', () => {
-    let text = replaceText(settings['copy']);
-    if (text.includes(json['link']) && share_with_time) {
-      text = text.replace(json['link'], json['link'] + '#t=' + json['time']['current']);
+     */
+    {
+      selector: "#second",
+      style: {
+        "display": ["block", "none"]
+      }
+    },
+    {
+      selector: '#controller-body[mode="compact"] #time',
+      style: {
+        "display": ["inline-block", "none"]
+      }
+    },
+    {
+      selector: '.title',
+      style: {
+        "display": ["inline-block", "none"]
+      },
+    },
+    {
+      selector: '#controller-body > hr:nth-child(4)',
+      style: {
+        "display": ["block", "none"]
+      }
+    },
+    {
+      selector: "#artwork",
+      style: {
+        "backgroundImage": "url(../icon.png)"
+      }
+    },
+    // Buttons and their attrs below.
+    {
+      selector: "#fav",
+      attr: {
+        "favorite": "false"
+      }
+    },
+    {
+      selector: "#shuffle",
+      attr: {
+        "shuffle": "false"
+      }
+    },
+    {
+      selector: "#repeat",
+      attr: {
+        "mode": ""
+      }
+    },
+    {
+      selector: "#repeat",
+      attr: {
+        "mode": ""
+      }
+    },
+    {
+      selector: "#follow",
+      attr: {
+        "followed": "false"
+      }
+    },
+    {
+      selector: "#toggle",
+      attr: {
+        "playing": "false"
+      }
     }
-    copyToClipboard( text );
-  });
+  ]
+  for (let hideThis of hideList) {
+    const selector = hideThis["selector"], el = document.querySelector(selector);
+    if (el == null) continue;
 
-  $('.copynp').on('click', () => {
-    copyToClipboard( replaceText(settings['copy']) );
-  });
+    // set each element's styles.
+    if (hideThis["style"]) {
+      const styleProperties = Object.keys(hideThis["style"]), styles = hideThis["style"];
 
-  $('#copy').focus(() => {
-    $('#copy').select();
+      // for each property in style
+      for (let property of styleProperties) {
+        const isArray = Array.isArray(styles[property]), vu = isArray ? styles[property][visibility ? 0 : 1] : styles[property];
+
+        // ignore(continue for loop) if the element has already that value OR (it's not an array && there's sc-tab.)
+        if (getComputedStyle(el)[property] === vu || (!isArray && visibility)) continue;
+
+        // DEBUG:
+        // console.log(selector, property, vu)
+        // console.log(`Arg: ${visibility} | ${selector}: ${property} =${getComputedStyle(el)[property]}=> ${vu}`)
+
+        // apply value into target property.
+        el.style[property] = vu;
+      }
+    }
+
+    if (hideThis["attr"]) {
+      const attrNames = Object.keys(hideThis["attr"]), attrs = hideThis["attr"];
+      for (let name of attrNames) {
+        // same thing
+        const isArray = Array.isArray(attrs[name]), vu = isArray ? attrs[name][visibility?0:1] : attrs[name];
+
+        // ignore in the same condition as styles.
+        if (el.attr(name).toLowerCase() === vu.toLowerCase() || (!isArray && visibility)) continue;
+        el.attr(name, vu);
+        // console.log(name, vu)
+      }
+    }
+  }
+}
+
+async function registerEvents() {
+  const arr = [
+    {
+      selector: "#twitter, #threads, #bsky",
+      event: "click",
+      handler: (event) => {
+        openURL( shareLink(event.target.id.toLowerCase()) );
+      }
+    },
+    {
+      selector: "#P",
+      event: "click",
+      handler: async () => {
+        let t = chrome.runtime.getURL(''); // 'chrome-extension://<extension-id>/'
+        await chrome.tabs.query({active:true, url: `${t + (t.endsWith('/') ? '' : '/')}popup/*.html?p=1`}).then(async (val) => {
+          if (val[0] == null || (localStorage['popout-dupe'] != null && localStorage['popout-dupe'] == 'true')) {
+            await popup('../popup/popup.html?p=1', 'a');
+            return;
+          }
+          await chrome.windows.update(val[0].windowId, {focused: true});
+        });
+        window.close();
+      }
+    },
+    {
+      selector: "#store",
+      event: "click",
+      handler: () => {
+        openURL('https://akiba.cloud/soundcloud-player/');
+      }
+    },
+    {
+      selector: "#share_btn",
+      event: "click",
+      handler: () => {
+        const share = document.querySelector('#share'), isVisible = (share.style['display'] !== 'none' && share.style['display'] !== '');
+        if (settings["dropdown-animation"]) {
+          isVisible ? slideUp(share) : slideDown(share);
+        } else {
+          share.style.display = isVisible ? 'none' : 'block';
+        }
+      }
+    },
+    {
+      selector: "#share_with_time",
+      event: "input",
+      handler: (event) => {
+        console.log(event.target);
+        share_with_time = event.target.checked;
+        setShareLink(json);
+      }
+    },
+    {
+      selector: "#social .clipboard",
+      event: "click",
+      handler: () => {
+        let text = replaceText(settings['copy']);
+        if (text.includes(json['link']) && share_with_time) {
+          text = text.replace(json['link'], json['link'] + '#t=' + json['time']['current']);
+        }
+        copyToClipboard( text );
+      }
+    },
+    {
+      selector: "#copy",
+      event: "focus",
+      handler: () => {
+        document.querySelector('#copy').select();
+        // be careful because there's another #copy with different function in settings page...
+      }
+    },
+  ];
+
+  arr.forEach(({ selector, event, handler }) => {
+    document.querySelectorAll(selector).forEach(el => {
+      el.addEventListener(event, handler);
+    });
   });
 }
 
@@ -242,11 +257,11 @@ function setShareLink(val) {
     'link': val['link'] != null ? val['link'] : json['link'],
   };
   let copyLink = share_with_time ? `${data['link']}#t=${data['time']['current']}` : data['link'];
-  $('#copy').val(copyLink);
+  document.querySelector("#copy").value = copyLink;
   let selectable = share_with_time
-                && $('#copy')[0].selectionStart != null
-                && $(document.activeElement)[0] == $('#copy')[0];
-  if (selectable) $('#copy').select();
+                && document.querySelector("#copy").selectionStart != null
+                && document.activeElement == document.querySelector("#copy");
+  if (selectable) document.querySelector("#copy").select();
 }
 
 function shareLink(social) {
@@ -262,59 +277,8 @@ function shareLink(social) {
 
 // Variables
 var dark = false, or = false, checkTimer = null, share_with_time = false,
-  hideList = ['#close', '#second', '#controller-body[mode="compact"] #hyphen', '.marquee .title'],
   links = {
     'twitter': 'https://twitter.com/intent/tweet?text=%text%&hashtags=NowPlaying',
     'threads': 'https://www.threads.com/intent/post?text=%text%',
     'bsky': 'https://bsky.app/intent/compose?text=%text%'
-  },
-  defaultController = `<div id='controller' class='floating'>
-      <div class='left'>
-        <button id='prev' class='clickable' title='Prev'></button>
-        <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
-        <button id='next' class='clickable' title='Next'></button>
-      </div>
-      <div class='right'>
-        <button id='follow' class='clickable' title='Follow/Unfollow' followed=''></button>
-        <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
-        <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
-        <button id='repeat' class='clickable' title='Repeat' mode=''></button>
-      </div>
-    </div>
-    <hr/>
-
-    <div style='padding-bottom: 6.5px;'>
-      <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
-      <div class='marquee'>
-        <a class='title clickable' title='Open SoundCloud Tab' href=''></a>
-      </div>
-    </div>
-    <hr/>`,
-  compactController = `<div class='floating'>
-    <div class='left'>
-      <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
-    </div>
-    <div id='controller' class='right'>
-      <div class='body marquee'>
-        <a class='title clickable' title='' href=''></a>
-      </div>
-      <div class='body'>
-        <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
-        <div>
-          <span id='current' style='float: left;'></span>
-          <span id='hyphen' class='icon'></span>
-          <span id='end' style='float: right;'></span>
-        </div>
-        <button id='repeat' class='clickable' title='Repeat' mode=''></button>
-      </div>
-      <div class='body'>
-        <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
-        <button id='prev' class='clickable' title='Prev'></button>
-        <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
-        <button id='next' class='clickable' title='Next'></button>
-        <button class='copynp clickable' title='Copy Title & URL'></button>
-        <button id='follow' class='clickable' title='Follow/Unfollow' followed=''></button>
-      </div>
-    </div>
-    <hr style='margin-top: 5px;'>
-  </div>`;
+  };
