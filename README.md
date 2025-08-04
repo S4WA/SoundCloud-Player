@@ -1,27 +1,41 @@
 # SoundCloud-Player
-This extension is for the soundcloud heavy users.
 
-You can control the tracks without changing your tab. Just open the popup n boom.
+This extension is for the soundcloud heavy users. Control playback from any tab using a popup interface.
 
-[We uploaded a quick tutorial video on YouTube.](https://www.youtube.com/watch?v=hIJyF2u3-RY)
+## Features
 
-# Disclaimer
-If you want to make an issue, Please write it in English or Japanese. Other language will not be supported.
+- Play, pause, skip tracks without switching tabs
+- Lightweight popup UI
+- Fast, responsive integration with SoundCloud
 
-# Links
-- [Install this on Chrome](https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej)
-- [Feedback](https://forms.gle/Cz6z8AgGYkHuSiQSA)
+## Demo
+
+[![Tutorial](http://img.youtube.com/vi/hIJyF2u3-RY/maxresdefault.jpg)](https://www.youtube.com/watch?v=hIJyF2u3-RY)
+
+## Installation
+
+- [Chrome Web Store](https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej)
+
 - [Buy me a coffee!](https://ko-fi.com/sawanese)
 
-# Documents
+## Documentation
+
 - [Wiki](https://github.com/S4WA/soundcloud-player/wiki)
 - [How to Use](https://github.com/S4WA/soundcloud-player/wiki/How-to-Use)
 - [CRXcavator Report](https://crxcavator.io/report/oackhlcggjandamnkggpfhfjbnecefej/)
 
-# Previews
-![image1](https://github.com/S4WA/SoundCloud-Player/blob/master/img/1.png?raw=true)
-![image2](https://github.com/S4WA/SoundCloud-Player/blob/master/img/2.png?raw=true)
+## Previews
 
-# Mechanism
+| Popup View | Track Control |
+|------------|----------------|
+| ![image1](https://github.com/S4WA/SoundCloud-Player/blob/master/img/1.png?raw=true) | ![image2](https://github.com/S4WA/SoundCloud-Player/blob/master/img/2.png?raw=true) |
+
+## Mechanism
+
 Visualized with GitDiagram
 ![](https://github.com/S4WA/SoundCloud-Player/blob/master/img/gitdiagram.png?raw=true)
+
+
+## Disclaimer
+
+If you want to make an issue, Please write it in English or Japanese. Other language will not be supported.
