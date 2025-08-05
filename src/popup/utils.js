@@ -301,6 +301,7 @@ function startMarquees() {
   let cssAnimation;
   if (isDefault) {
     if (settings['duplication']) {
+      console.log(content);
     }
 
     // only default marquee uses this.
@@ -399,9 +400,9 @@ function slideDown(element) {
   element.style.height = height;
     
   setTimeout(() => {
-      element.style.height = '';
-      element.style.overflow = '';
-      element.style.transition = '';
+    element.style.height = '';
+    element.style.overflow = '';
+    element.style.transition = '';
   }, 300);
 }
 

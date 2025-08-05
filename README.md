@@ -12,11 +12,15 @@ This extension is for the soundcloud heavy users. Control playback from any tab 
 
 [![Tutorial](http://img.youtube.com/vi/hIJyF2u3-RY/maxresdefault.jpg)](https://www.youtube.com/watch?v=hIJyF2u3-RY)
 
+## Previews
+
+| Default Theme | Compact Theme |
+|------------|----------------|
+| ![image1](https://github.com/S4WA/SoundCloud-Player/blob/master/img/1.png?raw=true) | ![image2](https://github.com/S4WA/SoundCloud-Player/blob/master/img/2.png?raw=true) |
+
 ## Installation
 
 - [Chrome Web Store](https://chrome.google.com/webstore/detail/soundcloud-player/oackhlcggjandamnkggpfhfjbnecefej)
-
-- [Buy me a coffee!](https://ko-fi.com/sawanese)
 
 ## Documentation
 
@@ -24,11 +28,9 @@ This extension is for the soundcloud heavy users. Control playback from any tab 
 - [How to Use](https://github.com/S4WA/soundcloud-player/wiki/How-to-Use)
 - [CRXcavator Report](https://crxcavator.io/report/oackhlcggjandamnkggpfhfjbnecefej/)
 
-## Previews
+## Donation
 
-| Popup View | Track Control |
-|------------|----------------|
-| ![image1](https://github.com/S4WA/SoundCloud-Player/blob/master/img/1.png?raw=true) | ![image2](https://github.com/S4WA/SoundCloud-Player/blob/master/img/2.png?raw=true) |
+- [Buy me a coffee!](https://ko-fi.com/sawanese)
 
 ## Mechanism
 

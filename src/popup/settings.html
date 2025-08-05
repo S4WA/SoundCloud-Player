@@ -56,24 +56,8 @@
               <td><textarea id='trackdisplay'></textarea></td>
             </tr>
             <tr>
-              <th>Display The Artwork</th>
+              <th>Artwork Visibility</th>
               <td><input type='checkbox' name='display-artwork' id='display-artwork'></td>
-            </tr>
-            <tr>
-              <th>Theme Color<br>(Default: #FF5500)</th>
-              <td><input id='themecolor' type='color'><input id='current-theme'></td>
-            </tr>
-            <tr>
-              <th>Background Color for Dark Mode<br>(Default: #3F3F3F)</th>
-              <td><input id='bgcolor' type='color'><input id='current-bgcolor'></td>
-            </tr>
-            <tr>
-              <th>Font</th>
-              <td><select id='fontlist'></select></td>
-            </tr>
-            <tr>
-              <th>Font Size</th>
-              <td><input id='font-size' type='number' step='0.1' min='1' style='width: 45px; height: 14px;'> px</td>
             </tr>
             <tr>
               <th>Theme</th>
@@ -85,7 +69,7 @@
               </td>
             </tr>
             <tr>
-              <th>Simpler Labels</th>
+              <th>Simplified Labelings</th>
               <td><input type='checkbox' name='dropdown-animation' id='simple-label'></td>
             </tr>
             <tr>
@@ -100,13 +84,47 @@
         </div>
       </div>
       <div class='dropdown' closed='true'>
+        <div class="dd-parent">
+          [Fonts]<span class='icon'></span>
+        </div>
+        <div class="dd-child">
+          <table class="options-table">
+            <tr>
+              <th>Font</th>
+              <td><select id='fontlist'></select></td>
+            </tr>
+            <tr>
+              <th>Font Size</th>
+              <td><input id='font-size' type='number' step='0.1' min='1' style='width: 45px; height: 14px;'> px</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class='dropdown' closed='true'>
+        <div class="dd-parent">
+          [Colors]<span class='icon'></span>
+        </div>
+        <div class="dd-child">
+          <table class="options-table">
+            <tr>
+              <th>Theme Color<br>(Default: #FF5500)</th>
+              <td><input id='themecolor' type='color'><input id='current-theme'></td>
+            </tr>
+            <tr>
+              <th>Background Color in Dark Mode<br>(Default: #3F3F3F)</th>
+              <td><input id='bgcolor' type='color'><input id='current-bgcolor'></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class='dropdown' closed='true'>
         <div class='dd-parent'>
           [Text Scrolling]<span class='icon'></span>
         </div>
         <div class='dd-child'>
           <table class='options-table' id='tsOptions'>
             <tr>
-              <th>Enable Text Scrolling on the default theme.</th>
+              <th>Enable Text Scrolling on default theme.</th>
               <td><input id='apply_marquee_to_default' type='checkbox'></td>
             </tr>
             <tr>
@@ -119,7 +137,7 @@
               </td>
             </tr>
             <tr>
-              <th>Speed for title text scrolling</th>
+              <th>Speed</th>
               <td><input id='duration' type='number' step='500' style='width: 45px; height: 14px;'> ms</td>
             </tr>
             <tr>
@@ -152,7 +170,7 @@
           <td><input type='checkbox' id='popout-dupe'></td>
         </tr>
         <tr>
-          <th>Remember window size</th>
+          <th>Remember window size (on popout)</th>
           <td><input type="checkbox" id='remember-window-size'></input></td>
         </tr>
       </table>
@@ -271,7 +289,7 @@
   </div>
   <div class="dropdown" closed="true">
     <div class="dd-parent">
-      <span class="icon"></span>Profiles/Import/Export
+      <span class="icon"></span>Import/Export
     </div>
     <hr>
     <div class='dd-child' id=''>

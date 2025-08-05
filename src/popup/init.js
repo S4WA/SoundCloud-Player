@@ -27,19 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.querySelector('#version')) document.querySelector('#version').innerText = `v${chrome.runtime.getManifest().version}`;
 });
 
-function newProfile(name, values) { // values = settings values
-  if (!name) return false;
-
-  if (profiles[name]) return false;
-
-  values = values || settings;
-
-  // saving value
-  profiles[name] = values;
-  // saving same value to the localStorage.
-  let stringfiedJson = JSON.stringify(profiles[name])
-}
-
 var prefix = '[SoundCloud Player]', json = {}, settings = {
   'trackdisplay': '%title% by %artist%',
   'themecolor': '#FF5500',
@@ -64,6 +51,4 @@ var prefix = '[SoundCloud Player]', json = {}, settings = {
   'remember-window-size': false,
   'window-width': 265,
   'window-height': 340,
-}, profiles = {
-
 };
