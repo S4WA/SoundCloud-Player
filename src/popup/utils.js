@@ -272,57 +272,83 @@ function initKeyboardBinds() {
   });
 }
 
-// startMarquees() will only be called when a new track is played.
+// startMarquees() will only be called when a new track is played. (also count track changes)
 function startMarquees() {
   if ( (!settings['apply_marquee_to_default'] && getThemeName() == 'default') && loc('popup.html') ) return;
 
-  const marquee = document.querySelector(".marquee"), content = marquee.querySelector(".title");
+  // THE CONTAINER AND ITS CONTENTS
+  // .container  = never moves
+  // .contents   = moves
+  // .contents a = just exists (firstChild and secondChild)
+  const container = document.querySelector(".container"), contents = container.querySelector(".contents");
 
+  // value
   const isDefault = !settings['back-and-forth'];
-
+  // numbers
   let duration = settings["duration"] ? Number(settings["duration"]) : 5000;
   const pauseTime = settings["pause"] ? Number(settings["pause"]) : 5000;
   const totalTime = duration + pauseTime;
 
-  marquee.attr("enabled", "true");
-  marquee.attr("mode", isDefault ? "marquee" : "back-and-forth");
+  // modify elements
+  container.attr("enabled", "true"); // shouldn't it be contents?
+  container.attr("mode", isDefault ? "marquee" : "back-and-forth");
+  contents.style["display"] = "inline-block"; // ?
 
-  content.style["display"] = "inline-block";
 
+  // a function to repeat the animation infinitely
   const insertNewAnimation = function(el, an) {
     el.style["animation"] = 'none'; // resetting
     el.offsetHeight; // forcing a reflow
     el.style["animation"] = an;
   }
 
-  const paddingLeft = parseFloat(content.style.paddingLeft) || 0, paddingRight = parseFloat(content.style.paddingRight) || 0;
-  if (content.offsetWidth - paddingLeft - paddingRight < marquee.offsetWidth) return;
+  // when back-n-forth && if the title is not bigger than the container, ignore.
+  const isSmallTitle = contents.offsetWidth - (parseFloat(contents.style.paddingLeft) || 0) - (parseFloat(contents.style.paddingRight) || 0) < container.offsetWidth
+  if (!isDefault && isSmallTitle) return;
 
+  // Essential part
   let cssAnimation;
   if (isDefault) {
-    if (settings['duplication']) {
-      console.log(content);
+    document.body.style.setProperty('--title-offset-x', `${contents.offsetWidth}px`); // only default marquee uses this
+
+    if (!settings['duplication']) {
+      /* Normal marquee: 
+      placeholders
+      - 1 = animation's duration 
+      - 2 = animation-delay
+      - 3 = animation's duration 
+      - 4 = duration of 1 + 2 */
+      // Animation is devided into two parts.
+      cssAnimation = `normal-marquee-first ${duration/2}ms ${pauseTime}ms linear forwards, normal-marquee-second ${duration/2}ms ${duration/2 + pauseTime}ms linear forwards`;
+    } else {
+      container.attr("hasDupe", "true");
+
+      const firstChild = contents.querySelector('a'), secondChild = firstChild.cloneNode(true); // clone the content
+
+      // calculate the gap between the children
+      const gap = isSmallTitle ? `${container.offsetWidth - contents.offsetWidth}px` : '1em';
+
+      firstChild.style['paddingRight'] = gap;
+      secondChild.style['paddingRight'] = gap;
+
+      contents.appendChild(secondChild);
+
+      cssAnimation = `normal-marquee-dupe ${duration}ms ${pauseTime}ms linear forwards`;
     }
-
-    // only default marquee uses this.
-    content.style.setProperty('--title-offset-x', `${content.offsetWidth}px`);
-
-    // Normal marquee: Placeholder 1 = animation's duration // 2 = animation-delay // 3 = animation's duration // 4 = duration of 1 + 2
-    // - Each part alone is incomplete.
-    // - It divides by two cuz the duration value represents the total duration of the entire animation sequence, and the sequence is split into two equal parts.
-    cssAnimation = `normal-marquee-first ${duration/2}ms ${pauseTime}ms linear forwards, normal-marquee-second ${duration/2}ms ${duration/2 + pauseTime}ms linear forwards`; 
   } else {
     // The property "--container-width" will be used only for the breathing mode.
-    content.style.setProperty('--container-width', `calc(${marquee.offsetWidth}px)`);
+    contents.style.setProperty('--container-width', `calc(${container.offsetWidth}px)`);
 
     // tbh, idk what to do about pauseTime for this
     cssAnimation = `back-and-forth ${duration + pauseTime}ms ${pauseTime}ms linear forwards`;
   }
 
-  content.style["animation"] = cssAnimation;
-  content.addEventListener('animationend', () => {
+  // inserting the animation.
+  contents.style["animation"] = cssAnimation;
+  // to repeat the animation infinitely
+  contents.addEventListener('animationend', () => {
     setTimeout(() => {
-      insertNewAnimation(content, cssAnimation);
+      insertNewAnimation(contents, cssAnimation);
     }, totalTime);
   });
 }

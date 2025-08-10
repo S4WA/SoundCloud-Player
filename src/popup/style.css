@@ -269,18 +269,24 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
 }*/
 
 /* Marquees */
-.marquee[enabled][mode="back-and-forth"], .marquee[enabled="true"][mode="back-and-forth"] {
+.container[enabled][mode="back-and-forth"], .container[enabled="true"][mode="back-and-forth"] {
   overflow: hidden;
   height: 16px;
   position: relative;
 }
 
-.marquee[enabled], .marquee[enabled="true"] {
+.container[enabled], .container[enabled="true"] {
   overflow: hidden;
   width: 100%;
   white-space: nowrap;
 }
 
+/* default marquee with dupe enabled */
+.container[enabled][hasDupe] .contents {
+  font-size: 0;
+}
+
+/* animations */
 @keyframes normal-marquee-first {
   100% {
     transform: translateX(calc(var(--title-offset-x)*-1));
@@ -293,6 +299,15 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   }
   100% {
     transform: translateX(0);
+  }
+}
+
+@keyframes normal-marquee-dupe {
+  0% {
+      transform: translateX(0);
+  }
+  100% {
+      transform: translateX(-50%);
   }
 }
 
