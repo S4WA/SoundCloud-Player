@@ -14,7 +14,7 @@ body {
 
 :root {
   --theme-color:#FF5500;
-  --bg-color:#3F3F3F;
+  --bg-color:#262626;
   --custom-font:'Meiryo';
   --font-size:12px;
 }
@@ -215,7 +215,7 @@ input[type='checkbox'] {
   height: 33%;
 }
 
-#controller-body[mode='compact'] #controller .body:not(.marquee) {
+#controller-body[mode='compact'] #controller .body:not(.container) {
   margin-right: auto;
   margin-left: auto;
   display: flex;

@@ -280,7 +280,7 @@ function startMarquees() {
   // .container  = never moves
   // .contents   = moves
   // .contents a = just exists (firstChild and secondChild)
-  const container = document.querySelector(".container"), contents = container.querySelector(".contents");
+  const container = document.querySelector(".container"), contents = container.querySelector(".contents"), firstChild = contents.querySelector('a');
 
   // value
   const isDefault = !settings['back-and-forth'];
@@ -303,13 +303,12 @@ function startMarquees() {
   }
 
   // when back-n-forth && if the title is not bigger than the container, ignore.
-  const isSmallTitle = contents.offsetWidth - (parseFloat(contents.style.paddingLeft) || 0) - (parseFloat(contents.style.paddingRight) || 0) < container.offsetWidth
-  if (!isDefault && isSmallTitle) return;
+  if (!isDefault && container.getBoundingClientRect().width > firstChild.getBoundingClientRect().width) return;
 
   // Essential part
   let cssAnimation;
   if (isDefault) {
-    document.body.style.setProperty('--title-offset-x', `${contents.offsetWidth}px`); // only default marquee uses this
+    document.body.style.setProperty('--title-offset-x', `${contents.getBoundingClientRect().width}px`); // only default marquee uses this
 
     if (!settings['duplication']) {
       /* Normal marquee: 
@@ -323,10 +322,11 @@ function startMarquees() {
     } else {
       container.attr("hasDupe", "true");
 
-      const firstChild = contents.querySelector('a'), secondChild = firstChild.cloneNode(true); // clone the content
+      const secondChild = firstChild.cloneNode(true); // clone the content
 
-      // calculate the gap between the children
-      const gap = isSmallTitle ? `${container.offsetWidth - contents.offsetWidth}px` : '1em';
+      // calculate the gap between each child
+      const isSmallTitle = container.getBoundingClientRect().width > firstChild.getBoundingClientRect().width + (parseFloat(getComputedStyle(firstChild).fontSize) * 2);
+      const gap = isSmallTitle ? `${container.getBoundingClientRect().width - contents.getBoundingClientRect().width}px` : '2em';
 
       firstChild.style['paddingRight'] = gap;
       secondChild.style['paddingRight'] = gap;
@@ -369,8 +369,8 @@ function toggleArtwork(val) {
     con.style["height"] = `${hidden ? (isCompactInSettingsPage ? 75 : 65) : 50}px`;
 
     // adding 1em should be only applied to marquee-container, instead of applying it to #controller as a whole.
-    document.querySelector(".marquee").style["marginLeft"] = hidden ? '0' : '1em';
-    document.querySelector(".marquee").style["width"] = `calc(${hidden ? 250 : 200}px - ${hidden ? '0px' : '1em'})`;
+    document.querySelector(".container").style["marginLeft"] = hidden ? '0' : '1em';
+    document.querySelector(".container").style["width"] = `calc(${hidden ? 250 : 200}px - ${hidden ? '0px' : '1em'})`;
   }
 
   document.querySelector("#artwork").style.display = val ? 'inline-block' : 'none';

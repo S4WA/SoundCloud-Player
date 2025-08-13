@@ -179,8 +179,10 @@ const defaultController = `<div id='controller' class='floating'>
       <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
     </div>
     <div id='controller' class='right'>
-      <div class='body marquee'>
-        <a class='title clickable' title='' href=''></a>
+      <div class='body container'>
+        <div class='contents'>
+          <a class='title clickable' title='' href=''></a>
+        </div>
       </div>
       <div class='body'>
         <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>

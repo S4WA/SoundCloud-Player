@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 var prefix = '[SoundCloud Player]', json = {}, settings = {
   'trackdisplay': '%title% by %artist%',
   'themecolor': '#FF5500',
-  'bgcolor': '#3F3F3F',
+  'bgcolor': '#262626',
   'twitter': '%title% By %artist% %url%',
   'threads': '%title% By %artist% %url%',
   'bsky': '%title% By %artist% %url%',
