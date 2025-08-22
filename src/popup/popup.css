@@ -24,17 +24,6 @@ body[dark='true'] input, body[dark='true'] span {
   content: '* Click to Open SoundCloud *';
 }
 
-#artwork {
-  width: 250px;
-  height: 250px;
-  text-align: center;
-  position: relative;
-  background-size: cover;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-image: url(../icon.png);
-}
-
 #volume, #close {
   float: right;
 }

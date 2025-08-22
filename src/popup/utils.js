@@ -8,12 +8,15 @@ async function queue(request, value) {
     return null;
   }
 
+  if (debug) console.log("queued: ", request);
+
   let jsonRequest = { type: request };
   if (value) jsonRequest.value = value;
 
   const val = await chrome.tabs.sendMessage(results[0].id, jsonRequest);
 
   if (val) {
+    if (debug) console.log("received:", val);
     // Use function update() in other windows/popups to apply and show same data simultaneously.
     syncAcrossViews("update", val['response'] ?? val);
     // same thing to toggleElements().
@@ -25,19 +28,23 @@ async function queue(request, value) {
 }
 
 async function checkMultipleWindow() {
+  // Exit the function if requestData is not defined or not a function
   if (typeof requestData != 'function') return;
 
-  let views = chrome.extension.getViews(), l = views.length; 
+  // Get all open extension windows and store their count in `l`
+  let views = chrome.extension.getViews(), l = views.length;
+
+  // If there is only one window, or this window is the first in the array
   if (l == 1 || (l > 1 && views[0] == this)) {
     console.log('this is the parent window.');
     setInterval(requestData, 1000); // loop
-    if (or) {
-      clearInterval(checkTimer);
+    if (or) { // If the flag `or` is true (popup.js, settings.js, embed.js has it individually)
+      clearInterval(checkTimer); // Stop the checkMultipleWindow interval to avoid duplicates
     }
-  } else if (or == false) {
+  } else if (or == false) { // If this is not the parent window and the flag `or` is false
     console.log('initializing...');
-    checkTimer = setInterval(checkMultipleWindow, 1000);
-    or = true;
+    checkTimer = setInterval(checkMultipleWindow, 1000); // restart the loop
+    or = true; // flag
   }
 }
 
@@ -272,9 +279,10 @@ function initKeyboardBinds() {
   });
 }
 
-// startMarquees() will only be called when a new track is played. (also count track changes)
+// startMarquees() will only be called when title has changed. (= track change/new track)
+let marqueeInterval, marqueeAnimation;
 function startMarquees() {
-  if ( (!settings['apply_marquee_to_default'] && getThemeName() == 'default') && loc('popup.html') ) return;
+  if ( loc('popup.html') && getThemeName() == 'default' && !settings['apply_marquee_to_default'] ) return;
 
   // THE CONTAINER AND ITS CONTENTS
   // .container  = never moves
@@ -282,75 +290,81 @@ function startMarquees() {
   // .contents a = just exists (firstChild and secondChild)
   const container = document.querySelector(".container"), contents = container.querySelector(".contents"), firstChild = contents.querySelector('a');
 
-  // value
+  if (marqueeInterval) { // reset
+    clearInterval(marqueeInterval);
+    marqueeInterval = null;
+    marqueeAnimation = null;
+    container.removeAttribute("animate");
+    container.onanimationend = null;
+  }
+
+  // values
   const isDefault = !settings['back-and-forth'];
-  // numbers
-  let duration = settings["duration"] ? Number(settings["duration"]) : 5000;
-  const pauseTime = settings["pause"] ? Number(settings["pause"]) : 5000;
-  const totalTime = duration + pauseTime;
+  const dupeEnabled = settings['duplication'];
+  // sizes
+  const singleTitleWidth = firstChild.getBoundingClientRect().width - parseFloat(getComputedStyle(firstChild).paddingRight);
+  const containerWidth = container.getBoundingClientRect().width;
+  const fontSize = parseFloat(getComputedStyle(firstChild).fontSize);
+  // numbers, parseInt just in case
+  let duration = parseInt(settings['duration'] ?? 5000); // pixels per ms?
+  const pauseTime = parseInt(settings["pause"] ?? 5000); // pause time in every animation
+  const totalTime = parseInt(duration + pauseTime);
 
   // modify elements
   container.attr("enabled", "true"); // shouldn't it be contents?
   container.attr("mode", isDefault ? "marquee" : "back-and-forth");
   contents.style["display"] = "inline-block"; // ?
 
+  container.style.setProperty("--duration", `${duration}ms`);
+  container.style.setProperty("--pause-time", `${pauseTime}ms`);
+  container.style.setProperty('--container-width', `calc(${container.offsetWidth}px)`);
 
-  // a function to repeat the animation infinitely
-  const insertNewAnimation = function(el, an) {
-    el.style["animation"] = 'none'; // resetting
-    el.offsetHeight; // forcing a reflow
-    el.style["animation"] = an;
-  }
-
-  // when back-n-forth && if the title is not bigger than the container, ignore.
-  if (!isDefault && container.getBoundingClientRect().width > firstChild.getBoundingClientRect().width) return;
-
-  // Essential part
-  let cssAnimation;
+  // applying values & modify elements (gibberish)
   if (isDefault) {
-    document.body.style.setProperty('--title-offset-x', `${contents.getBoundingClientRect().width}px`); // only default marquee uses this
-
-    if (!settings['duplication']) {
-      /* Normal marquee: 
-      placeholders
-      - 1 = animation's duration 
-      - 2 = animation-delay
-      - 3 = animation's duration 
-      - 4 = duration of 1 + 2 */
-      // Animation is devided into two parts.
-      cssAnimation = `normal-marquee-first ${duration/2}ms ${pauseTime}ms linear forwards, normal-marquee-second ${duration/2}ms ${duration/2 + pauseTime}ms linear forwards`;
-    } else {
+    container.style.setProperty("--duration", `${duration/2}ms`); // overwrite
+    if (dupeEnabled) {
       container.attr("hasDupe", "true");
 
-      const secondChild = firstChild.cloneNode(true); // clone the content
+      const dupeAlreadyExists = document.querySelectorAll('.title').length > 1;
+      const secondChild = dupeAlreadyExists ? document.querySelectorAll('.title')[1] : firstChild.cloneNode(true); // clone the content
 
       // calculate the gap between each child
-      const isSmallTitle = container.getBoundingClientRect().width > firstChild.getBoundingClientRect().width + (parseFloat(getComputedStyle(firstChild).fontSize) * 2);
-      const gap = isSmallTitle ? `${container.getBoundingClientRect().width - contents.getBoundingClientRect().width}px` : '2em';
+      const isSmallTitle = containerWidth > singleTitleWidth + (fontSize * 2);
+      const gap = isSmallTitle ? `${containerWidth - singleTitleWidth}px` : '2em';
 
       firstChild.style['paddingRight'] = gap;
       secondChild.style['paddingRight'] = gap;
 
-      contents.appendChild(secondChild);
-
-      cssAnimation = `normal-marquee-dupe ${duration}ms ${pauseTime}ms linear forwards`;
+      if (!dupeAlreadyExists) {
+        contents.appendChild(secondChild);
+      }
+    } else {
     }
-  } else {
-    // The property "--container-width" will be used only for the breathing mode.
-    contents.style.setProperty('--container-width', `calc(${container.offsetWidth}px)`);
-
-    // tbh, idk what to do about pauseTime for this
-    cssAnimation = `back-and-forth ${duration + pauseTime}ms ${pauseTime}ms linear forwards`;
+  } else {    
+    if (containerWidth > singleTitleWidth) return; // if it doesn't define properties, it won't animate.
   }
 
-  // inserting the animation.
-  contents.style["animation"] = cssAnimation;
-  // to repeat the animation infinitely
-  contents.addEventListener('animationend', () => {
-    setTimeout(() => {
-      insertNewAnimation(contents, cssAnimation);
-    }, totalTime);
-  });
+  // animation loop part (gibberish...?)
+  if ((isDefault && dupeEnabled) || (!isDefault)) { // if other than default marquee (= marquee w/ dupe OR breathing)
+    marqueeAnimation = function() {
+      container.attr('animate', ''); // the reason for this if-statement's condition is because those two just need to hold attribute "animate" without value, therefore I thought such implementation is the best practice for this. Although I don't know putting IFs within function and onanimationend is better or not. In terms of readability, i thought this is better.
+    }
+    container.onanimationend = () => { // not addeventlistener
+      container.removeAttribute('animate');
+    };
+  } else { // if default
+    // KNOWN ISSUE: If text is too short, it won't animate properly; the second animation starts from the middle.
+    marqueeAnimation = function() {
+      container.attr('animate', "m1");
+    }
+    container.onanimationend = () => { // not addeventlistener
+      // second animation will get interrupted by setInterval below, thus onanimationend won't get triggered in the first place, but i wrote if-statement here nonetheless.
+      if (container.attr('animate') === "m1") container.attr('animate', "m2");
+    };
+  }
+  // animation insertion
+  marqueeAnimation();
+  marqueeInterval = setInterval(marqueeAnimation, totalTime);
 }
 
 async function checkDisplayArtwork() {

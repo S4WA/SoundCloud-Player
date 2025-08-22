@@ -32,30 +32,29 @@ async function update() {
   json['following'] = isFollowing();
 }
 
-chrome.runtime.onMessage.addListener(async function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   // Debug:
   // if (request.type != 'request-data') console.log('received:', request);
 
   let response = {};
 
   switch (request.type) {
-    case 'get-element': {
-      response['value'] = document.querySelectorAll(`${request.value}`).length;
+    case 'request-data': { // transfer the whole data
+      if (getTitle() == null) return; // track null = return.
+      update().then(() => {
+        sendResponse(json);
+      });
       break;
     }
-    case 'request-data': {
-      if (getTitle() == null) return;
-      await update();
-      sendResponse(json);
-      break;
-    }
-    case 'smart-request-data': {
+    case 'smart-request-data': { // minimal data transfer
       if (getTitle() == null) return;
       response = {};
 
-      if (getTitle() != json['title']) {
-        await update();
-        response = json;
+      if (getTitle() != json['title']) { // when the song changes
+        update().then(() => {
+          sendResponse(json);
+        });
+        break;
       }
       if (isPlaying() != json['playing']) {
         response['playing'] = isPlaying();
@@ -103,16 +102,18 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
     }
     case 'prev': {
       document.querySelector(".playControls__prev").click();
-      await update();
-      response = json;
-      sendResponse(response);
+      update().then(() => {
+        response = json;
+        sendResponse(response);
+      });
       break;
     }
     case 'next': {
       document.querySelector(".playControls__next").click();
-      await update();
-      response = json;
-      sendResponse(response);
+      update().then(() => {
+        response = json;
+        sendResponse(response);
+      });
       break;
     }
     case 'unfav':
@@ -188,7 +189,8 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
       break;
     }
   }
-  // console.log(response);
+  return true; // magic spell
+  // Return true to indicate that sendResponse will be called asynchronously ... cuz of update().
 });
 
 var prefix = '[SoundCloud Player] ', 

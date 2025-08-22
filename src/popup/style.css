@@ -80,6 +80,17 @@ input[type='checkbox'] {
 }*/
 
 /* Buttons */
+#artwork {
+  width: 250px;
+  height: 250px;
+  text-align: center;
+  position: relative;
+  background-size: cover;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-image: url(../icon.png);
+}
+
 #prev {
   background-image: url('../assets/audio/prev.svg');
 }
@@ -273,54 +284,77 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
   overflow: hidden;
   height: 16px;
   position: relative;
+  /*animation: back-and-forth-MASK var(--duration) var(--pause-time) linear forwards;*/
 }
 
 .container[enabled], .container[enabled="true"] {
   overflow: hidden;
   width: 100%;
   white-space: nowrap;
+  text-align: left; /* just for compact mode, but i don't think i need to separate this for such */
 }
 
 /* default marquee with dupe enabled */
-.container[enabled][hasDupe] .contents {
+.container[enabled][hasDupe][animate] .contents {
   font-size: 0;
+  animation: normal-marquee-dupe var(--duration) var(--pause-time) linear forwards;
 }
 
-/* animations */
+/* animation */
+.container[enabled][mode="marquee"][animate='m1'] .contents { /* m1 = marquee animation no.1 */
+  animation: normal-marquee-first var(--duration) var(--pause-time) linear forwards;
+}
+
+.container[enabled][mode="marquee"][animate='m2'] .contents {
+  animation: normal-marquee-second var(--duration) linear forwards;
+}
+
+.container[enabled][mode="back-and-forth"][animate] .contents {
+  animation: back-and-forth var(--duration) var(--pause-time) linear forwards;
+}
+
+/* keyframes */
 @keyframes normal-marquee-first {
   100% {
-    transform: translateX(calc(var(--title-offset-x)*-1));
+    /*transform: translateX(-100%);*/
+    transform: translate3d(-100%, 0, 0);
   }
 }
 
 @keyframes normal-marquee-second {
   0% {
-    transform: translateX(100%);
+    /*transform: translateX(calc(var(--container-width) + 100%));*/
+    transform: translate3d(calc(var(--container-width) + 100%), 0, 0);
   }
   100% {
-    transform: translateX(0);
+    /*transform: translateX(0);*/
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes normal-marquee-dupe {
   0% {
-      transform: translateX(0);
+      /*transform: translateX(0);*/
+      transform: translate3d(0, 0, 0);
   }
   100% {
-      transform: translateX(-50%);
+      /*transform: translateX(-50%);*/
+      transform: translate3d(-50%, 0, 0);
   }
 }
 
 @keyframes back-and-forth {
   0%, 100% {
-    transform: translateX(0); 
+    /*transform: translateX(0);*/
+    transform: translate3d(0, 0, 0);
   }
   35%, 75% {
-    transform: translateX(calc(-100% + var(--container-width)));
+    /*transform: translateX(calc(-100% + var(--container-width)));*/
+    transform: translate3d(calc(-100% + var(--container-width)), 0, 0);
   }
 }
 
-@keyframes mask-back-and-forth {
+@keyframes back-and-forth-MASK {
   0%, 100% {
     -webkit-mask-image: none;
     mask-image: none;

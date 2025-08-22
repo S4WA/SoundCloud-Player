@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelector('#eshortcuts').innerText = `To change the shortcut for opening popup, access '${isChrome() ? 'chrome://extensions/shortcuts' : 'about:addons'}' manually.`;
+
+  chrome.commands.getAll().then(obj => {
+    const filtered = obj.filter(item => item.name === "_execute_action");
+    // if user has changed the shortcut for '_execute_action' manually then also change innerText.
+    if (filtered.length == 1) document.querySelector("#_exec_act_popup").innerText = filtered[0]["shortcut"];
+  });
 });
 
 async function initReceiver() {
@@ -388,19 +394,26 @@ function insertAnnouncement() {
       {
         title: "Fixed",
         items: [ // bullet points
-          "TEST TEST TEST"
+          "Critical display bugs."
         ]
       },
       {
         title: "Updated",
         items: [
           "A few internal things have changed. The extensions as a whole should work smoother.",
+          "Options for displays are subcategorized in smaller chunks now.",
         ]
-      }
+      },
+      {
+        title: "Added",
+        items: [
+          "Option for remembering window size in popout mode.",
+        ]
+      },
     ],
     message: {
-      content: "Hi.",
-      date: "Jun 12, 2025",
+      content: "Huge change coming soon?",
+      date: "Aug 23, 2025",
       style: "line-break: anywhere; font-style: italic;",
       class: "gray"
     }

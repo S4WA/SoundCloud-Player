@@ -19,13 +19,14 @@ async function update(val) {
   const arr = [
     { key: "artwork", selector: "#artwork", handler: (link) => { 
       if (toggleArtwork) toggleArtwork(settings['display-artwork']);
-      document.querySelector("#artwork").style.backgroundImage = link; 
+      document.querySelector("#artwork").style['backgroundImage'] = link; 
     }},
     { key: "title", selector: ".title", handler: () => {
-      const el = document.querySelector(".title");
-      el.innerText = replaceText(localStorage.getItem('trackdisplay'), val);
+      document.querySelectorAll(".title").forEach(function(el) {
+        el.innerText = replaceText(localStorage.getItem('trackdisplay'), val);
+        el.attr('href', val['link']);
+      });
       startMarquees();
-      el.attr('href', val['link']);
     }},
     { key: "time", selector: "#current", handler: (time) => {
       if (document.querySelector("#current").innerText != time['current']) {
@@ -116,10 +117,19 @@ async function registerUniversalEvents() {
   });
 
   if (settings['remember-window-size']) { // should this guy be here or somewhere else lol
-    window.onresize = function() {
-      localStorage["window-width"] = window.innerWidth;
-      localStorage["window-height"] = window.innerHeight;
-    }
+    chrome.tabs.getCurrent(tab => { // if it's not popout, ignore.
+      if (!tab) return;
+      window.onresize = function () { // if it's popout then detect resized events
+        chrome.windows.getCurrent({}, (winner) => {
+          const width = winner.width, height = winner.height;
+          localStorage["window-width"] = width;
+          localStorage["window-height"] = height;
+          // settings['window-width'] = width;
+          // settings['window-height'] = height;
+          // console.log(width, height);
+        });
+      };
+    });
   }
 }
 
