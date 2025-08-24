@@ -57,7 +57,7 @@ function getEndTime() {
 
 function getVolume() {
   if (document.querySelector('.volume__sliderWrapper') == null) return 0;
-  return Number(document.querySelector('.volume__sliderWrapper').attr('aria-valuenow'))*100;
+  return Math.floor(Number(document.querySelector('.volume__sliderWrapper').getAttribute('aria-valuenow'))*100);
 }
 
 function isMuted() {
@@ -105,6 +105,7 @@ function isFollowing() {
 }
 
 function input(keyCode, name, shiftKey) {
+  document.body.focus();
   document.dispatchEvent(
     new KeyboardEvent('keydown', {
       key: name,

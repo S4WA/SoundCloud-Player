@@ -74,7 +74,7 @@ async function requestData() {
 }
 
 function getStartPage() {
-  return settings['startpage'] != null ? settings['startpage'] : 'https://soundcloud.com';
+  return settings['startpage'] ?? 'https://soundcloud.com';
 }
 
 async function openSCTab2() {

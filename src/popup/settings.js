@@ -131,10 +131,10 @@ function checkFonts() {
 }
 
 function checkCustomColors() {
-  // #themecolor and #bgcolor are color pickers
-  // #current-theme and #current-bgcolor are input elements
-  const thColorPicker = document.querySelector('#themecolor'), bgColorPicker = document.querySelector('#bgcolor');
-  const thInput = document.querySelector('#current-theme'), bgInput = document.querySelector('#current-bgcolor');
+  // #themecolor, #bgcolor and #dark-themecolor are color pickers
+  // #current-theme, #current-bgcolor and #current-dark-theme are input elements
+  const thColorPicker = document.querySelector('#themecolor'), bgColorPicker = document.querySelector('#bgcolor'), thDarkColorPicker = document.querySelector("#dark-themecolor")
+  thInput = document.querySelector('#current-theme'), bgInput = document.querySelector('#current-bgcolor'), thDarkInput = document.querySelector("#current-dark-theme");
 
   // - Theme Color
   if (localStorage.getItem('themecolor') != null) {

@@ -32,6 +32,16 @@ body[dark='true'] input, body[dark='true'] span {
   padding-bottom: 3.5px;
 }
 
+#current-volume {
+  /*width: 3em;*/
+  display: none;
+}
+
+#volume-slider {
+  height: calc(var(--font-size) * 0.6);
+  width: 10em;
+}
+
 /* Share buttons */
 
 #share {

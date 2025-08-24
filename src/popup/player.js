@@ -43,7 +43,13 @@ async function update(val) {
     { key: "repeat", selector: "#repeat", attr: "mode" },
     { key: "volume", selector: "#current-volume", handler: (vol) => {
       if (!loc("popup.html")) return;
-      document.querySelector("#current-volume").innerText = `${Math.floor(vol)} %` 
+      const volume = Math.floor(vol);
+
+      document.querySelector("#current-volume").innerText = `${volume} %` 
+      const range = document.querySelector("#volume-slider");
+      range.value = volume;
+      range.oldNum = volume;
+      // console.log(document.querySelector("#volume-slider").value);
     }}, 
     { key: "mute", selector: "#volume-icon", handler: (muted) => { 
       if (!loc("popup.html")) return;

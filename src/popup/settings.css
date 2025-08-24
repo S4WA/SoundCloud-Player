@@ -43,12 +43,12 @@ textarea {
   width: 94%;
 }
 
-#themecolor, #bgcolor {
+#themecolor, #bgcolor, #dark-themecolor {
   height: 21px;
   width: 29px;
 }
 
-#current-theme, #current-bgcolor {
+#current-theme, #current-bgcolor, #current-dark-theme {
   width: 60%;
 }
 

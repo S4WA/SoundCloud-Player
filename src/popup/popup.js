@@ -76,7 +76,7 @@ async function toggleElements(visibility) {
       }
     },
     {
-      selector: '.title',
+      selector: '.container',
       style: {
         "display": ["inline-block", "none"]
       },
@@ -241,6 +241,27 @@ async function registerEvents() {
         // be careful because there's another #copy with different function in settings page...
       }
     },
+    {
+      selector: "#volume-slider",
+      event: "change",
+      handler: (e) => {
+        const range = e.target, newNum = Number(range.value);
+
+        if (debug) console.log(`val: ${newNum} | oldNum: ${range.oldNum}`)
+        range.gap = newNum - range.oldNum;
+        range.oldNum = newNum;
+        if (debug) console.log(`gap: ${range.gap}`)
+
+        const isPositive = range.gap > 0;
+        let count = Math.floor( Math.abs(range.gap)/10 );
+        if (debug) console.log(count);
+
+        while (count > 0) {
+          queue(isPositive ? "up" : "down");
+          --count;
+        }
+      }
+    }
   ];
 
   arr.forEach(({ selector, event, handler }) => {
@@ -253,8 +274,8 @@ async function registerEvents() {
 // Share link
 function setShareLink(val) {
   let data = {
-    'time': val['time'] != null ? val['time'] : json['time'],
-    'link': val['link'] != null ? val['link'] : json['link'],
+    'time': val['time'] ?? json['time'],
+    'link': val['link'] ?? json['link'],
   };
   let copyLink = share_with_time ? `${data['link']}#t=${data['time']['current']}` : data['link'];
   document.querySelector("#copy").value = copyLink;
