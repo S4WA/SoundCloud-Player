@@ -244,8 +244,9 @@ async function registerEvents() {
     {
       selector: "#volume-slider",
       event: "change",
-      handler: (e) => {
+      handler: async (e) => {
         const range = e.target, newNum = Number(range.value);
+        sliderEditing = true;
 
         if (debug) console.log(`val: ${newNum} | oldNum: ${range.oldNum}`)
         range.gap = newNum - range.oldNum;
@@ -256,8 +257,12 @@ async function registerEvents() {
         let count = Math.floor( Math.abs(range.gap)/10 );
         if (debug) console.log(count);
 
-        while (count > 0) {
-          queue(isPositive ? "up" : "down");
+        while (count >= 0) {
+          if (count > 0) {
+            await queue(isPositive ? "up" : "down"); // does it have to be async/await?
+          } else {
+            sliderEditing = false;
+          }
           --count;
         }
       }
@@ -297,7 +302,7 @@ function shareLink(social) {
 }
 
 // Variables
-var dark = false, or = false, checkTimer = null, share_with_time = false,
+var dark = false, or = false, checkTimer = null, share_with_time = false, sliderEditing = false,
   links = {
     'twitter': 'https://twitter.com/intent/tweet?text=%text%&hashtags=NowPlaying',
     'threads': 'https://www.threads.com/intent/post?text=%text%',

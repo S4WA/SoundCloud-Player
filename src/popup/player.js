@@ -42,10 +42,12 @@ async function update(val) {
     { key: "shuffle", selector: "#shuffle", attr: "shuffle" },
     { key: "repeat", selector: "#repeat", attr: "mode" },
     { key: "volume", selector: "#current-volume", handler: (vol) => {
-      if (!loc("popup.html")) return;
+      if (!loc("popup.html")) return; // volume slider or curent volume text is only available in popup.html
+      if (sliderEditing) return; // not to interfere with volume change. 
+
       const volume = Math.floor(vol);
 
-      document.querySelector("#current-volume").innerText = `${volume} %` 
+      document.querySelector("#current-volume").innerText = `${volume} %`;
       const range = document.querySelector("#volume-slider");
       range.value = volume;
       range.oldNum = volume;
