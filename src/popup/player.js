@@ -152,20 +152,47 @@ function setTheme() {
         setCompactTheme();
         break;
       }
+      case 'modern': {
+        if (document.querySelector('#time')) document.querySelector('#time').remove();
+        const ctrlBody = document.querySelector("#controller-body");
+        ctrlBody.innerHTML = modernController;
+        ctrlBody.attr("mode", "modern");
+
+        document.body.style['padding'] = 0;
+        document.body.style['margin'] = 0;
+
+        const selectors = ['.container', '#time', 'hr','#second', '#share', 'body > div:nth-child(4)'];
+
+        selectors.forEach(sel => {;
+          document.querySelector(sel).style['marginLeft'] = '8px';
+          document.querySelector(sel).style['marginRight'] = '8px';
+        });
+
+        document.querySelector("#controller").style['marginRight'] = '8px';
+        document.querySelector("#artwork").style['width'] = '100%';
+        document.querySelector(".container").style['width'] = 'calc(250px - 8px - 8px)';
+        document.querySelector('.container').style['paddingTop'] = '0.5em';
+
+        document.querySelector("#volume-slider").style['width'] = '160px';
+
+        break;
+      }
     }
     resolve();
   });
 }
 
 function setDefaultTheme() {
-  document.querySelector("#controller-body").innerHTML = defaultController;
-  document.querySelector("#controller-body").attr("mode", "default");
+  const ctrlBody = document.querySelector("#controller-body");
+  ctrlBody.innerHTML = defaultController;
+  ctrlBody.attr("mode", "default");
 }
 
 function setCompactTheme() {
   if (document.querySelector('#time')) document.querySelector('#time').remove();
-  document.querySelector("#controller-body").innerHTML = compactController;
-  document.querySelector("#controller-body").attr("mode", "compact");
+  const ctrlBody = document.querySelector("#controller-body");
+  ctrlBody.innerHTML = compactController;
+  ctrlBody.attr("mode", "compact");
 }
 
 const defaultController = `<div id='controller' class='floating'>
@@ -221,4 +248,28 @@ const defaultController = `<div id='controller' class='floating'>
       </div>
     </div>
     <hr style='margin-top: 5px;'>
-  </div>`;
+  </div>`,
+  modernController = `<div style='padding-bottom: 6.5px;'>
+      <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
+      <div class='container'>
+        <div class='contents'>
+          <a class='title clickable' title='Open SoundCloud Tab' href=''></a>
+        </div>
+      </div>
+    </div>
+    <div id='time'>
+      <span id='current' style='float: left;'></span>
+      <span id='end' style='float: right;'></span>
+    </div>
+    <div id='controller'>
+        <button id='follow' class='clickable' title='Follow/Unfollow' followed=''></button>
+        <button id='shuffle' class='clickable' title='Shuffle' shuffle=''></button>
+        <div id='center'>
+          <button id='prev' class='clickable' title='Prev'></button>
+          <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>
+          <button id='next' class='clickable' title='Next'></button>
+        </div>
+        <button id='repeat' class='clickable' title='Repeat' mode=''></button>
+        <button id='fav' class='clickable' title='Like/Unlike' favorite=''></button>
+    </div>
+    <hr/>`;

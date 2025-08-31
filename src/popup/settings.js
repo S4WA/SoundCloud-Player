@@ -412,7 +412,7 @@ function insertAnnouncement() {
       },
     ],
     message: {
-      content: "Huge change coming soon?",
+      content: "Last update: Sep 2025",
       date: "Aug 23, 2025",
       style: "line-break: anywhere; font-style: italic;",
       class: "gray"

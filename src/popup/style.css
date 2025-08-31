@@ -108,7 +108,7 @@ input[type='checkbox'] {
 }
 
 #fav[favorite='true'] {
-  background-color: var(--theme-color);
+  background-color: var(--theme-color) !important;
 
   -webkit-mask: url('../assets/audio/unFav.svg');
   -webkit-mask-size: cover;
@@ -263,7 +263,7 @@ body[dark='true'] #controller button:not([favorite='true']):not([shuffle='true']
 }
 
 /* Controller Icons */
-#controller button {
+#controller button:not(#controller-body[mode='modern'] #controller #center button) {
   border: 0;
   font: 0/0 a;
   width: 24px;

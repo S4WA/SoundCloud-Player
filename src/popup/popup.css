@@ -37,9 +37,27 @@ body[dark='true'] input, body[dark='true'] span {
   display: none;
 }
 
+#volume-slider { /* keep element in layout */
+}
+
+#second #volume-icon:hover ~ #volume-slider,
+#second > div.left:hover #volume-slider {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+
 #volume-slider {
+  /* size */
   height: calc(var(--font-size) * 0.6);
   width: 10em;
+
+  /* animation/visibility */
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+  opacity: 0;
+  display: inline-block;
 }
 
 /* Share buttons */
@@ -166,4 +184,71 @@ body[dark='true'] #social .clipboard {
 body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down, body[dark='true'] #volume-icon, body[dark='true'] #hyphen {
   background-color: transparent;
   filter: invert(1);
+}
+
+/* Modern Theme 
+   (wrote on this file because modern theme is only available in popup.html)  */
+#controller-body[mode='modern'] #controller {
+  display: flex;
+  /*gap: 22px;*/
+  justify-content: center;
+  width: 100%;
+  height: 2em;
+  padding: 0.6em 0;
+}
+
+#controller-body[mode='modern'] #controller button:nth-child(1) {
+  margin-left: 0;
+  /* removing the margin because i wanted to make #artwork just into the edge of the body element, then in order to do it, i had to do it like this */
+}
+
+#controller-body[mode='modern'] #controller #center {
+  /* centralize, in other words, try to have different distance in buttons at the edges, and #shuffle and #repeat, and three others in the middle */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1px;
+}
+
+#controller-body[mode='modern'] #controller #center button {
+  /* change the size of three buttons in the middle. */
+  border: 0;
+  font: 0/0 a;
+  width: 32px;
+  height: 32px;
+  text-shadow: none;
+  color: transparent;
+  background-color: transparent;
+  background-position: center center;
+  background-size: contain;
+}
+
+#controller-body[mode='modern'] #shuffle {
+  /* have different distance for buttons at the second last position */
+  margin-left: 18px;
+}
+
+#controller-body[mode='modern'] #repeat {
+  /* have different distance for buttons at the second last position */
+  margin-right: 18px;
+}
+
+#controller-body[mode='modern'] #shuffle,
+#controller-body[mode='modern'] #repeat {
+  width: 24px !important;
+  height: 24px !important;
+  margin-top: 0.5px;
+  background-size: contain;
+}
+
+#controller-body[mode='modern'] #favorite {
+  /* different sizes to make it look like the buttons have the same size. */
+  width: 16px !important;
+  height: 16px !important;
+}
+
+#controller-body[mode='modern'] #follow {
+  width: 24px !important;
+  height: 24px !important;
+  margin-top: 1.5px;
 }

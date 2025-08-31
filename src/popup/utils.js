@@ -301,10 +301,6 @@ function startMarquees() {
   // values
   const isDefault = !settings['back-and-forth'];
   const dupeEnabled = settings['duplication'];
-  // sizes
-  const singleTitleWidth = firstChild.getBoundingClientRect().width - parseFloat(getComputedStyle(firstChild).paddingRight);
-  const containerWidth = container.getBoundingClientRect().width;
-  const fontSize = parseFloat(getComputedStyle(firstChild).fontSize);
   // numbers, parseInt just in case
   let duration = parseInt(settings['duration'] ?? 5000); // pixels per ms?
   const pauseTime = parseInt(settings["pause"] ?? 5000); // pause time in every animation
@@ -319,6 +315,11 @@ function startMarquees() {
   container.style.setProperty("--pause-time", `${pauseTime}ms`);
   container.style.setProperty('--container-width', `calc(${container.offsetWidth}px)`);
 
+  // sizes
+  let containerWidth = container.getBoundingClientRect().width;
+  let singleTitleWidth = firstChild.getBoundingClientRect().width - parseFloat(getComputedStyle(firstChild).paddingRight);
+  const fontSize = parseFloat(getComputedStyle(firstChild).fontSize);
+
   // applying values & modify elements (gibberish)
   if (isDefault) {
     container.style.setProperty("--duration", `${duration/2}ms`); // overwrite
@@ -328,17 +329,20 @@ function startMarquees() {
       const dupeAlreadyExists = document.querySelectorAll('.title').length > 1;
       const secondChild = dupeAlreadyExists ? document.querySelectorAll('.title')[1] : firstChild.cloneNode(true); // clone the content
 
+      if (!dupeAlreadyExists) {
+        contents.appendChild(secondChild);
+      }
+
+      // sizes
+      containerWidth = container.getBoundingClientRect().width;
+      singleTitleWidth = firstChild.getBoundingClientRect().width - parseFloat(getComputedStyle(firstChild).paddingRight);
+
       // calculate the gap between each child
       const isSmallTitle = containerWidth > singleTitleWidth + (fontSize * 2);
       const gap = isSmallTitle ? `${containerWidth - singleTitleWidth}px` : '2em';
 
       firstChild.style['paddingRight'] = gap;
       secondChild.style['paddingRight'] = gap;
-
-      if (!dupeAlreadyExists) {
-        contents.appendChild(secondChild);
-      }
-    } else {
     }
   } else {    
     if (containerWidth > singleTitleWidth) return; // if it doesn't define properties, it won't animate.
