@@ -120,7 +120,7 @@ input[type='checkbox'] {
 }
 
 #shuffle[shuffle='true'] {
-  background-color: var(--theme-color);
+  background-color: var(--theme-color) !important;
 
   -webkit-mask: url('../assets/audio/shuffled.svg');
   -webkit-mask-size: cover;
@@ -135,14 +135,14 @@ input[type='checkbox'] {
 }
 
 #repeat[mode='one'] {
-  background-color: var(--theme-color);
+  background-color: var(--theme-color) !important;
 
   -webkit-mask: url('../assets/audio/repeat_one.svg');
   -webkit-mask-size: cover;
 }
 
 #repeat[mode='all'] {
-  background-color: var(--theme-color);
+  background-color: var(--theme-color) !important;
 
   -webkit-mask: url('../assets/audio/repeat_all.svg');
   -webkit-mask-size: cover;
@@ -190,8 +190,8 @@ input[type='checkbox'] {
 }
 
 #follow[followed='true'] {
+  background-color: var(--theme-color) !important;
   -webkit-mask: url('../assets/followed.svg');
-  background-color: var(--theme-color);
   -webkit-mask-size: cover;
 }
 

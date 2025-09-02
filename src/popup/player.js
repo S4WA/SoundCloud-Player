@@ -168,6 +168,7 @@ function setTheme() {
           document.querySelector(sel).style['marginRight'] = '8px';
         });
 
+        // some of those below can be written in css files tho. cba looking for ones suitable and what not.
         document.querySelector("#controller").style['marginRight'] = '8px';
         document.querySelector("#artwork").style['width'] = '100%';
         document.querySelector(".container").style['width'] = 'calc(250px - 8px - 8px)';
@@ -175,6 +176,10 @@ function setTheme() {
 
         document.querySelector("#volume-slider").style['width'] = '160px';
 
+        document.querySelector("#volume-icon").style["width"] = "18px";
+        document.querySelector("#volume-icon").style["height"] = "18px";
+        document.querySelector("#share_btn").style["width"] = "18px";
+        document.querySelector("#share_btn").style["height"] = "18px";
         break;
       }
     }

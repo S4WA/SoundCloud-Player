@@ -25,6 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initKeyboardBinds();
   });
   if (document.querySelector('#version')) document.querySelector('#version').innerText = `v${chrome.runtime.getManifest().version}`;
+  if (settings['always-show-slider'] && document.querySelector("#volume-slider")) {
+    const slider = document.querySelector("#volume-slider");
+    slider.classList.add("always-show");
+  }
 });
 
 var debug = false, 
@@ -54,4 +58,5 @@ var debug = false,
       'remember-window-size': false,
       'window-width': 265,
       'window-height': 340,
+      'always-show-slider': false,
     };

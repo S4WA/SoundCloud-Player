@@ -37,21 +37,35 @@ body[dark='true'] input, body[dark='true'] span {
   display: none;
 }
 
-#volume-slider { /* keep element in layout */
-}
+#volume-icon:hover ~ #volume-slider:not(.always-show),
+#volume-slider:not(.always-show):hover {
+  /* SELECTORS CAN'T BE 
+        #volume-icon:hover ~ #volume-slider, #volume-slider:hover 
 
-#second #volume-icon:hover ~ #volume-slider,
-#second > div.left:hover #volume-slider {
+     Because this method is inperfect and triggers twice when mouse hovers out of the #volume-icon */
+
+  /* part of animation aka to change the visibility */
   transform: scaleX(1);
   opacity: 1;
 }
 
+#volume-slider:not(.always-show)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto; /* allows hover detection */
+}
 
 #volume-slider {
   /* size */
   height: calc(var(--font-size) * 0.6);
   width: 10em;
+}
 
+#volume-slider:not(.always-show) {
   /* animation/visibility */
   transform: scaleX(0);
   transform-origin: left;

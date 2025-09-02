@@ -246,6 +246,7 @@ async function initInputs() {
     [ '#popout-dupe', 'popout-dupe' ],
     [ '#apply_marquee_to_default', 'apply_marquee_to_default' ],
     [ '#remember-window-size', 'remember-window-size' ],
+    [ '#always-show-slider', 'always-show-slider' ]
   ];
 
   // any number input element OR textarea element OR select element
