@@ -61,7 +61,7 @@ body[dark='true'] input, body[dark='true'] span {
 
 #volume-slider {
   /* size */
-  height: calc(var(--font-size) * 0.6);
+  height: calc(var(--font-size) * 1.05);
   width: 10em;
 }
 
