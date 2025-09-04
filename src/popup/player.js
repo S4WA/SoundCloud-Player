@@ -16,56 +16,74 @@ async function update(val) {
   // set artwork, title, current time & duration, current vol (text)
   // set playing, favorite, shuffle, mute status (true/false)
   // set repeat status (one/all/none)
+  // set % to progress bar
   const arr = [
-    { key: "artwork", selector: "#artwork", handler: (link) => { 
-      if (toggleArtwork) toggleArtwork(settings['display-artwork']);
-      document.querySelector("#artwork").style['backgroundImage'] = link; 
-    }},
-    { key: "title", selector: ".title", handler: () => {
-      document.querySelectorAll(".title").forEach(function(el) {
-        el.innerText = replaceText(localStorage.getItem('trackdisplay'), val);
-        el.attr('href', val['link']);
-      });
-      startMarquees();
-    }},
-    { key: "time", selector: "#current", handler: (time) => {
-      if (document.querySelector("#current").innerText != time['current']) {
-        document.querySelector("#current").innerText = time['current'];
-        if (loc("popup.html")) document.querySelector("#share_current_time").value = time['current'];
+    { 
+      key: "artwork", selector: "#artwork", handler: (link) => { 
+        if (toggleArtwork) toggleArtwork(settings['display-artwork']);
+        document.querySelector("#artwork").style['backgroundImage'] = link; 
       }
-      if (document.querySelector("#end").innerText != time['end']) {
-        document.querySelector("#end").innerText = time['end'];
+    },
+    { 
+      key: "title", selector: ".title", handler: () => {
+        document.querySelectorAll(".title").forEach(function(el) {
+          el.innerText = replaceText(localStorage.getItem('trackdisplay'), val);
+          el.attr('href', val['link']);
+        });
+        startMarquees();
       }
-    }},
+    },
+    { 
+      key: "time", selector: "#current", handler: (time) => {
+        if (document.querySelector("#current").innerText != time['current']) {
+          document.querySelector("#current").innerText = time['current'];
+          if (loc("popup.html")) document.querySelector("#share_current_time").value = time['current'];
+        }
+        if (document.querySelector("#end").innerText != time['end']) {
+          document.querySelector("#end").innerText = time['end'];
+        }
+      }
+    },
     { key: "playing", selector: "#toggle", attr: "playing" },
     { key: "favorite", selector: "#fav", attr: "favorite" },
     { key: "shuffle", selector: "#shuffle", attr: "shuffle" },
     { key: "repeat", selector: "#repeat", attr: "mode" },
-    { key: "volume", selector: "#current-volume", handler: (vol) => {
-      if (!loc("popup.html")) return; // volume slider or curent volume text is only available in popup.html
-      if (sliderEditing) return; // not to interfere with volume change. 
+    { 
+      key: "volume", selector: "#current-volume", handler: (vol) => {
+        if (!loc("popup.html")) return; // volume slider or curent volume text is only available in popup.html
+        if (sliderEditing) return; // not to interfere with volume change. 
 
-      const volume = Math.floor(vol);
+        const volume = Math.floor(vol);
 
-      document.querySelector("#current-volume").innerText = `${volume} %`;
-      const range = document.querySelector("#volume-slider");
-      range.value = volume;
-      range.oldNum = volume;
-      // console.log(document.querySelector("#volume-slider").value);
-    }}, 
-    { key: "mute", selector: "#volume-icon", handler: (muted) => { 
-      if (!loc("popup.html")) return;
-      const cList = document.querySelector("#volume-icon").classList; 
-      muted ? cList.add("muted") : cList.remove("muted");
-    }},
-    { key: "following", selector: "#follow", handler: (following) => {
-      if (following != null && following != 'self') {
-        document.querySelector("#follow").style.display = "";
-        document.querySelector("#follow").attr("followed", following);
-      } else if (following == 'self') {
-        document.querySelector("#follow").style.display = "none";
+        document.querySelector("#current-volume").innerText = `${volume} %`;
+        const range = document.querySelector("#volume-slider");
+        range.value = volume;
+        range.oldNum = volume;
+        // console.log(document.querySelector("#volume-slider").value);
       }
-    }}
+    }, 
+    { 
+      key: "mute", selector: "#volume-icon", handler: (muted) => { 
+        if (!loc("popup.html")) return;
+        const cList = document.querySelector("#volume-icon").classList; 
+        muted ? cList.add("muted") : cList.remove("muted");
+      }
+    },
+    { 
+      key: "following", selector: "#follow", handler: (following) => {
+        if (following != null && following != 'self') {
+          document.querySelector("#follow").style.display = "";
+          document.querySelector("#follow").attr("followed", following);
+        } else if (following == 'self') {
+          document.querySelector("#follow").style.display = "none";
+        }
+      }
+    },
+    {
+      key: "progress", selector: "#progressbar-bar", handler: (percentage) => {
+        document.querySelector("#progressbar-bar").style["width"] = percentage;
+      }
+    }
   ];
 
   arr.forEach(({ key, selector, attr, handler }) => {
@@ -153,33 +171,7 @@ function setTheme() {
         break;
       }
       case 'modern': {
-        if (document.querySelector('#time')) document.querySelector('#time').remove();
-        const ctrlBody = document.querySelector("#controller-body");
-        ctrlBody.innerHTML = modernController;
-        ctrlBody.attr("mode", "modern");
-
-        document.body.style['padding'] = 0;
-        document.body.style['margin'] = 0;
-
-        const selectors = ['.container', '#time', 'hr','#second', '#share', 'body > div:nth-child(4)'];
-
-        selectors.forEach(sel => {;
-          document.querySelector(sel).style['marginLeft'] = '8px';
-          document.querySelector(sel).style['marginRight'] = '8px';
-        });
-
-        // some of those below can be written in css files tho. cba looking for ones suitable and what not.
-        document.querySelector("#controller").style['marginRight'] = '8px';
-        document.querySelector("#artwork").style['width'] = '100%';
-        document.querySelector(".container").style['width'] = 'calc(250px - 8px - 8px)';
-        document.querySelector('.container').style['paddingTop'] = '0.5em';
-
-        document.querySelector("#volume-slider").style['width'] = '160px';
-
-        document.querySelector("#volume-icon").style["width"] = "18px";
-        document.querySelector("#volume-icon").style["height"] = "18px";
-        document.querySelector("#share_btn").style["width"] = "18px";
-        document.querySelector("#share_btn").style["height"] = "18px";
+        setModernTheme();
         break;
       }
     }
@@ -198,6 +190,56 @@ function setCompactTheme() {
   const ctrlBody = document.querySelector("#controller-body");
   ctrlBody.innerHTML = compactController;
   ctrlBody.attr("mode", "compact");
+}
+
+function setModernTheme() { // the problem is that player.js is supposed to be shared in both popup/settings.html, but this function is only relevant for popup.html. so writing them here is kinda nonsense, but at the same time, if i write them in different file (popup.js) and the rest of functions that shares similarities as this function remains in this file (player.js) is also a clutter.
+  if (document.querySelector('#time')) document.querySelector('#time').remove();
+  const ctrlBody = document.querySelector("#controller-body");
+  ctrlBody.innerHTML = modernController;
+  ctrlBody.attr("mode", "modern");
+
+  // CHANGE STYLES
+  document.body.style['padding'] = 0;
+  document.body.style['margin'] = 0;
+
+  const selectors = ['.container', '#time', 'hr','#second', '#share', 'body > div:nth-child(4)' ];
+
+  selectors.forEach(sel => {;
+    document.querySelector(sel).style['marginLeft'] = '8px';
+    document.querySelector(sel).style['marginRight'] = '8px';
+  });
+
+  // - some of those below can be written in css files tho. cba looking for ones suitable and what not.
+  document.querySelector("#controller").style['marginRight'] = '8px';
+  document.querySelector("#artwork").style['width'] = '100%';
+  document.querySelector(".container").style['width'] = 'calc(250px - 8px - 8px)';
+  document.querySelector('.container').style['paddingTop'] = '0.5em';
+
+  document.querySelector("#volume-slider").style['width'] = '160px';
+
+  document.querySelector("#volume-icon").style["width"] = "18px";
+  document.querySelector("#volume-icon").style["height"] = "18px";
+  document.querySelector("#share_btn").style["width"] = "18px";
+  document.querySelector("#share_btn").style["height"] = "18px";
+
+  document.querySelectorAll('#controller-body > hr, #second > hr, #share > hr').forEach(el => el.remove());
+
+  removeNodes();
+
+  document.body.style["paddingBottom"] = "6.5px";
+
+  // PROGRESS BAR
+  const bg = document.querySelector('#progressbar-background'), bar = document.querySelector("#progressbar-bar");
+
+  bg.addEventListener("click", (e) => {
+    const rect = bg.getBoundingClientRect();
+    const leftX = rect.left + window.scrollX;
+    const rightX = rect.right + window.scrollX;
+    const num = event.pageX/rightX*100;
+
+    bar.style["width"] = `${num}%`;
+    queue('settime', num);
+  });
 }
 
 const defaultController = `<div id='controller' class='floating'>
@@ -263,6 +305,10 @@ const defaultController = `<div id='controller' class='floating'>
       </div>
     </div>
     <div id='time'>
+      <div id='progressbar-background' class='clickable'>
+        <div id='progressbar-bar'>
+        </div>
+      </div>
       <span id='current' style='float: left;'></span>
       <span id='end' style='float: right;'></span>
     </div>

@@ -34,10 +34,5 @@ This extension is for the soundcloud heavy users. Control playback from any tab 
 
 ## Mechanism
 
-Visualized with GitDiagram
+Visualized with [GitDiagram](https://gitdiagram.com/)
 ![](https://github.com/S4WA/SoundCloud-Player/blob/master/img/gitdiagram.png?raw=true)
-
-
-## Disclaimer
-
-If you want to make an issue, Please write it in English or Japanese. Other language will not be supported.

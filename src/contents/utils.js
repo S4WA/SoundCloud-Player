@@ -104,6 +104,12 @@ function isFollowing() {
   return document.querySelector('.playbackSoundBadge .sc-button-follow').attr('aria-label').includes('Unfollow');
 }
 
+function getProgress() {
+  const el = document.querySelector(`[role="progressbar"] .playbackTimeline__progressBar`);
+  if (!el) return 0;
+  return el.style['width'];
+}
+
 function input(keyCode, name, shiftKey) {
   document.body.focus();
   document.dispatchEvent(

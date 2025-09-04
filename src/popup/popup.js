@@ -41,15 +41,20 @@ async function checkElements() {
   if (settings['simple-label']) {
     document.querySelector("#store").innerText = "SC PLYR";
     // $('#share_btn,#settings,#thelink > div.right > div:nth-child(1) > span').contents().each(function() { if (this.nodeType === Node.TEXT_NODE) this.remove(); });
-    const elements = document.querySelectorAll('#share_btn, #settings, .thelink > .right > div:nth-child(1) > span');
-    elements.forEach(element => {
-      Array.from(element.childNodes).forEach(node => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          node.remove();
-        }
-      });
-    });
+    removeNodes();
   }
+}
+
+// remove text nodes
+function removeNodes() {
+  const elements = document.querySelectorAll('#share_btn, #settings, .thelink > .right > div:nth-child(1) > span');
+  elements.forEach(element => {
+    Array.from(element.childNodes).forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.remove();
+      }
+    });
+  });
 }
 
 // they are hidden when there's no sc-tab.
@@ -128,6 +133,24 @@ async function toggleElements(visibility) {
       selector: "#toggle",
       attr: {
         "playing": "false"
+      }
+    },
+    {
+      selector: "#progressbar-background",
+      style: {
+        "display": ["block", "none"]
+      }
+    },
+    {
+      selector: "#controller-body[mode='modern'] div",
+      style: {
+        "padding-bottom": ["6.5px", "0"]
+      }
+    },
+    {
+      selector: "#controller-body[mode='modern']",
+      style: {
+        "padding-bottom": ["6.5px", "0"]
       }
     }
   ]

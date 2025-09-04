@@ -63,6 +63,7 @@ body[dark='true'] input, body[dark='true'] span {
   /* size */
   height: calc(var(--font-size) * 1.05);
   width: 10em;
+  accent-color: var(--theme-color);
 }
 
 #volume-slider:not(.always-show) {
@@ -265,4 +266,23 @@ body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='tru
   width: 24px !important;
   height: 24px !important;
   margin-top: 1.5px;
+}
+
+#progressbar-background {
+  height: 5px;
+  width: 234px;
+  margin-bottom: 10px;
+}
+body[dark='false'] #progressbar-background {
+  background-color: #000;
+}
+
+body[dark='true'] #progressbar-background {
+  background-color: #fff;
+}
+
+#progressbar-bar {
+  height: 5px;
+  width: 50%;
+  background-color: var(--theme-color);
 }

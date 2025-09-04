@@ -30,6 +30,7 @@ async function update() {
   json['repeat'] = getRepeatMode();
   json['shuffle'] = isShuffling();
   json['following'] = isFollowing();
+  json['progress'] = getProgress();
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -50,36 +51,32 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       if (getTitle() == null) return;
       response = {};
 
-      if (getTitle() != json['title']) { // when the song changes
+      const current = {
+        title: getTitle(),
+        playing: isPlaying(),
+        favorite: isLiked(),
+        volume: getVolume(),
+        mute: isMuted(),
+        repeat: getRepeatMode(),
+        shuffle: isShuffling(),
+        progress: getProgress(),
+        time: {
+          current: getCurrentTime(),
+          end: getEndTime()
+        }
+      };
+
+      if (current.title !== json.title) {
         update().then(() => {
           sendResponse(json);
         });
         break;
       }
-      if (isPlaying() != json['playing']) {
-        response['playing'] = isPlaying();
-      }
-      if (isLiked() != json['favorite']) {
-        response['favorite'] = isLiked();
-      }
-      if (getVolume() != json['volume']) {
-        response['volume'] = getVolume();
-        response['mute'] = isMuted();
-      }
-      if (getCurrentTime() != json['time']['current']) {
-        response['time'] = {
-          'current': getCurrentTime(),
-          'end': getEndTime()
-        };
-      }
-      if (isMuted() != json['mute']) {
-        response['mute'] = isMuted();
-      }
-      if (getRepeatMode() != json['repeat']) {
-        response['repeat'] = getRepeatMode();
-      }
-      if (isShuffling() != json['shuffle']) {
-        response['shuffle'] = isShuffling();
+
+      for (const [key, value] of Object.entries(current)) {
+        if (JSON.stringify(value) !== JSON.stringify(json[key])) {
+          response[key] = value;
+        }
       }
       sendResponse(response);
       break;
@@ -162,13 +159,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       json['volume'] = getVolume();
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
+      json['progress'] = getProgress();
 
-      response = { 'response': { 'time': json['time'], 'volume': json['volume'] } };
+      response = { 'response': { 'time': json['time'], 'progress': json['progress'], 'volume': json['volume'] } }; // i forgot why it also needs to update time.
       sendResponse(response);
       break;
     }
     case 'seekb':
-    case 'seekf': { // seek backward/forward
+    case 'seekf': { // seek backward/forward , but also needs to update progressbar.
       if (request.type == 'seekb') {
         seekBack();
       } else if (request.type == 'seekf') {
@@ -176,8 +174,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       }
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
+      json['progress'] = getProgress();
 
-      response = { 'response': { 'time': json['time'] } };
+      response = { 'response': { 'time': json['time'], 'progress': json['progress'] } };
       sendResponse(response);
       break;
     }
@@ -185,6 +184,33 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       document.querySelector('.playbackSoundBadge .sc-button-follow').click();
       json['following'] = isFollowing();
       response = { 'response' : { 'following': json['following'] } }
+      sendResponse(response);
+      break;
+    }
+    case 'settime': {
+      let percentage = request.value;
+      if (!percentage) break; // .value has to be 0-100% of the progress bar.
+
+      // calculate distance.
+      let el = document.querySelector('.playbackTimeline__progressWrapper');
+      let rect = el.getBoundingClientRect();
+
+      let duration = parseFloat(el.getAttribute('aria-valuemax'));
+      let targetTime = (percentage/100)*duration;
+      let offset = (targetTime / duration) * rect.width;
+      let x = rect.left + offset;
+
+      // dispatch event
+      el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: x, clientY: rect.top+5 }));
+      el.dispatchEvent(new MouseEvent('mouseup',   { bubbles: true, clientX: x, clientY: rect.top+5 }));
+
+      // update value & respond
+      json['progress'] = getProgress();
+      json['time']['current'] = getCurrentTime();
+      json['time']['end'] = getEndTime();
+
+      // send
+      response = { 'response': { 'progress': json['progress'], 'time': json['time'] } };
       sendResponse(response);
       break;
     }
@@ -209,5 +235,6 @@ var prefix = '[SoundCloud Player] ',
     'volume': 0,
     'mute': false,
     'following': false,
+    'progress': 0,
     // , "playlist": []
   };
