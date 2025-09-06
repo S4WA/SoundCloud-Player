@@ -37,7 +37,13 @@ async function update(val) {
       key: "time", selector: "#current", handler: (time) => {
         if (document.querySelector("#current").innerText != time['current']) {
           document.querySelector("#current").innerText = time['current'];
-          if (loc("popup.html")) document.querySelector("#share_current_time").value = time['current'];
+          const barEditing = document.querySelector("#progressbar").progressbarEditing;
+          // Only update the current time when:
+          //  - 1. when the location.href = 'popup.html'
+          //  - 2. progressbar is not being hovered.
+          if (!loc("popup.html") || barEditing) return;
+
+          document.querySelector("#share_current_time").value = time['current'];
         }
         if (document.querySelector("#end").innerText != time['end']) {
           document.querySelector("#end").innerText = time['end'];
@@ -80,9 +86,12 @@ async function update(val) {
       }
     },
     {
-      key: "progress", selector: "#progressbar-bar", handler: (percentage) => {
-        const el = document.querySelector("#progressbar-bar");
-        if (!el) return;
+      key: "progress", selector: "#progressbar-bar", handler: (percentage) => { // why didn't i include this to json['time']????????????
+        const el = document.querySelector("#progressbar-bar"), barEditing = document.querySelector("#progressbar").progressbarEditing;
+        // Ignore and don't change progress bar in either of the conditions:
+        //  - 1. if progress-bar doesn't exist, meaning if the theme is not modern nor the current page is in popup.html, then ignore.
+        //  - 2. if progressbar is being edited, meaning if user hovers the mouse and other functions are trying to edit width of the bar, then ignore.
+        if (!el || barEditing) return;
         el.style["width"] = percentage;
       }
     }
@@ -211,7 +220,7 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
     document.querySelector(sel).style['marginRight'] = '8px';
   });
 
-  // Changing styles via JS because these elements are outside the controller's scope.
+  // Changing styles via JS because these elements are outside #controller-body's scope.
   // - vol-slider
   document.querySelector("#volume-slider").style['width'] = '160px';
   // - vol-icon
@@ -227,9 +236,13 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
   document.body.style["paddingBottom"] = "6.5px";
 
   // PROGRESS BAR
-  const bg = document.querySelector('#progressbar-background'), bar = document.querySelector("#progressbar-bar");
+  // - wholebody (invisible): it exists to make the hitbox of progressbar bigger than it looks
+  // - bg (visible): shows background (darkmode off: dark color / on: reverse the color)
+  // - bar (visible): shows current progress with theme-color
+  const wholebody = document.querySelector("#progressbar"), bg = document.querySelector('#progressbar'), bar = document.querySelector("#progressbar-bar");
 
-  bg.addEventListener("click", (e) => {
+  // returns the percentage of the horizontal axis of the progress bar the user hovered/clicked & function per se also edits with the percentage given.
+  const editProgressBar = function(e) { // event = click / mousemove
     const rect = bg.getBoundingClientRect();
     const clickX = e.clientX - rect.left; // position relative to progress bar
     const width = rect.width;             // total width of progress bar
@@ -238,9 +251,38 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
     // clamp between 0 and 100
     percent = Math.max(0, Math.min(100, percent));
 
-    bar.style.width = `${percent}%`;
+    bar.style['width'] = `${percent}%`;
+    return percent;
+  }
+
+  // CLICK EVENT HANDLER FOR #PROGRESSBAR
+  wholebody.addEventListener("click", (e) => {
+    const percent = editProgressBar(e);
     queue('settime', percent);
   });
+
+  // HANDLERS FOR LIVE HOVER PREVIEW IN #PROGRESSBAR
+  const hoveredInHandler = function(e) {
+    bg.progressbarEditing = true;
+    const percentage = editProgressBar(e);
+    let result = toSeconds(json['time']['end']);
+    result = Math.floor(result * (percentage/100) );
+    result = toTimeString(result);
+
+    const currentTime = document.querySelector("#current");
+    currentTime.lastTime = currentTime.innerText;
+
+    currentTime.innerText = result;
+  }
+  const hoverOutHandler = function() {
+    bg.progressbarEditing = false;
+    
+    const currentTime = document.querySelector("#current");
+    currentTime.innerText = currentTime.lastTime;
+  }
+  wholebody.addEventListener("mouseenter", hoveredInHandler);
+  wholebody.addEventListener("mousemove", hoveredInHandler);
+  wholebody.addEventListener("mouseleave", hoverOutHandler);
 }
 
 const defaultController = `<div id='controller' class='floating'>
@@ -297,7 +339,7 @@ const defaultController = `<div id='controller' class='floating'>
     </div>
     <hr style='margin-top: 5px;'>
   </div>`,
-  modernController = `<div style='padding-bottom: 6.5px;'>
+  modernController = `<div>
       <div id='artwork' title='Open SoundCloud Tab' class='clickable'></div>
       <div class='container'>
         <div class='contents'>
@@ -306,8 +348,10 @@ const defaultController = `<div id='controller' class='floating'>
       </div>
     </div>
     <div id='time'>
-      <div id='progressbar-background' class='clickable'>
-        <div id='progressbar-bar'>
+      <div id='progressbar' class='clickable'>
+        <div id='progressbar-background' class='clickable'>
+          <div id='progressbar-bar'>
+          </div>
         </div>
       </div>
       <span id='current' style='float: left;'></span>

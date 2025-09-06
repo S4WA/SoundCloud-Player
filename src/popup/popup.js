@@ -136,7 +136,7 @@ async function toggleElements(visibility) {
       }
     },
     {
-      selector: "#progressbar-background",
+      selector: "#controller-body[mode='modern'] #time",
       style: {
         "display": ["block", "none"]
       }

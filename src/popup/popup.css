@@ -287,11 +287,18 @@ body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='tru
   padding-top: 0.5em;
 }
 
+#progressbar {
+  display: inline-block;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  background: transparent;
+}
+
 #progressbar-background {
   height: 5px;
   width: 234px;
-  margin-bottom: 10px;
 }
+
 body[dark='false'] #progressbar-background {
   background-color: #000;
 }
