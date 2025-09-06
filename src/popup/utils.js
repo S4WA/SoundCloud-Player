@@ -238,6 +238,34 @@ function loc(val) {
 }
 
 function initKeyboardBinds() {
+  // THE HANDLER FOR VOLUME CHANGES; SHIFT + UP/DOWN
+  let sliderTimeout, lastVol;
+  const showSlider = function(val) {;
+    const newVol = val['response']['volume'];
+    if (newVol) {
+      if (!lastVol) lastVol = newVol;
+      console.log(lastVol, newVol)
+      if (lastVol === newVol) return;
+      lastVol = newVol;
+    }
+
+    const slider = document.querySelector("#volume-slider");
+    if (!slider) return; // ignore if there's no slider === current page is not popup.html || current theme is not 'modern'
+    if (settings['always-show-slider']) return;
+
+    slider.classList.add("anim"); // animate slider to show up
+
+    // clear old timeout
+    if (sliderTimeout) clearTimeout(sliderTimeout);
+
+    // set new timeout
+    sliderTimeout = setTimeout(() => {
+      slider.classList.remove("anim");
+      sliderTimeout = null;
+    }, 500);
+  };
+
+  // THE CORE OF initKeyboardBinds();
   const list = {
     /*
       keycode: { withShiftKey: "command name" }
@@ -246,33 +274,90 @@ function initKeyboardBinds() {
         It enables the user to do max 2 diff things with the same keycode.
         e.g.) using the key "L" alone (without pressing shift key), would act as liking/unliking the current track. Whereas "L" + shift will cycle the repeat modes.
     */
-    32: { 'false': 'toggle'  },
-    38: { 'true' : 'up'      },
-    40: { 'true' : 'down'    },
-    77: { 'false': 'mute'    },
-    76: { 'true' : 'repeat', 'false':   'fav' },
-    83: { 'true' : 'shuffle' },
-    37: { 'true' : 'prev',   'false': 'seekb' },
-    39: { 'true' : 'next',   'false': 'seekf' },
+    32: { // SPACE
+      'false': {
+        command: 'toggle',
+      }
+    },
+    38: { // UP ARROW
+      'true': {
+        command: 'up',
+        handler: showSlider
+      }
+    },
+    40: { // DOWN ARROW
+      'true': {
+        command: 'down',
+        handler: showSlider
+      }
+    },
+    77: { // M
+      'false': {
+        command: 'mute'
+      }
+    },
+    76: { // L
+      'true': {
+        command: 'repeat'
+      },
+      'false': {
+        command: 'fav'
+      }
+    },
+    83: { // S
+      'true': {
+        command: 'shuffle'
+      }
+    },
+    37: { // LEFT ARROW
+      'true': {
+        command: 'prev'
+      },
+      'false': {
+        command: 'seekb'
+      }
+    },
+    39: { // RIGHT ARROW
+      'true': {
+        command: 'next'
+      },
+      'false': {
+        command: 'seekf'
+      }
+    },
   };
 
   document.body.addEventListener('keydown', function(e) {
+    // if SC-Player is ready to interact with its main content tab.
     if (keyReady == false) return;
+    // if user's focused on elements such as those below while keydown event occurs
     if ([ "input", "select", "option", "textarea" ].includes(e.target.tagName.toLowerCase())) return;
+    // ignore any pressed key when it's in settings.html && compact player's not enabled there
     if (loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings'])) return;
-    switch (e.keyCode) {
+
+    const keycode = e.keyCode, shiftkey = e.shiftKey;
+    switch (keycode) {
       case 81: { // Q Key
         openSCTab();
         break;
       }
       default: { // Other than Q key
-        if (list[e.keyCode] == null) return;
+        if (!list[keycode]) return;
 
-        let cmd = list[e.keyCode][e.shiftKey ? 'true' : 'false'];
+        // ignore unexisting keybinds
+        const keybind = list[keycode][shiftkey ? 'true' : 'false'];
+        if (!keybind) return;
+        const cmd = keybind["command"];
+        if (!cmd) return;
 
-        if (cmd == null) return;
-
-        queue(cmd);
+        // send commands to content.js
+        queue(cmd).then((val) => {
+          // then, if there's a handler, then run it.
+          const handler = keybind["handler"];
+          if (handler) {
+            handler(val);
+          }
+        });
         e.preventDefault(); // block default browser actions, like page scrolling, when the spacebar is pressed
       }
     }

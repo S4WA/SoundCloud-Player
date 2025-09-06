@@ -81,7 +81,9 @@ async function update(val) {
     },
     {
       key: "progress", selector: "#progressbar-bar", handler: (percentage) => {
-        document.querySelector("#progressbar-bar").style["width"] = percentage;
+        const el = document.querySelector("#progressbar-bar");
+        if (!el) return;
+        el.style["width"] = percentage;
       }
     }
   ];
@@ -209,23 +211,19 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
     document.querySelector(sel).style['marginRight'] = '8px';
   });
 
-  // - some of those below can be written in css files tho. cba looking for ones suitable and what not.
-  document.querySelector("#controller").style['marginRight'] = '8px';
-  document.querySelector("#artwork").style['width'] = '100%';
-  document.querySelector(".container").style['width'] = 'calc(250px - 8px - 8px)';
-  document.querySelector('.container').style['paddingTop'] = '0.5em';
-
+  // Changing styles via JS because these elements are outside the controller's scope.
+  // - vol-slider
   document.querySelector("#volume-slider").style['width'] = '160px';
-
+  // - vol-icon
   document.querySelector("#volume-icon").style["width"] = "18px";
   document.querySelector("#volume-icon").style["height"] = "18px";
-  document.querySelector("#share_btn").style["width"] = "18px";
-  document.querySelector("#share_btn").style["height"] = "18px";
-
+  // - share-icon
+  document.querySelector("#share_icon").style["width"] = "16.5px";
+  document.querySelector("#share_icon").style["height"] = "16.5px";
+  // - removing clutters
   document.querySelectorAll('#controller-body > hr, #second > hr, #share > hr').forEach(el => el.remove());
-
   removeNodes();
-
+  // - add padding-bottom to body to balance the whole page, as clutter removal occurs
   document.body.style["paddingBottom"] = "6.5px";
 
   // PROGRESS BAR
@@ -233,12 +231,15 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
 
   bg.addEventListener("click", (e) => {
     const rect = bg.getBoundingClientRect();
-    const leftX = rect.left + window.scrollX;
-    const rightX = rect.right + window.scrollX;
-    const num = event.pageX/rightX*100;
+    const clickX = e.clientX - rect.left; // position relative to progress bar
+    const width = rect.width;             // total width of progress bar
+    let percent = (clickX / width) * 100;
 
-    bar.style["width"] = `${num}%`;
-    queue('settime', num);
+    // clamp between 0 and 100
+    percent = Math.max(0, Math.min(100, percent));
+
+    bar.style.width = `${percent}%`;
+    queue('settime', percent);
   });
 }
 

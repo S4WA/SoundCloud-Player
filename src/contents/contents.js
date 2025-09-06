@@ -147,7 +147,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     case 'mute':
     case 'unmute': {
       document.querySelector('.volume button[type="button"]').click();
-      json['mute'] = document.querySelector('.volume').attr('class').includes('muted');
+      json['mute'] = isMuted();
 
       response = { 'response': {'mute': json['mute'], 'volume': json['volume'] } };
       sendResponse(response);
@@ -160,8 +160,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
       json['progress'] = getProgress();
+      json['mute'] = isMuted();
 
-      response = { 'response': { 'time': json['time'], 'progress': json['progress'], 'volume': json['volume'] } }; // i forgot why it also needs to update time.
+      response = { 'response': { 'time': json['time'], 'progress': json['progress'], 'volume': json['volume'], 'mute': json['mute'] } }; // i forgot why it also needs to update time.
       sendResponse(response);
       break;
     }

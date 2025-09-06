@@ -2,6 +2,10 @@
 
 This extension is for the soundcloud heavy users. Control playback from any tab using a popup interface.
 
+## Disclaimer
+
+This is an unofficial extension. Not affiliated with or endorsed by SoundCloud.
+
 ## Features
 
 - Play, pause, skip tracks without switching tabs
