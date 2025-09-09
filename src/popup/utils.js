@@ -554,29 +554,5 @@ function syncAcrossViews(fnName, args) {
   }
 }
 
-function toSeconds(time) {
-  const parts = time.split(":").map(Number);
-  if (parts.length === 3) {
-    const [h, m, s] = parts;
-    return h * 3600 + m * 60 + s;
-  } else if (parts.length === 2) {
-    const [m, s] = parts;
-    return m * 60 + s;
-  }
-  return 0;
-}
-
-function toTimeString(seconds) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-
-  if (h > 0) {
-    return [h, m, s].map(v => String(v).padStart(2, "0")).join(":");
-  } else {
-    return [m, s].map(v => String(v).padStart(2, "0")).join(":");
-  }
-}
-
 // keyReady: if SC-Player is ready to interact with its main content tab.
 var keyReady = false;

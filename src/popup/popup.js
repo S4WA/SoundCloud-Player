@@ -11,12 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     registerEvents(),
     registerUniversalEvents(),
     checkDisplayArtwork(),
-    queue('request-data').then((val) => {
-      for (const key in val) {
-        json[key] = val[key];
-      }
-      sessionStorage.setItem('data', JSON.stringify(json));
-    }),
+    queue('request-data'),
     checkMultipleWindow(),
   ]);
 });
@@ -240,7 +235,6 @@ async function registerEvents() {
       selector: "#share_with_time",
       event: "input",
       handler: (event) => {
-        console.log(event.target);
         share_with_time = event.target.checked;
         setShareLink(json);
       }
@@ -299,20 +293,6 @@ async function registerEvents() {
   });
 }
 
-// Share link
-function setShareLink(val) {
-  let data = {
-    'time': val['time'] ?? json['time'],
-    'link': val['link'] ?? json['link'],
-  };
-  let copyLink = share_with_time ? `${data['link']}#t=${data['time']['current']}` : data['link'];
-  document.querySelector("#copy").value = copyLink;
-  let selectable = share_with_time
-                && document.querySelector("#copy").selectionStart != null
-                && document.activeElement == document.querySelector("#copy");
-  if (selectable) document.querySelector("#copy").select();
-}
-
 function shareLink(social) {
   social = social.toLowerCase();
   let data = JSON.parse( sessionStorage.getItem('data') ); 
@@ -325,7 +305,7 @@ function shareLink(social) {
 }
 
 // Variables
-var dark = false, or = false, checkTimer = null, share_with_time = false, sliderEditing = false,
+var dark = false, or = false, checkTimer = null, share_with_time = false, sliderEditing = false, 
   links = {
     'twitter': 'https://twitter.com/intent/tweet?text=%text%&hashtags=NowPlaying',
     'threads': 'https://www.threads.com/intent/post?text=%text%',

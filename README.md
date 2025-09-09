@@ -40,3 +40,6 @@ This is an unofficial extension. Not affiliated with or endorsed by SoundCloud.
 
 Visualized with [GitDiagram](https://gitdiagram.com/)
 ![](https://github.com/S4WA/SoundCloud-Player/blob/master/img/gitdiagram.png?raw=true)
+
+## Thanks to
+my friends who reviewed and gave me feedbacks for this project.

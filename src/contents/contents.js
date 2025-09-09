@@ -192,18 +192,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       let percentage = request.value;
       if (!percentage) break; // .value has to be 0-100% of the progress bar.
 
-      // calculate distance.
-      let el = document.querySelector('.playbackTimeline__progressWrapper');
-      let rect = el.getBoundingClientRect();
-
-      let duration = parseFloat(el.getAttribute('aria-valuemax'));
-      let targetTime = (percentage/100)*duration;
-      let offset = (targetTime / duration) * rect.width;
-      let x = rect.left + offset;
-
-      // dispatch event
-      el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: x, clientY: rect.top+5 }));
-      el.dispatchEvent(new MouseEvent('mouseup',   { bubbles: true, clientX: x, clientY: rect.top+5 }));
+      setTime(percentage);
 
       // update value & respond
       json['progress'] = getProgress();

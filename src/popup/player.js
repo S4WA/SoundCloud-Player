@@ -4,6 +4,12 @@ async function update(val) {
   // if value is null or isn't json, return. 
   if (val == null || typeof val !== 'object') return;
 
+  // update json and save it to sessionStorage(???).
+  for (const key in val) {
+    json[key] = val[key];
+  }
+  sessionStorage.setItem('data', JSON.stringify(json));
+
   // check if the page is settings.html or popup.html
   if (loc("settings.html")) {
     let compact_enabled = localStorage.getItem('compact_in_settings') != null && localStorage.getItem('compact_in_settings') == 'true';
@@ -31,22 +37,21 @@ async function update(val) {
           el.attr('href', val['link']);
         });
         startMarquees();
+        setShareLink(val);
       }
     },
     { 
       key: "time", selector: "#current", handler: (time) => {
-        if (document.querySelector("#current").innerText != time['current']) {
-          document.querySelector("#current").innerText = time['current'];
-          const barEditing = document.querySelector("#progressbar").progressbarEditing;
-          // Only update the current time when:
-          //  - 1. when the location.href = 'popup.html'
-          //  - 2. progressbar is not being hovered.
-          if (!loc("popup.html") || barEditing) return;
+        const endTime = document.querySelector("#end"), currentTime = document.querySelector("#current");
+        const oldTime = json["time"] ?? time;
 
-          document.querySelector("#share_current_time").value = time['current'];
-        }
-        if (document.querySelector("#end").innerText != time['end']) {
-          document.querySelector("#end").innerText = time['end'];
+        if (!endTime || !currentTime) return;
+
+        endTime.innerText = time['end'];
+        currentTime.innerText = time['current'];
+
+        if (loc("popup.html")) {
+          setShareLink(val);
         }
       }
     },
@@ -87,12 +92,11 @@ async function update(val) {
     },
     {
       key: "progress", selector: "#progressbar-bar", handler: (percentage) => { // why didn't i include this to json['time']????????????
-        const el = document.querySelector("#progressbar-bar"), barEditing = document.querySelector("#progressbar").progressbarEditing;
-        // Ignore and don't change progress bar in either of the conditions:
-        //  - 1. if progress-bar doesn't exist, meaning if the theme is not modern nor the current page is in popup.html, then ignore.
-        //  - 2. if progressbar is being edited, meaning if user hovers the mouse and other functions are trying to edit width of the bar, then ignore.
-        if (!el || barEditing) return;
+        const el = document.querySelector("#progressbar-bar");
+        // Ignore and don't change progress bar if progress-bar doesn't exist, meaning if the theme is not modern nor the current page is in popup.html, then ignore.
+        if (!el) return;
         el.style["width"] = percentage;
+        setShareLink(val);
       }
     }
   ];
@@ -103,10 +107,6 @@ async function update(val) {
       handler ? handler(val[key]) : element.attr(attr, val[key]);
     }
   });
-
-  if (loc("popup.html")) {
-    setShareLink(val);
-  }
 }
 
 // this is the function inside. Universal as in settings.htmll & popup.html
@@ -168,6 +168,25 @@ async function registerUniversalEvents() {
       };
     });
   }
+}
+
+// Share link (only with player.js-popup.js)
+function setShareLink(val) {
+  if (!loc("popup.html")) return;
+
+  let data = {
+    'time': val['time'] ?? json['time'],
+    'link': val['link'] ?? json['link'],
+  };
+  let copyLink = share_with_time ? `${data['link']}#t=${data['time']['current']}` : data['link'];
+  const copyEl = document.querySelector("#copy"); // wasn't there another element that uses same id?
+  copyEl.value = copyLink;
+  document.querySelector("#share_current_time").value = data['time']['current'];
+
+  let selectable = share_with_time
+                && copyEl.selectionStart != null
+                && document.activeElement == copyEl;
+  if (selectable) copyEl.select();
 }
 
 function setTheme() {
@@ -252,39 +271,37 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
     percent = Math.max(0, Math.min(100, percent));
 
     bar.style['width'] = `${percent}%`;
+    // I had to put this here instead of  because when it live previews during the mouse drag and when mouse ups it only sends the older number 
+    // (e.g. even if you drag from 80% to 1%, then it sends 7% or something)
+    // This is the best i can do here. 
+    // Finger crossing that SoundCloud won't see this and think that it's a robot doing it. 
+    // If such happens, then I need to put a delay to send queue/find an alternative way.
+    queue('settime', percent);
     return percent;
   }
 
   // CLICK EVENT HANDLER FOR #PROGRESSBAR
   wholebody.addEventListener("click", (e) => {
-    const percent = editProgressBar(e);
-    queue('settime', percent);
+    editProgressBar(e);
   });
 
-  // HANDLERS FOR LIVE HOVER PREVIEW IN #PROGRESSBAR
-  const hoveredInHandler = function(e) {
-    bg.progressbarEditing = true;
-    const percentage = editProgressBar(e);
-    let result = toSeconds(json['time']['end']);
-    result = Math.floor(result * (percentage/100) );
-    result = toTimeString(result);
-
-    const currentTime = document.querySelector("#current");
-    currentTime.lastTime = currentTime.innerText;
-
-    currentTime.innerText = result;
-  }
-  const hoverOutHandler = function() {
-    bg.progressbarEditing = false;
-    
-    const currentTime = document.querySelector("#current");
-    currentTime.innerText = currentTime.lastTime;
-  }
-  wholebody.addEventListener("mouseenter", hoveredInHandler);
-  wholebody.addEventListener("mousemove", hoveredInHandler);
-  wholebody.addEventListener("mouseleave", hoverOutHandler);
+  // known issue: https://www.sam.today/blog/html5-dnd-globe-icon
+  let dragging = false;
+  bg.addEventListener("mousedown", (e) => {
+    dragging = true;
+    editProgressBar(e); // initial update
+  });
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    editProgressBar(e);
+  });
+  document.addEventListener("mouseup", () => {
+    if (!dragging) return;
+    dragging = false;
+  });
 }
 
+let json = {};
 const defaultController = `<div id='controller' class='floating'>
       <div class='left'>
         <button id='prev' class='clickable' title='Prev'></button>

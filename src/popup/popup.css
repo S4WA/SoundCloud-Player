@@ -287,6 +287,8 @@ body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='tru
   padding-top: 0.5em;
 }
 
+/* PROGRESS BAR COMPONENTS */
+/* 1. progress bar wrapper */
 #progressbar {
   display: inline-block;
   padding-top: 5px;
@@ -294,19 +296,20 @@ body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='tru
   background: transparent;
 }
 
+/* 2. colored background for progress bar*/
 #progressbar-background {
   height: 5px;
   width: 234px;
 }
-
+/*    background for darkmode on/off */
 body[dark='false'] #progressbar-background {
   background-color: #000;
 }
-
 body[dark='true'] #progressbar-background {
   background-color: #fff;
 }
 
+/* 3. highlighted part of progress bar = portrays current time */
 #progressbar-bar {
   height: 5px;
   width: 50%;

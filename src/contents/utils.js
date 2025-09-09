@@ -105,9 +105,24 @@ function isFollowing() {
 }
 
 function getProgress() {
-  const el = document.querySelector(`[role="progressbar"] .playbackTimeline__progressBar`);
+  const el = document.querySelector(`[role="progressbar"] .playbackTimeline__progressHandle`);
   if (!el) return 0;
-  return el.style['width'];
+  return el.style['left'];
+}
+
+function setTime(percentage) {
+  // calculate distance.
+  let el = document.querySelector('.playbackTimeline__progressWrapper');
+  let rect = el.getBoundingClientRect();
+
+  let duration = parseFloat(el.getAttribute('aria-valuemax'));
+  let targetTime = (percentage/100)*duration;
+  let offset = (targetTime / duration) * rect.width;
+  let x = rect.left + offset;
+
+  // dispatch events
+  el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: x, clientY: rect.top+5 }));
+  el.dispatchEvent(new MouseEvent('mouseup',   { bubbles: true, clientX: x, clientY: rect.top+5 }));
 }
 
 function input(keyCode, name, shiftKey) {

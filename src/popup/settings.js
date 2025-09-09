@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     putAllLinks(),
     registerEvents(),
     registerUniversalEvents(),
-    initReceiver(),
+    queue('request-data'),
     checkMultipleWindow(),
     insertAnnouncement(),
   ]);
@@ -38,13 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-async function initReceiver() {
-  queue('request-data').then((val) => {
-    json = val;
-    sessionStorage.setItem('data', JSON.stringify(json));
-  });
-}
-
+// apply animations to every dropdown dom element
 async function initDropdown() {
   // Children
   const dropdowns = document.querySelectorAll('.dropdown');
@@ -181,7 +175,7 @@ function checkCustomColors() {
   });
 }
 
-function cheeckTheme() {
+function checkTheme() {
   if (localStorage.getItem('theme') == null) return;
   let themeName = localStorage.getItem('theme');
   document.querySelector(`#theme-select option[value='${themeName}']`).attr('selected', 'true');
@@ -193,7 +187,7 @@ async function initSettings() {
     document.querySelector("#trackdisplay").value = localStorage["trackdisplay"];
   }
 
-  cheeckTheme();
+  checkTheme();
   checkFonts();
   checkCustomColors();
   checkMarqueesDurations();
@@ -227,6 +221,8 @@ async function initInputs() {
     updateFontSize(this.value + 'px');
   });
 
+  // apply elements with values from localStorage
+  // [ "#element's ID", "localStorage key" ]
   const list = [
     [ '#duration' , 'duration' ],
     [ '#pause', 'pause' ],
@@ -249,7 +245,7 @@ async function initInputs() {
     [ '#always-show-slider', 'always-show-slider' ]
   ];
 
-  // any number input element OR textarea element OR select element
+  // EVENT HANDLER with any change occur in <input> OR <textarea> OR <select> elements will automatically save values to localStorage.
   for (let i = 0; i < list.length; i++) {
     const element = document.querySelector(list[i][0]);
     if (element) {
@@ -259,7 +255,6 @@ async function initInputs() {
       });
     }
   }
-
   for (let i = 0; i < checkboxes.length; i++) {
     const element = document.querySelector(checkboxes[i][0]);
     if (element) {
@@ -453,4 +448,4 @@ function insertAnnouncement() {
   }
 }
 
-var json = {}, or = false, dark = false, checkTimer = null;
+var or = false, dark = false, checkTimer = null;
