@@ -4,23 +4,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector("#controller-body").style["display"] = "none";
   }
 
-  Promise.all([
-    initDropdown(),
-    initSettings(),
-    initTemplates(),
-    initInputs(),
-    putAllLinks(),
-    registerEvents(),
-    registerUniversalEvents(),
-    queue('request-data'),
-    checkMultipleWindow(),
-    insertAnnouncement(),
-  ]);
+  queue('request-data').then(() => {
+    initDropdown();
+    initSettings();
+    initTemplates();
+    initInputs();
+    putAllLinks();
+    registerEvents();
+    registerUniversalEvents();
+    checkMultipleWindow();
+    insertAnnouncement();
+  })
 
   if (isPopout()) {
     document.querySelector('#captureme').attr('href', 'embed.html?p=1');
     document.querySelector('#captureme').innerText = "Capture Me";
     document.querySelector('#captureguide').innerText = "(Guide)";
+    // No Duplicates
+    document.querySelector('#back').attr('href', 'popup.html?p=1');
   }
 
   document.querySelector('#video .dd-parent').addEventListener('click', function() {
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // apply animations to every dropdown dom element
-async function initDropdown() {
+function initDropdown() {
   // Children
   const dropdowns = document.querySelectorAll('.dropdown');
   dropdowns.forEach((dropdown) => {
@@ -181,7 +182,7 @@ function checkTheme() {
   document.querySelector(`#theme-select option[value='${themeName}']`).attr('selected', 'true');
 }
 
-async function initSettings() {
+function initSettings() {
   // - Track Display
   if (localStorage.getItem('trackdisplay') != null) {
     document.querySelector("#trackdisplay").value = localStorage["trackdisplay"];
@@ -195,14 +196,9 @@ async function initSettings() {
   if (localStorage.getItem('startpage') != null) {
     document.querySelector('#startpage').value = localStorage.getItem('startpage');
   }
-
-  // No Duplicates
-  if (isPopout()) {
-    document.querySelector('#back').attr('href', 'popup.html?p=1');
-  }
 }
 
-async function initTemplates() {
+function initTemplates() {
   // Share Templates
   // - init
   const keys = ['twitter', 'copy', 'threads', 'bsky'];
@@ -213,7 +209,7 @@ async function initTemplates() {
   }
 }
 
-async function initInputs() {
+function initInputs() {
   document.querySelector('#fontlist').addEventListener('input', function() {
     updateFont(this.value);
   });
@@ -240,36 +236,38 @@ async function initInputs() {
     [ '#duplication', 'duplication' ],
     [ '#dropdown-animation', 'dropdown-animation' ],
     [ '#popout-dupe', 'popout-dupe' ],
-    [ '#apply_marquee_to_default', 'apply_marquee_to_default' ],
+    [ '#apply_marquee_to_legacy', 'apply_marquee_to_legacy' ],
     [ '#remember-window-size', 'remember-window-size' ],
     [ '#always-show-slider', 'always-show-slider' ]
   ];
 
   // EVENT HANDLER with any change occur in <input> OR <textarea> OR <select> elements will automatically save values to localStorage.
   for (let i = 0; i < list.length; i++) {
-    const element = document.querySelector(list[i][0]);
+    const elementID = list[i][0], settingsKey = list[i][1];
+    const element = document.querySelector(elementID);
     if (element) {
       element.addEventListener('input', function() {
-        localStorage.setItem(list[i][1], this.value);
-        settings[list[i][1]] = this.value;
+        localStorage.setItem(settingsKey, this.value);
+        settings[settingsKey] = this.value;
       });
     }
   }
   for (let i = 0; i < checkboxes.length; i++) {
-    const element = document.querySelector(checkboxes[i][0]);
+    const elementID = checkboxes[i][0], settingsKey = checkboxes[i][1];
+    const element = document.querySelector(elementID);
     if (element) {
       element.addEventListener('change', function(event) {
-        localStorage.setItem(checkboxes[i][1], this.checked);
-        settings[checkboxes[i][1]] = this.checked;
+        localStorage.setItem(settingsKey, this.checked);
+        settings[settingsKey] = this.checked;
       });
-      if (localStorage.getItem(checkboxes[i][1]) != null && localStorage.getItem(checkboxes[i][1]) == 'true') {
+      if (localStorage.getItem(settingsKey) != null && localStorage.getItem(settingsKey) == 'true') {
         element.checked = true;
       }
     }
   }
 }
 
-async function putAllLinks() {
+function putAllLinks() {
   const linkList = [
     [ '#github', 'https://github.com/S4WA/SoundCloud-Player' ],
     [ '#hp', 'https://akiba.cloud/soundcloud-player/' ],
@@ -296,7 +294,7 @@ function goBackToMain() {
 }
 
 // 
-async function registerEvents() {
+function registerEvents() {
   const arr = [
     {
       selector: "#toggle-compact",

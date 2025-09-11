@@ -62,13 +62,13 @@
               <td><input type='checkbox' name='display-artwork' id='display-artwork'></td>
             </tr>
             <tr>
-              <th>Theme <span style='color:red;'>(NEW!)</span></th>
+              <th>Theme</th>
               <td>
                 <select id='theme-select'>
                   <option value='default'>Default</option>
                   <option value='compact'>Compact</option>
-                  <option value='modern'>Modern (New!)</option>
-                  <option value='classic'>Classic (New!)</option>
+                  <option value='legacy'>Legacy</option>
+                  <!-- <option value='classic'>Classic (New!)</option> -->
                 </select>
               </td>
             </tr>
@@ -118,13 +118,13 @@
               <th>Theme Color<br>(Default: #FF5500)</th>
               <td><input id='themecolor' type='color'><input id='current-theme'></td>
             </tr>
-            <tr>
+            <!-- <tr>
               <th>Dark Mode Theme Color
                 <br>(Default: #FF5500)
                 <br>Enable: <input type="checkbox" id="enable-dark-themecolor">
               </th>
               <td><input id='dark-themecolor' type='color'><input id='current-dark-theme'></td>
-            </tr>
+            </tr> -->
             <tr>
               <th>Background Color in Dark Mode<br>(Default: #262626)</th>
               <td><input id='bgcolor' type='color'><input id='current-bgcolor'></td>
@@ -139,8 +139,8 @@
         <div class='dd-child'>
           <table class='options-table' id='tsOptions'>
             <tr>
-              <th>Enable Text Scrolling on default theme.</th>
-              <td><input id='apply_marquee_to_default' type='checkbox'></td>
+              <th>Enable Text Scrolling on legacy theme.</th>
+              <td><input id='apply_marquee_to_legacy' type='checkbox'></td>
             </tr>
             <tr>
               <th>Theme</th>
@@ -215,8 +215,10 @@
         <textarea id='copy'></textarea>
       </div>
 
+      <br>
+
       <span>
-          Formats
+          Placeholders
           <table id='formats'>
             <tr>
               <th>Title</th>
@@ -232,7 +234,7 @@
             </tr>
           </table>
           <br>
-          <i>templates are texts that applies to the share links. </i>
+          <i>You can modify what is shared before posting here.</i>
       </span>
       <hr>
     </div>

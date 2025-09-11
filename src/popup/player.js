@@ -193,15 +193,15 @@ function setTheme() {
   return new Promise((resolve, reject) => {
     switch (getThemeName()) {
       case 'default': {
-        setDefaultTheme();
+        setModernTheme();
         break;
       }
       case 'compact': {
         setCompactTheme();
         break;
       }
-      case 'modern': {
-        setModernTheme();
+      case 'legacy': {
+        setLegacyTheme();
         break;
       }
     }
@@ -209,10 +209,10 @@ function setTheme() {
   });
 }
 
-function setDefaultTheme() {
+function setLegacyTheme() {
   const ctrlBody = document.querySelector("#controller-body");
-  ctrlBody.innerHTML = defaultController;
-  ctrlBody.attr("mode", "default");
+  ctrlBody.innerHTML = legacyController;
+  ctrlBody.attr("mode", "legacy");
 }
 
 function setCompactTheme() {
@@ -228,38 +228,39 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
   ctrlBody.innerHTML = modernController;
   ctrlBody.attr("mode", "modern");
 
-  // CHANGE STYLES
-  document.body.style['padding'] = 0;
-  document.body.style['margin'] = 0;
+  // JSON rules
+  const styleRules = [
+    { selector: "body", styles: { padding: "0", margin: "0", paddingBottom: "6.5px" } }, // - removing body margins/paddings to display artwork with no gaps on each side & padding-bottom to body to balance the whole page, as clutter removal operates
+    { selector: ".container", styles: { marginLeft: "8px", marginRight: "8px" } }, // Changing styles via JS because these elements are outside #controller-body's scope.
+    { selector: "#time", styles: { marginLeft: "8px", marginRight: "8px" } },
+    { selector: "hr", styles: { marginLeft: "8px", marginRight: "8px" } },
+    { selector: "#second", styles: { marginLeft: "8px", marginRight: "8px" } },
+    { selector: "#share", styles: { marginLeft: "8px", marginRight: "8px" } },
+    { selector: "body > div:nth-child(4)", styles: { marginLeft: "8px", marginRight: "8px" } },
+    { selector: "#volume-slider", styles: { width: "160px" } },
+    { selector: "#volume-icon", styles: { width: "18px", height: "18px" } },
+    { selector: "#share_icon", styles: { width: "16.5px", height: "16.5px" } }
+  ];
 
-  const selectors = ['.container', '#time', 'hr','#second', '#share', 'body > div:nth-child(4)' ];
+  // Apply styles
+  for (let rule of styleRules) {
+    const elements = document.querySelectorAll(rule.selector);
+    for (let el of elements) {
+      for (let [prop, value] of Object.entries(rule.styles)) {
+        el.style[prop] = value;
+      }
+    }
+  }
 
-  selectors.forEach(sel => {;
-    document.querySelector(sel).style['marginLeft'] = '8px';
-    document.querySelector(sel).style['marginRight'] = '8px';
-  });
-
-  // Changing styles via JS because these elements are outside #controller-body's scope.
-  // - vol-slider
-  document.querySelector("#volume-slider").style['width'] = '160px';
-  // - vol-icon
-  document.querySelector("#volume-icon").style["width"] = "18px";
-  document.querySelector("#volume-icon").style["height"] = "18px";
-  // - share-icon
-  document.querySelector("#share_icon").style["width"] = "16.5px";
-  document.querySelector("#share_icon").style["height"] = "16.5px";
-  // - removing clutters
+  // Remove clutter
   document.querySelectorAll('#controller-body > hr, #second > hr, #share > hr').forEach(el => el.remove());
-  removeNodes();
-  // - add padding-bottom to body to balance the whole page, as clutter removal occurs
-  document.body.style["paddingBottom"] = "6.5px";
+  removeTextNodes();
 
   // PROGRESS BAR
   // - wholebody (invisible): it exists to make the hitbox of progressbar bigger than it looks
   // - bg (visible): shows background (darkmode off: dark color / on: reverse the color)
   // - bar (visible): shows current progress with theme-color
   const wholebody = document.querySelector("#progressbar"), bg = document.querySelector('#progressbar'), bar = document.querySelector("#progressbar-bar");
-
   // returns the percentage of the horizontal axis of the progress bar the user hovered/clicked & function per se also edits with the percentage given.
   const editProgressBar = function(e) { // event = click / mousemove
     const rect = bg.getBoundingClientRect();
@@ -276,6 +277,9 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
     // This is the best i can do here. 
     // Finger crossing that SoundCloud won't see this and think that it's a robot doing it. 
     // If such happens, then I need to put a delay to send queue/find an alternative way.
+
+    // known issue:
+    // if a track is long enough (about an hour) and user tries to slide it to 1%, then it gets flickery and won't get to the "destination". so frustrating that i can't fix it.
     queue('settime', percent);
     return percent;
   }
@@ -302,7 +306,7 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
 }
 
 let json = {};
-const defaultController = `<div id='controller' class='floating'>
+const legacyController = `<div id='controller' class='floating'>
       <div class='left'>
         <button id='prev' class='clickable' title='Prev'></button>
         <button id='toggle' class='clickable' title='Play/Pause' playing=''></button>

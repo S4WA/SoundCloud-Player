@@ -364,9 +364,10 @@ function initKeyboardBinds() {
 }
 
 // startMarquees() will only be called when title has changed. (= track change/new track)
-let marqueeInterval, marqueeAnimation;
+// very error prone. poor coding. easy to break and is hard to maintain.
 function startMarquees() {
-  if ( loc('popup.html') && getThemeName() == 'default' && !settings['apply_marquee_to_default'] ) return;
+  if ( loc('popup.html') && getThemeName() == 'legacy' && !settings['apply_marquee_to_legacy'] ) return;
+  let marqueeInterval, marqueeAnimation;
 
   // THE CONTAINER AND ITS CONTENTS
   // .container  = never moves
@@ -383,21 +384,21 @@ function startMarquees() {
   }
 
   // values
-  const isDefault = !settings['back-and-forth'];
+  const isDefaultMarquee = !settings['back-and-forth'];
   const dupeEnabled = settings['duplication'];
   // numbers, parseInt just in case
-  let duration = parseInt(settings['duration'] ?? 5000); // pixels per ms?
-  const pauseTime = parseInt(settings["pause"] ?? 5000); // pause time in every animation
-  const totalTime = parseInt(duration + pauseTime);
+  let duration = settings['duration'] ?? 5000; // pixels per ms?
+  const pauseTime = settings["pause"] ?? 5000; // pause time in every animation
+  const totalTime = duration + pauseTime;
 
   // modify elements
   container.attr("enabled", "true"); // shouldn't it be contents?
-  container.attr("mode", isDefault ? "marquee" : "back-and-forth");
+  container.attr("mode", isDefaultMarquee ? "marquee" : "back-and-forth");
   contents.style["display"] = "inline-block"; // ?
 
   container.style.setProperty("--duration", `${duration}ms`);
   container.style.setProperty("--pause-time", `${pauseTime}ms`);
-  container.style.setProperty('--container-width', `calc(${container.offsetWidth}px)`);
+  container.style.setProperty("--container-width", `calc(${container.offsetWidth}px)`);
 
   // sizes
   let containerWidth = container.getBoundingClientRect().width;
@@ -405,7 +406,7 @@ function startMarquees() {
   const fontSize = parseFloat(getComputedStyle(firstChild).fontSize);
 
   // applying values & modify elements (gibberish)
-  if (isDefault) {
+  if (isDefaultMarquee) {
     container.style.setProperty("--duration", `${duration/2}ms`); // overwrite
     if (dupeEnabled) {
       container.attr("hasDupe", "true");
@@ -433,7 +434,7 @@ function startMarquees() {
   }
 
   // animation loop part (gibberish...?)
-  if ((isDefault && dupeEnabled) || (!isDefault)) { // if other than default marquee (= marquee w/ dupe OR breathing)
+  if ((isDefaultMarquee && dupeEnabled) || (!isDefaultMarquee)) { // if other than default marquee (= marquee w/ dupe OR breathing)
     marqueeAnimation = function() {
       container.attr('animate', ''); // the reason for this if-statement's condition is because those two just need to hold attribute "animate" without value, therefore I thought such implementation is the best practice for this. Although I don't know putting IFs within function and onanimationend is better or not. In terms of readability, i thought this is better.
     }

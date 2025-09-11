@@ -36,12 +36,12 @@ async function checkElements() {
   if (settings['simple-label']) {
     document.querySelector("#store").innerText = "SC PLYR";
     // $('#share_btn,#settings,#thelink > div.right > div:nth-child(1) > span').contents().each(function() { if (this.nodeType === Node.TEXT_NODE) this.remove(); });
-    removeNodes();
+    removeTextNodes();
   }
 }
 
 // remove text nodes
-function removeNodes() {
+function removeTextNodes() {
   const elements = document.querySelectorAll('#share_btn, #settings, .thelink > .right > div:nth-child(1) > span');
   elements.forEach(element => {
     Array.from(element.childNodes).forEach(node => {
