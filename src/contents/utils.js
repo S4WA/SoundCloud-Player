@@ -105,18 +105,21 @@ function isFollowing() {
 }
 
 function getProgress() {
-  const el = document.querySelector(`[role="progressbar"] .playbackTimeline__progressHandle`);
-  if (!el) return 0;
-  return el.style['left'];
+  const bar = document.querySelector(`.playbackTimeline__progressBar`);
+  const bg  = document.querySelector(`.playbackTimeline__progressBackground`);
+  if (!bar || !bg) return 0;
+
+  const percent = parseFloat(getComputedStyle(document.querySelector(`.playbackTimeline__progressBar`))["width"]) / parseFloat(getComputedStyle(document.querySelector(`.playbackTimeline__progressBackground`))["width"]) * 100;
+  return percent;
 }
 
-function setTime(percentage) {
+function setTime(percent) {
   // calculate distance.
   let el = document.querySelector('.playbackTimeline__progressWrapper');
   let rect = el.getBoundingClientRect();
 
   let duration = parseFloat(el.getAttribute('aria-valuemax'));
-  let targetTime = (percentage/100)*duration;
+  let targetTime = (percent/100)*duration;
   let offset = (targetTime / duration) * rect.width;
   let x = rect.left + offset;
 

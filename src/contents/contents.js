@@ -197,10 +197,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       break;
     }
     case 'settime': {
-      let percentage = request.value;
-      if (!percentage) break; // .value has to be 0-100% of the progress bar.
-
-      setTime(percentage);
+      let percent = request.value;
+      if (!percent) break; // .value has to be 0-100% of the progress bar.
+      setTime(percent);
 
       // update value & respond
       json['progress'] = getProgress();

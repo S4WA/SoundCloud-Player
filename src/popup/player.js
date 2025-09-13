@@ -91,12 +91,12 @@ async function update(val) {
       }
     },
     {
-      key: "progress", selector: "#progressbar-bar", handler: (percentage) => { // why didn't i include this to json['time']????????????
+      key: "progress", selector: "#progressbar-bar", handler: (percent) => { // why didn't i include this to json['time']????????????
         const el = document.querySelector("#progressbar-bar");
         // Ignore and don't change progress bar if progress-bar doesn't exist, meaning if the theme is not modern nor the current page is in popup.html, then ignore.
         if (!el) return;
-        el.style["width"] = percentage;
-        setShareLink(val);
+        el.style["width"] = `${percent}%`;
+        setShareLink(val); // update specific time in the track to share as well.
       }
     }
   ];
@@ -168,6 +168,158 @@ async function registerUniversalEvents() {
       };
     });
   }
+}
+
+function initKeyboardBinds() {
+  // THE HANDLER FOR VOLUME CHANGES; SHIFT + UP/DOWN
+  let sliderTimeout, lastVol;
+  const showSlider = function(val) {
+    const newVol = val['response']['volume'];
+    if (newVol) {
+      if (!lastVol) lastVol = newVol;
+      if (lastVol === newVol) return;
+      lastVol = newVol;
+    }
+
+    const slider = document.querySelector("#volume-slider");
+    if (!slider) return; // ignore if there's no slider === current page is not popup.html || current theme is not 'modern'
+    if (settings['always-show-slider']) return;
+
+    slider.classList.add("anim"); // animate slider to show up
+
+    // clear old timeout
+    if (sliderTimeout) clearTimeout(sliderTimeout);
+
+    // set new timeout
+    sliderTimeout = setTimeout(() => {
+      slider.classList.remove("anim");
+      sliderTimeout = null;
+    }, 500);
+  };
+
+  // THE CORE OF initKeyboardBinds();
+  const list = {
+    /*
+      keycode: { 
+        shiftPressed: "command name",
+        handler: handler(),
+        target: "only run commands and handlers when targeted element are selected."
+      }
+    */
+    32: { // SPACE
+      'false': {
+        command: 'toggle',
+      }
+    },
+    38: { // UP ARROW
+      'true': {
+        command: 'up', // + SHIFT
+        handler: showSlider
+      },
+      'false': {
+        command: 'up',
+        handler: showSlider,
+        targetID: 'volume-slider' // queue in only when #volume-slider is focused.
+      }
+    },
+    40: { // DOWN ARROW
+      'true': {
+        command: 'down', // + SHIFT
+        handler: showSlider
+      },
+      'false': {
+        command: 'down',
+        handler: showSlider,
+        targetID: 'volume-slider' // queue in only when #volume-slider is focused.
+      }
+    },
+    77: { // M
+      'false': {
+        command: 'mute'
+      }
+    },
+    76: { // L
+      'true': {
+        command: 'repeat' // + SHIFT
+      },
+      'false': {
+        command: 'fav'
+      }
+    },
+    83: { // S
+      'true': {
+        command: 'shuffle'
+      }
+    },
+    37: { // LEFT ARROW
+      'true': {
+        command: 'prev' // + SHIFT
+      },
+      'false': {
+        command: 'seekb'
+      }
+    },
+    39: { // RIGHT ARROW
+      'true': {
+        command: 'next' // + SHIFT
+      },
+      'false': {
+        command: 'seekf'
+      }
+    },
+    81: { // Q
+      'false': {
+        handler: openSCTab
+      }
+    }
+  };
+
+  document.body.addEventListener('keydown', function(e) {
+    // if SC-Player is ready to interact with its main content tab.
+    if (keyReady == false) return;
+    // ignore any pressed key when it's in settings.html && compact player's not enabled there
+    if (loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings'])) return;
+
+    const keycode     = e.keyCode;
+    const shiftkey    = e.shiftKey ? 'true' : 'false';
+    const keymap      = list[keycode];
+    const keybind     = keymap?.[shiftkey] ?? null;
+    const cmd         = keybind?.command   ?? null;
+    const handler     = keybind?.handler   ?? null;
+    const targetID    = keybind?.targetID  ?? null;
+
+    // no keymap return.
+    if (!keymap) return;
+    // ignore unexisting keybinds
+    if (!keybind) return;
+
+    // replace your current focus/target check with this
+    const active = document.activeElement;
+    const activeTag = active?.tagName?.toLowerCase() ?? "";
+    const formElementIsFocused = ["input", "select", "option", "textarea"].includes(activeTag) || active?.isContentEditable;
+
+    // If this keybind requires a specific element, only run when that element is focused.
+    // Otherwise (no targetID) ignore the key when any form control is focused.
+    if (targetID) {
+      if (active?.id !== targetID) return;
+    } else {
+      if (formElementIsFocused) return;
+    }
+
+    // send commands to content.js
+    if (cmd) {
+      queue(cmd).then((val) => {
+        // then, if there's a handler, then run it.
+        if (handler) {
+          handler(val);
+        }
+      }); 
+    } else {
+      // no command registered but if there's a handler, then run it.
+      handler();
+    }
+    e.preventDefault(); // block default browser actions, like page scrolling, when the spacebar is pressed
+  });
 }
 
 // Share link (only with player.js-popup.js)
@@ -258,10 +410,10 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
 
   // PROGRESS BAR
   // - wholebody (invisible): it exists to make the hitbox of progressbar bigger than it looks
-  // - bg (visible): shows background (darkmode off: dark color / on: reverse the color)
+  // - bg (visible): shows background (darkmode off: dark color / on: reverse the color) (although this variable is unnecessary.)
   // - bar (visible): shows current progress with theme-color
-  const wholebody = document.querySelector("#progressbar"), bg = document.querySelector('#progressbar'), bar = document.querySelector("#progressbar-bar");
-  // returns the percentage of the horizontal axis of the progress bar the user hovered/clicked & function per se also edits with the percentage given.
+  const wholebody = document.querySelector("#progressbar"), bg = document.querySelector('#progressbar-background'), bar = document.querySelector("#progressbar-bar");
+  // returns the percent of the horizontal axis of the progress bar the user hovered/clicked & function per se also edits with the percent given.
   const editProgressBar = function(e) { // event = click / mousemove
     const rect = bg.getBoundingClientRect();
     const clickX = e.clientX - rect.left; // position relative to progress bar
@@ -289,9 +441,9 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
     editProgressBar(e);
   });
 
-  // known issue: https://www.sam.today/blog/html5-dnd-globe-icon
+  // a known issue on macos only.: https://www.sam.today/blog/html5-dnd-globe-icon
   let dragging = false;
-  bg.addEventListener("mousedown", (e) => {
+  wholebody.addEventListener("mousedown", (e) => {
     dragging = true;
     editProgressBar(e); // initial update
   });

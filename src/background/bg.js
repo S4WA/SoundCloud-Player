@@ -17,6 +17,7 @@ const names = [
   'seekf' 
 ];
 
+// listening global shortcuts.
 chrome.commands.onCommand.addListener(async (command) => {
   command = command.toLowerCase();
   if (!names.includes(command)) return;

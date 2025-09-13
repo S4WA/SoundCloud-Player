@@ -291,7 +291,7 @@ body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='tru
 /* 1. progress bar wrapper */
 #progressbar {
   display: inline-block;
-  padding-top: 5px;
+  padding-top: 5px; /* increase hitbox. */
   padding-bottom: 10px;
   background: transparent;
 }

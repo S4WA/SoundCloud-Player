@@ -4,17 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector("#controller-body").style["display"] = "none";
   }
 
-  queue('request-data').then(() => {
-    initDropdown();
-    initSettings();
-    initTemplates();
-    initInputs();
-    putAllLinks();
-    registerEvents();
-    registerUniversalEvents();
-    checkMultipleWindow();
-    insertAnnouncement();
-  })
+  initDropdown();
+  initSettings();
+  initTemplates();
+  initInputs();
+  putAllLinks();
+  registerEvents();
+  registerUniversalEvents();
+  checkMultipleWindow();
+  insertAnnouncement();
+  queue('request-data');
 
   if (isPopout()) {
     document.querySelector('#captureme').attr('href', 'embed.html?p=1');
@@ -352,7 +351,7 @@ function registerEvents() {
         if (count === 3) {
           const sureDiv = document.getElementById('sure');
           const div = document.createElement('div');
-          div.innerHTML = '<br>ARE YOU SURE YOU WANT TO RESET EVERYTHING ? [<span id="yes" class="clickable">YES</span>] [<span id="no" class="clickable">NO</span>]';
+          div.innerHTML = `<br>ARE YOU SURE YOU WANT TO RESET EVERYTHING? There's no going back. [<span id="yes" class="clickable">YES</span>] [<span id="no" class="clickable">NO</span>]`;
           sureDiv.appendChild(div);
 
           const yesNoSpans = document.querySelectorAll('#yes, #no');
