@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+  (function() {
+    const prefix = "[SoundCloud Player]";
+    for (const m of ["log", "warn", "error", "info", "debug"]) {
+      const orig = console[m];
+      console[m] = orig.bind(console, prefix);
+    }
+  })();
+
   document.title = 'SoundCloud Player';
   new Promise((resolve, reject) => {
     for (const key in settings) {
@@ -32,11 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 var debug = false, 
-    prefix = '[SoundCloud Player]',
     settings = {
       'trackdisplay': '%title% by %artist%',
       'themecolor': '#FF5500',
-      'bgcolor': '#171717',
+      'bgcolor': '#121212',
       'twitter': '%title% by %artist% %url%',
       'threads': '%title% by %artist% %url%',
       'bsky': '%title% by %artist% %url%',

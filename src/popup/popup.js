@@ -33,7 +33,7 @@ async function checkElements() {
   toggleElements(arg);
 
   // if simple-label is enabled, all of .innerText will be emptied.
-  if (settings['simple-label']) {
+  if (settings['simple-label'] && getThemeName() != 'default') {
     document.querySelector("#store").innerText = "SC PLYR";
     // $('#share_btn,#settings,#thelink > div.right > div:nth-child(1) > span').contents().each(function() { if (this.nodeType === Node.TEXT_NODE) this.remove(); });
     removeTextNodes();
@@ -265,14 +265,11 @@ async function registerEvents() {
         const range = e.target, newNum = Number(range.value);
         sliderEditing = true;
 
-        if (debug) console.log(`val: ${newNum} | oldNum: ${range.oldNum}`)
         range.gap = newNum - range.oldNum;
         range.oldNum = newNum;
-        if (debug) console.log(`gap: ${range.gap}`)
 
         const isPositive = range.gap > 0;
         let count = Math.floor( Math.abs(range.gap)/10 );
-        if (debug) console.log(count);
 
         while (count >= 0) {
           if (count > 0) {

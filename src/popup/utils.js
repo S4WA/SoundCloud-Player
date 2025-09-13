@@ -267,11 +267,11 @@ function initKeyboardBinds() {
   // THE CORE OF initKeyboardBinds();
   const list = {
     /*
-      keycode: { withShiftKey: "command name" }
-
-      What's withShiftKey?:
-        It enables the user to do max 2 diff things with the same keycode.
-        e.g.) using the key "L" alone (without pressing shift key), would act as liking/unliking the current track. Whereas "L" + shift will cycle the repeat modes.
+      keycode: { 
+        shiftPressed: "command name",
+        handler: handler(),
+        target: "only run commands and handlers when targeted element are selected."
+      }
     */
     32: { // SPACE
       'false': {
@@ -280,14 +280,24 @@ function initKeyboardBinds() {
     },
     38: { // UP ARROW
       'true': {
-        command: 'up',
+        command: 'up', // + SHIFT
         handler: showSlider
+      },
+      'false': {
+        command: 'up',
+        handler: showSlider,
+        targetID: 'volume-slider' // queue in only when #volume-slider is focused.
       }
     },
     40: { // DOWN ARROW
       'true': {
-        command: 'down',
+        command: 'down', // + SHIFT
         handler: showSlider
+      },
+      'false': {
+        command: 'down',
+        handler: showSlider,
+        targetID: 'volume-slider' // queue in only when #volume-slider is focused.
       }
     },
     77: { // M
@@ -297,7 +307,7 @@ function initKeyboardBinds() {
     },
     76: { // L
       'true': {
-        command: 'repeat'
+        command: 'repeat' // + SHIFT
       },
       'false': {
         command: 'fav'
@@ -310,7 +320,7 @@ function initKeyboardBinds() {
     },
     37: { // LEFT ARROW
       'true': {
-        command: 'prev'
+        command: 'prev' // + SHIFT
       },
       'false': {
         command: 'seekb'
@@ -318,48 +328,64 @@ function initKeyboardBinds() {
     },
     39: { // RIGHT ARROW
       'true': {
-        command: 'next'
+        command: 'next' // + SHIFT
       },
       'false': {
         command: 'seekf'
       }
     },
+    81: { // Q
+      'false': {
+        handler: openSCTab
+      }
+    }
   };
 
   document.body.addEventListener('keydown', function(e) {
     // if SC-Player is ready to interact with its main content tab.
     if (keyReady == false) return;
-    // if user's focused on elements such as those below while keydown event occurs
-    if ([ "input", "select", "option", "textarea" ].includes(e.target.tagName.toLowerCase())) return;
     // ignore any pressed key when it's in settings.html && compact player's not enabled there
     if (loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings'])) return;
 
-    const keycode = e.keyCode, shiftkey = e.shiftKey;
-    switch (keycode) {
-      case 81: { // Q Key
-        openSCTab();
-        break;
-      }
-      default: { // Other than Q key
-        if (!list[keycode]) return;
+    const keycode     = e.keyCode;
+    const shiftkey    = e.shiftKey ? 'true' : 'false';
+    const keymap      = list[keycode];
+    const keybind     = keymap?.[shiftkey] ?? null;
+    const cmd         = keybind?.command   ?? null;
+    const handler     = keybind?.handler   ?? null;
+    const targetID    = keybind?.targetID  ?? null;
 
-        // ignore unexisting keybinds
-        const keybind = list[keycode][shiftkey ? 'true' : 'false'];
-        if (!keybind) return;
-        const cmd = keybind["command"];
-        if (!cmd) return;
+    // no keymap return.
+    if (!keymap) return;
+    // ignore unexisting keybinds
+    if (!keybind) return;
 
-        // send commands to content.js
-        queue(cmd).then((val) => {
-          // then, if there's a handler, then run it.
-          const handler = keybind["handler"];
-          if (handler) {
-            handler(val);
-          }
-        });
-        e.preventDefault(); // block default browser actions, like page scrolling, when the spacebar is pressed
-      }
+    // replace your current focus/target check with this
+    const active = document.activeElement;
+    const activeTag = active?.tagName?.toLowerCase() ?? "";
+    const formElementIsFocused = ["input", "select", "option", "textarea"].includes(activeTag) || active?.isContentEditable;
+
+    // If this keybind requires a specific element, only run when that element is focused.
+    // Otherwise (no targetID) ignore the key when any form control is focused.
+    if (targetID) {
+      if (active?.id !== targetID) return;
+    } else {
+      if (formElementIsFocused) return;
     }
+
+    // send commands to content.js
+    if (cmd) {
+      queue(cmd).then((val) => {
+        // then, if there's a handler, then run it.
+        if (handler) {
+          handler(val);
+        }
+      }); 
+    } else {
+      // no command registered but if there's a handler, then run it.
+      handler();
+    }
+    e.preventDefault(); // block default browser actions, like page scrolling, when the spacebar is pressed
   });
 }
 

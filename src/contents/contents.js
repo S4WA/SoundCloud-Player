@@ -1,5 +1,13 @@
 window.onload = (async() => {
-  console.log(prefix, "Hi.");
+  (function() {
+    const prefix = "[SoundCloud Player]";
+    for (const m of ["log", "warn", "error", "info", "debug"]) {
+      const orig = console[m];
+      console[m] = orig.bind(console, prefix);
+    }
+  })();
+
+  console.log("Hi.");
 
   // Check if extension is reloaded
   setInterval(async() => {
@@ -10,7 +18,7 @@ window.onload = (async() => {
       if (reloading == false) {
         location.reload();
         reloading = true;
-        console.info(prefix, 'reloading...');
+        console.info('reloading...');
       }
     }
   }, 10000);
@@ -209,8 +217,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   // Return true to indicate that sendResponse will be called asynchronously ... cuz of update().
 });
 
-var prefix = '[SoundCloud Player] ', 
-  reloading = false,
+var reloading = false,
   json = {
     'playing': false,
     'artwork': null,

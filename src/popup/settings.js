@@ -178,7 +178,7 @@ function checkCustomColors() {
 
 function checkTheme() {
   if (localStorage.getItem('theme') == null) return;
-  let themeName = localStorage.getItem('theme');
+  const themeName = localStorage.getItem('theme');
   document.querySelector(`#theme-select option[value='${themeName}']`).attr('selected', 'true');
 }
 

@@ -228,7 +228,7 @@ function setModernTheme() { // the problem is that player.js is supposed to be s
   ctrlBody.innerHTML = modernController;
   ctrlBody.attr("mode", "modern");
 
-  // JSON rules
+  // JSON styling rules
   const styleRules = [
     { selector: "body", styles: { padding: "0", margin: "0", paddingBottom: "6.5px" } }, // - removing body margins/paddings to display artwork with no gaps on each side & padding-bottom to body to balance the whole page, as clutter removal operates
     { selector: ".container", styles: { marginLeft: "8px", marginRight: "8px" } }, // Changing styles via JS because these elements are outside #controller-body's scope.
