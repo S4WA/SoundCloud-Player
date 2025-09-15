@@ -109,7 +109,7 @@ async function update(val) {
   });
 }
 
-// this is the function inside. Universal as in settings.htmll & popup.html
+// Universal as in settings.htmll & popup.html
 async function registerUniversalEvents() {
   const obj = ['toggle', 'prev', 'next', 'fav', 'repeat', 'shuffle', 'follow', 'up', 'down'];
   for (let i = 0; i < obj.length; i++) {
@@ -197,128 +197,130 @@ function initKeyboardBinds() {
     }, 500);
   };
 
-  // THE CORE OF initKeyboardBinds();
-  const list = {
-    /*
-      keycode: { 
-        shiftPressed: "command name",
-        handler: handler(),
-        target: "only run commands and handlers when targeted element are selected."
-      }
-    */
-    32: { // SPACE
-      'false': {
-        command: 'toggle',
-      }
+  // {
+  //   command: "",
+  //   keys:    "",
+  //   handler: null,
+  //   target:  "",
+  // }
+
+  // - key is always there. others aren't.
+
+  // THE ESSENSE
+  const list = [
+    {
+      command: "toggle",
+      keys:    [ "Space" ]
     },
-    38: { // UP ARROW
-      'true': {
-        command: 'up', // + SHIFT
-        handler: showSlider
-      },
-      'false': {
-        command: 'up',
-        handler: showSlider,
-        targetID: 'volume-slider' // queue in only when #volume-slider is focused.
-      }
+    {
+      command: "up",
+      keys:    [ "Shift", "ArrowUp" ],
+      handler: showSlider // normal volume control shortcuts.
     },
-    40: { // DOWN ARROW
-      'true': {
-        command: 'down', // + SHIFT
-        handler: showSlider
-      },
-      'false': {
-        command: 'down',
-        handler: showSlider,
-        targetID: 'volume-slider' // queue in only when #volume-slider is focused.
-      }
+    {
+      command: "down",
+      keys:    [ "Shift", "ArrowDown" ],
+      handler: showSlider
     },
-    77: { // M
-      'false': {
-        command: 'mute'
-      }
+    {
+      command: "up",
+      keys:    [ "ArrowUp" ],
+      handler: showSlider,
+      target:  "#volume-slider", // also run handler for volume control only when this element is focused.
     },
-    76: { // L
-      'true': {
-        command: 'repeat' // + SHIFT
-      },
-      'false': {
-        command: 'fav'
-      }
+    {
+      command: "down",
+      keys:    [ "ArrowDown" ],
+      handler: showSlider,
+      target:  "#volume-slider",
     },
-    83: { // S
-      'true': {
-        command: 'shuffle'
-      }
+    {
+      command: "up",
+      keys:    [ "ArrowRight" ],
+      handler: showSlider,
+      target:  "#volume-slider", // honestly, $("#slider").on("change") would've been better than this though. why did i make it like this?
     },
-    37: { // LEFT ARROW
-      'true': {
-        command: 'prev' // + SHIFT
-      },
-      'false': {
-        command: 'seekb'
-      }
+    {
+      command: "down",
+      keys:    [ "ArrowLeft" ],
+      handler: showSlider,
+      target:  "#volume-slider",
     },
-    39: { // RIGHT ARROW
-      'true': {
-        command: 'next' // + SHIFT
-      },
-      'false': {
-        command: 'seekf'
-      }
+    {
+      command: "mute",
+      keys:    [ "KeyM" ],
     },
-    81: { // Q
-      'false': {
-        handler: openSCTab
-      }
+    {
+      command: "repeat",
+      keys:    [ "Shift", "KeyL" ],
+    },
+    {
+      command: "fav",
+      keys:    [ "KeyL" ],
+    },
+    {
+      command: "shuffle",
+      keys:    [ "Shift", "KeyS" ],
+    },
+    {
+      command: "prev",
+      keys:    [ "Shift", "ArrowLeft" ],
+    },
+    {
+      command: "next",
+      keys:    [ "Shift", "ArrowRight" ],
+    },
+    {
+      command: "seekf",
+      keys:    [ "ArrowRight" ],
+    },
+    {
+      command: "seekb",
+      keys:    [ "ArrowLeft" ],
+    },
+    {
+      keys:    [ "KeyQ" ],
+      handler: openSCTab,
     }
-  };
+  ];
 
-  document.body.addEventListener('keydown', function(e) {
-    // if SC-Player is ready to interact with its main content tab.
-    if (keyReady == false) return;
-    // ignore any pressed key when it's in settings.html && compact player's not enabled there
-    if (loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings'])) return;
+  const disabledInSettingsPage = loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings']);
 
-    const keycode     = e.keyCode;
-    const shiftkey    = e.shiftKey ? 'true' : 'false';
-    const keymap      = list[keycode];
-    const keybind     = keymap?.[shiftkey] ?? null;
-    const cmd         = keybind?.command   ?? null;
-    const handler     = keybind?.handler   ?? null;
-    const targetID    = keybind?.targetID  ?? null;
+  document.addEventListener('keydown', (event) => {
+    if (keyReady == false) return; // ignore events if popup is not ready to interact with content script yet.
+    if (disabledInSettingsPage) return; // ignore keydown events when compact player's not enabled in settings.html
 
-    // no keymap return.
-    if (!keymap) return;
-    // ignore unexisting keybinds
-    if (!keybind) return;
-
-    // replace your current focus/target check with this
     const active = document.activeElement;
     const activeTag = active?.tagName?.toLowerCase() ?? "";
     const formElementIsFocused = ["input", "select", "option", "textarea"].includes(activeTag) || active?.isContentEditable;
 
-    // If this keybind requires a specific element, only run when that element is focused.
-    // Otherwise (no targetID) ignore the key when any form control is focused.
-    if (targetID) {
-      if (active?.id !== targetID) return;
-    } else {
-      if (formElementIsFocused) return;
-    }
+    const pressedKeys = [];
+    if (event.ctrlKey) pressedKeys.push('Control');
+    if (event.shiftKey) pressedKeys.push('Shift');
+    if (event.altKey) pressedKeys.push('Alt');
+    pressedKeys.push(event.code);
 
-    // send commands to content.js
-    if (cmd) {
-      queue(cmd).then((val) => {
-        // then, if there's a handler, then run it.
-        if (handler) {
-          handler(val);
-        }
-      }); 
-    } else {
-      // no command registered but if there's a handler, then run it.
-      handler();
+    for (const item of list) {
+      const { keys, command, handler, target } = item;
+
+      if (target) {
+        if (![...document.querySelectorAll(target)].includes(active)) continue;
+      } else {
+        if (formElementIsFocused) continue;
+      }
+
+      if (!(keys.every(k => pressedKeys.includes(k)) && keys.length === pressedKeys.length)) continue;
+
+      if (command) {
+        queue(command).then((val) => {
+          if (handler) handler(val);
+        });
+      } else if (handler) {
+        handler();
+      }
+      event.preventDefault();
+      break;
     }
-    e.preventDefault(); // block default browser actions, like page scrolling, when the spacebar is pressed
   });
 }
 
