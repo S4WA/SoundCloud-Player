@@ -351,7 +351,7 @@ function registerEvents() {
         if (count === 3) {
           const sureDiv = document.getElementById('sure');
           const div = document.createElement('div');
-          div.innerHTML = `<br>ARE YOU SURE YOU WANT TO RESET EVERYTHING? There's no going back. [<span id="yes" class="clickable">YES</span>] [<span id="no" class="clickable">NO</span>]`;
+          div.innerHTML = `<br>ARE YOU SURE YOU WANT TO RESET EVERYTHING? There's no going back.<br><br>[<span id="yes" class="clickable">YES</span>] [<span id="no" class="clickable">NO</span>]`;
           sureDiv.appendChild(div);
 
           const yesNoSpans = document.querySelectorAll('#yes, #no');
@@ -381,67 +381,81 @@ function registerEvents() {
 }
 
 function insertAnnouncement() {
-  // I thought it'd be easier than writing html
-  const an = {
-    updates: [
-      {
-        title: "Fixed",
-        items: [ // bullet points
-          "Critical display bugs."
-        ]
-      },
-      {
-        title: "Updated",
-        items: [
-          "A few internal things have changed. The extensions as a whole should work smoother.",
-          "Options for displays are subcategorized in smaller chunks now.",
-        ]
-      },
-      {
-        title: "Added",
-        items: [
-          "Option for remembering window size in popout mode.",
-        ]
-      },
-    ],
-    message: {
-      content: "Last update: Sep 2025",
-      date: "Aug 23, 2025",
-      style: "line-break: anywhere; font-style: italic;",
-      class: "gray"
+  const messages = [
+    {
+      version: "1.5.0",
+      changes: [
+        {
+          title: "Added",
+          items: [
+            "New Default UI Theme",
+            "Volume Slider",
+            "Progress Bar",
+            "Custom Keybinds",
+          ]
+        },
+        {
+          title: "Changed",
+          items: [
+            "The old default theme will remain as the 'Legacy' theme, as we introduced new default theme."
+          ]
+        }
+      ]
+    },
+    {
+      version: "1.4.2",
+      changes: [
+        {
+          title: "Fixed",
+          items: [
+            "Critical display bugs."
+          ]
+        },
+        {
+          title: "Updated",
+          items: [
+            "A few internal things have changed. The extensions as a whole should work smoother.",
+            "Options for displays are subcategorized in smaller chunks now.",
+          ]
+        },
+        {
+          title: "Added",
+          items: [
+            "Option for remembering window size in popout."
+          ]
+        }
+      ]
     }
-  };
+  ];
 
-  if (an["updates"]) {
-    const update = an["updates"];
-    for (let i = 0; i < update.length; i++) {
-      const title = update[i]["title"], items = update[i]["items"];
+  const announceBody = document.querySelector("#announcement");
 
-      const body = Object.assign(document.createElement('div'), {
-        innerHTML: `<span class='bold'>[${title}]</span><br>`
-      });
-      const bulletpoints = document.createElement("ul");
+  for (let i = 0; i < messages.length; i++) {
+    const message = messages[i]; // each version's changelog.
+    const version = message?.version; // e.g. 1.5.0
+    const changes = message?.changes; // list of change groups.
 
-      for (const text of items) {
-        bulletpoints.appendChild(
-          Object.assign(document.createElement('li'), { innerText: text })
-          );
-      }
-      body.appendChild(bulletpoints);
-      document.querySelector('#announcement').insertBefore(body, document.querySelector('#announcement hr'));
-    }
-  }
-  if (an["message"]) {
-    const body = Object.assign(document.createElement('div'), {
-      innerHTML: `<span class='bold'>[Message]</span><br>`
+    const messageDOM = Object.assign(document.createElement('div'), {
+      innerHTML: `<span class='bold' style='font-size: 130%;'>V${version}</span><br>`
     });
-    body.appendChild(Object.assign(document.createElement('div'), {
-        style: an["message"]["style"],
-        className: an["message"]["class"],
-        innerHTML: `<span>${an["message"]["content"]}<br><br>${an["message"]["date"]}</span>`
-      })
-    );
-    document.querySelector('#announcement').insertBefore(body, document.querySelector('#announcement hr'));
+
+    for (let j = 0; j < changes.length; j++) {
+      const change = changes[j]; // category of change.
+      const title = change?.title; // "Added", "Fixed", "Removed", etc.
+      const items = change?.items; // descriptions / list of individual changes under this category.
+
+      const changesDOM = document.createElement("ul"); // bulletpoints for descriptions
+      messageDOM.appendChild(Object.assign(document.createElement("span"), { innerText: `[${title}]` })); // DOM for "Added", etc
+
+      for (var k = 0; k < items.length; k++) {
+        const item = items[k];
+        changesDOM.appendChild(Object.assign(document.createElement('li'), { innerText: item })); // each description "volume slider" ...etc.
+      }
+
+      messageDOM.appendChild(changesDOM);
+    }
+    announceBody.appendChild(messageDOM);
+    announceBody.appendChild(document.createElement("hr"));
   }
 }
 

@@ -70,7 +70,7 @@ body[dark='true'] input, body[dark='true'] span {
   /* animation/visibility */
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.3s ease, opacity 0.2s ease;
+  transition: transform 0.3s ease, opacity 0.5s ease;
   opacity: 0;
   display: inline-block;
 }

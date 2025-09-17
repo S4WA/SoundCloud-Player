@@ -172,14 +172,11 @@ async function registerUniversalEvents() {
 
 function initKeyboardBinds() {
   // THE HANDLER FOR VOLUME CHANGES; SHIFT + UP/DOWN
-  let sliderTimeout, lastVol;
+  let sliderTimeout, lastVol = 100; // TODO: fix it
   const showSlider = function(val) {
     const newVol = val['response']['volume'];
-    if (newVol) {
-      if (!lastVol) lastVol = newVol;
-      if (lastVol === newVol) return;
-      lastVol = newVol;
-    }
+    if (lastVol === newVol) return;
+    lastVol = newVol;
 
     const slider = document.querySelector("#volume-slider");
     if (!slider) return; // ignore if there's no slider === current page is not popup.html || current theme is not 'modern'
