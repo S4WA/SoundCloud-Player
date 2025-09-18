@@ -384,6 +384,7 @@ function insertAnnouncement() {
   const messages = [
     {
       version: "1.5.0",
+      date: "Sep, 2025",
       changes: [
         {
           title: "Added",
@@ -404,6 +405,7 @@ function insertAnnouncement() {
     },
     {
       version: "1.4.2",
+      date: "Aug 3, 2025",
       changes: [
         {
           title: "Fixed",
@@ -431,18 +433,19 @@ function insertAnnouncement() {
   const announceBody = document.querySelector("#announcement");
 
   for (let i = 0; i < messages.length; i++) {
-    const message = messages[i]; // each version's changelog.
+    const message = messages[i];      // each version's changelog.
+    const date    = message?.date;    // the date of each version is published
     const version = message?.version; // e.g. 1.5.0
     const changes = message?.changes; // list of change groups.
 
     const messageDOM = Object.assign(document.createElement('div'), {
-      innerHTML: `<span class='bold' style='font-size: 130%;'>V${version}</span><br>`
+      innerHTML: `<span class='bold' style='font-size: 150%;'>V${version}</span> <span>${date}</span><br>`
     });
 
     for (let j = 0; j < changes.length; j++) {
-      const change = changes[j]; // category of change.
-      const title = change?.title; // "Added", "Fixed", "Removed", etc.
-      const items = change?.items; // descriptions / list of individual changes under this category.
+      const change = changes[j];    // category of change.
+      const title  = change?.title; // "Added", "Fixed", "Removed", etc.
+      const items  = change?.items; // descriptions / list of individual changes under this category.
 
       const changesDOM = document.createElement("ul"); // bulletpoints for descriptions
       messageDOM.appendChild(Object.assign(document.createElement("span"), { innerText: `[${title}]` })); // DOM for "Added", etc

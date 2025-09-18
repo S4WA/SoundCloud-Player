@@ -83,6 +83,10 @@ table {
   width: 50%;
 }
 
+#shortcuts td {
+  width: 50%;
+}
+
 #shortcuts th, #shortcuts td {
   padding: 4px 7px;
   text-align: left;

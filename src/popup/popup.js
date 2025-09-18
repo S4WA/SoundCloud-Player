@@ -23,6 +23,12 @@ async function init() {
     document.querySelector("#P").style.display = "none";
     document.querySelector("#settings").attr("href", "settings.html?p=1");
   }
+  const verDOM = document.querySelector('#version');
+  if (verDOM) verDOM.innerText = `v${chrome.runtime.getManifest().version}`;
+  const slider = document.querySelector("#volume-slider");
+  if (settings['always-show-slider'] && slider) {
+    slider.classList.add("always-show");
+  }
 }
 
 async function checkElements() {
@@ -104,12 +110,6 @@ async function toggleElements(visibility) {
       selector: "#shuffle",
       attr: {
         "shuffle": "false"
-      }
-    },
-    {
-      selector: "#repeat",
-      attr: {
-        "mode": ""
       }
     },
     {
@@ -279,6 +279,8 @@ async function registerEvents() {
           }
           --count;
         }
+
+        if (showSlider) showSlider();
       }
     }
   ];

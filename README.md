@@ -14,13 +14,13 @@ This is an unofficial extension. Not affiliated with or endorsed by SoundCloud.
 
 ## Demo
 
-[![Tutorial](http://img.youtube.com/vi/hIJyF2u3-RY/maxresdefault.jpg)](https://www.youtube.com/watch?v=hIJyF2u3-RY)
+[![Tutorial](https://github.com/S4WA/SoundCloud-Player/blob/master/img/store%20listings/1.5.0/1.png?raw=true)](https://www.youtube.com/watch?v=hIJyF2u3-RY)
 
 ## Previews
 
-| Default Theme | Compact Theme |
-|------------|----------------|
-| ![image1](https://github.com/S4WA/SoundCloud-Player/blob/master/img/1.png?raw=true) | ![image2](https://github.com/S4WA/SoundCloud-Player/blob/master/img/2.png?raw=true) |
+| Default Theme | Compact Theme | Legacy Theme |
+|------------|----------------|----------------|
+| ![image1](https://github.com/S4WA/SoundCloud-Player/blob/master/img/store%20listings/1.5.0/screenshots/Default.png?raw=true) | ![image2](https://github.com/S4WA/SoundCloud-Player/blob/master/img/store%20listings/1.5.0/screenshots/Compact.png?raw=true) | ![image3](https://github.com/S4WA/SoundCloud-Player/blob/master/img/store%20listings/1.5.0/screenshots/Legacy.png?raw=true) |
 
 ## Installation
 

@@ -11,12 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
   new Promise((resolve, reject) => {
     for (const key in settings) {
       if (localStorage.getItem(key) == null) {
-        const value = (typeof settings[key] == 'string'
-          || typeof settings[key] == 'number'
-          || typeof settings[key] == 'boolean'
-          ) ? settings[key] : JSON.stringify(settings[key]);
+        const value = (typeof settings[key] == 'string' || typeof settings[key] == 'number' || typeof settings[key] == 'boolean') ? settings[key] : JSON.stringify(settings[key]);
+        // save items to localstorage if it doesn't exist.
         localStorage.setItem(key, value);
       } else {
+        // import from localstorage
         const obj = isJsonString(localStorage.getItem(key));
         settings[key] = obj == null ? localStorage.getItem(key) : obj;
       }
@@ -32,15 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }).then(() => {
     initKeyboardBinds();
   });
-  if (document.querySelector('#version')) document.querySelector('#version').innerText = `v${chrome.runtime.getManifest().version}`;
-  if (settings['always-show-slider'] && document.querySelector("#volume-slider")) {
-    const slider = document.querySelector("#volume-slider");
-    slider.classList.add("always-show");
-  }
 });
 
-var debug = false, 
-    settings = {
+let debug = false;
+const settings = {
       'trackdisplay': '%title% by %artist%',
       'themecolor': '#FF5500',
       'bgcolor': '#121212',
