@@ -1,6 +1,12 @@
-
-// default shortcut
-// - rules: Shift, Control, Meta, Alt should never hold which side it is, remove "Right"/"Left" in the text.
+// DEFAULT SHORTCUTS
+// Rules: 
+// - command: null or a string(queue command name).
+// - default_keys & overridden_keys: 
+//   - default_keys:    has to exist with an array.
+//   - overridden_keys: null or an array.
+//     - Shift, Control, Meta, Alt should never hold which side it is, remove "Right"/"Left" in the text.
+// - remapUI: has to exist as JS Object with elementID and innerText(label).
+// - handler: null or a function.
 const shortcuts = [
   {
     command: "toggle",
@@ -174,64 +180,9 @@ function keybindEventHandler(event) { // e.g.) Keydown event
 
   // REMAPPING KEYS HANDLING.
   if (currentlyEditingBindMapper) {
-    if (!nonSpecialKeysExist) return; // Ignore when keydown event only holds special keys like "Shift".
-
-    // VARIABLES   (targeted key map data, DOM element to edit & an array of pressed ekys)
-    const binderData = currentlyEditingBindMapper // an object containing all data of one keybind (command, default_keys, overridden_keys, remapUI, handler).
-    const binderDOM  = document.querySelector(`#${binderData.remapUI.elementID}`);
-    const keymaps    = Array.from(pressedKeys);
-
-    // IF PRESSED KEYS ARE JUST "ESCAPE" KEY THEN ACT LIKE NOTHING HAPPENED; RETURN.
-    if (Array.isArray(keymaps) && keymaps.length === 1 && keymaps[0] === "Escape") {
-      if (binderData) {
-        const keys = binderData.overridden_keys ?? binderData.default_keys;
-        binderDOM.innerText = keys.map(codeToLabel).join(" + ");
-        currentlyEditingBindMapper = null; // RESET EDITING. WE GOING BACK.
-        return;
-      }
-    }
-
-    // CONFLICT CHECK. (No duplicated shortcuts.)
-    for (const other of shortcuts) {
-      if (other === binderData) continue;
-      const otherKeys = other.overridden_keys?.length ? other.overridden_keys : other.default_keys;
-      // Check if there's duplication (conflict) in both default_keys or existing customized keys.
-      if (arraysEqual(keymaps, otherKeys) || arraysEqual(keymaps, other.default_keys)) { // If there's a conflict then reset the whole thing. No saving, act like nothing happened; RETURN.
-        const keys = binderData.overridden_keys ?? binderData.default_keys;
-        binderDOM.innerText = keys.map(codeToLabel).join(" + ");
-        currentlyEditingBindMapper = null; // RESET EDITING. WE GOING BACK.
-        return;
-      }
-    }
-
-    // UPDATING BINDING VARIABLES & DOM ELEMENTS (VISUALS)
-    binderData.overridden_keys = keymaps;
-    binderDOM.innerText = keymaps.map(codeToLabel).join(" + ");
-
-    // UPDATING LOCALSTORAGE
-    const objects = isJsonString(localStorage.overridden_keybinds); // Obtaining localstorage that holds customized keybinds and reconvert them from string to JS Object.
-    if (objects) {
-      // Rewrite localstorage to save.
-      for (const item of shortcuts) { // For-loop default keybinds,,,
-        if (item.default_keys === binderData.default_keys) { // For-loop to find the right JS Object that holds the right data by checking default keybinds.
-          // Recreating obj for the keybind to overwrite localStorage.
-          const recreatedObj = {
-            default_keys: binderData.default_keys, // Hold default_keys as well in order to fact check
-            overridden_keys: keymaps, // Update the datum here. This is what's overwritten.
-          };
-          objects.push(recreatedObj);
-          break; // Stop for-loops.
-        } else {
-          continue; // Continue for-loops.
-        }
-      }
-
-      // UPDATING LOCALSTORAGE.
-      localStorage.overridden_keybinds = JSON.stringify(objects); // Stringfy JS Object to save it as localStorage.
-    }
-
-    // REFACTORING VARIABLES / CANCELING EVENTS / RETURNING.
-    currentlyEditingBindMapper = null;
+    // Converting Set to Array.
+    const keymap = Array.from(pressedKeys);
+    verifyKeybind(keymap, nonSpecialKeysExist);
     event.preventDefault();
     return;
   }
@@ -274,8 +225,9 @@ function insertShortcutTables() {
 
     const keys = (overridden_keys ?? default_keys).map(codeToLabel).join(" + ");
     const row  = document.createElement("tr");
-    
-    row.innerHTML = `<td>${remapUI.label}</td><th id="${remapUI.elementID}">${keys}</th>`;
+    const customized = overridden_keys != null; // When a keybind is customized then give a different label/DOM element.
+
+    row.innerHTML = `<td class='${customized ? "bold" : ""}'>${remapUI.label}</td><th id="${remapUI.elementID}">${keys}</th>`;
     table.appendChild(row);
 
     row.querySelector("th").addEventListener("click", () => {
@@ -287,23 +239,154 @@ function insertShortcutTables() {
   }
 }
 
+// INITIALIZATION OF KEYBINDS.
+// UPDATE OVERRIDDEN_KEYS IN EACH KEYBIND FROM LOCALSTORAGE.
 function initKeybindsInLocalstorage() {
-  // INITIALIZATION OF KEYBINDS.
-  // UPDATE OVERRIDDEN_KEYS IN EACH KEYBIND FROM LOCALSTORAGE.
-  const storage = localStorage.overridden_keybinds;
-  if (!storage) {
-    localStorage.overridden_keybinds = JSON.stringify([]);
-  } else {
-    const obj = isJsonString(storage); // Parse stringfied data of localStorage to JS Object.
-    for (const item of obj) { // For-loop parsed data.
-      for (const defaultKeybind of shortcuts) { // For-loop default keybind data.
-        if (arraysEqual(item.default_keys, defaultKeybind.default_keys)) { // If both parsed data and default keybind data maches, then we can overwrite.
-          defaultKeybind.overridden_keys = item.overridden_keys; // Overwrite 'shortcut'. The essense of it.
-          break;
-        } else {
-          continue;
-        }
-      }
+  let stored;
+  try {
+    stored = JSON.parse(localStorage.getItem("overridden_keybinds") || "[]");
+  } catch {
+    stored = [];
+    localStorage.setItem("overridden_keybinds", "[]");
+  }
+  for (const s of stored) {
+    const match = shortcuts.find(v => arraysEqual(s.default_keys, v.default_keys));
+    if (match) match.overridden_keys = s.overridden_keys;
+  }
+}
+
+// KEYBIND REGISTER
+function verifyKeybind(keymap, nonSpecialKeysExist) {
+  // THIS FUNCTION RETURNS BOOLEAN DATA TYPE.
+  // - TRUE  = registered successfully.
+  // - FALSE = failed.
+  // NOTE: I forgot why I did this. Seems pointless for now.
+
+  if (!keymap) return false;              // Null check
+  if (!nonSpecialKeysExist) return false; // Ignore when keydown event only holds special keys like "Shift".
+
+  // Obtain localStorage and parse as a JS Object.
+  const stored = isJsonString(localStorage.overridden_keybinds);
+  if (!stored) {
+    cancelProcedure();
+    return false; // If there's no localStorage, return. This exist just in case.
+  }
+
+  // VARIABLES;
+  const binderData = currentlyEditingBindMapper // an object containing all data of one keybind (command, default_keys, overridden_keys, remapUI, handler).
+  const binderDOM  = document.querySelector(`#${binderData.remapUI.elementID}`);
+
+
+  // IF PRESSED KEYS ARE JUST "ESCAPE" KEY THEN RETURN.
+  if (Array.isArray(keymap) && keymap.length === 1 && keymap[0] === "Escape") {
+    cancelProcedure();
+    return false;
+  }
+
+  // CONFLICT CHECK (AVOID ANY DUPLICATION)
+  // - If there's a keybind (either default or customized) already exists, then don't register.
+  for (const other of shortcuts) {
+    if (other === binderData) continue;
+    const otherKeys = other.overridden_keys ?? other.default_keys;
+
+    // If there's duplication (conflict) in both default_keys or existing customized keys.
+    if (arraysEqual(keymap, otherKeys)) {
+      cancelProcedure();
+      return false;
     }
   }
+
+  // IS IT SAME AS THE DEFAULT KEYBIND?
+  if (arraysEqual(binderData.default_keys, keymap)) {
+    if (binderData.overridden_keys) {
+      // This is when user's trying to reset the keybind manually, thereby proceed the registration.
+
+      // Update variable and DOM element.
+      binderData.overridden_keys       = null;
+      binderDOM.innerText              = formatLabel(binderData.default_keys);
+      binderDOM.previousElementSibling.classList.remove("bold");
+      // Update localStorage.
+      localStorage.overridden_keybinds = JSON.stringify(
+        stored.filter(
+          obj => !arraysEqual(obj.default_keys, binderData.default_keys)
+        )
+      );
+
+      // REFACTORING.
+      currentlyEditingBindMapper = null;
+      return true;
+    }
+    // This contrarily is when user is trying to bind the same keymap as the default, thereby drop the process.
+    cancelProcedure();
+    return false;
+  }
+
+  // --- If function reaches here it means the keymap is legitimate. ---
+  binderData.overridden_keys = keymap;
+  registerKeybind(binderData, binderDOM, keymap);
+
+  // REFACTORING VARIABLE & RETURN TRUE.
+  currentlyEditingBindMapper = null;
+  return true;
+}
+
+// UPDATE VARIABLES, LOCALSTORAGE, DOM ELEMENT.
+function registerKeybind(binderData, binderDOM, keymap) {
+  const stored = isJsonString(localStorage.overridden_keybinds);
+  // UPDATE DOM ELEMENT.
+  binderDOM.innerText = formatLabel(keymap);
+  binderDOM.previousElementSibling.classList.add("bold");
+  // UPDATE LOCALSTORAGE
+  const updateExistingObject = stored.some(obj => arraysEqual(obj.default_keys, binderData.default_keys));
+  // Avoid duplication in localStorage.
+  if (updateExistingObject) {
+    stored.forEach(obj => {
+      // Find the right target to overwrite.
+      if (arraysEqual(obj.default_keys, binderData.default_keys)) {
+        obj.overridden_keys = keymap;
+      }
+    });
+  } else {
+    // Create a new JS object & add it.
+    stored.push({
+      default_keys:    binderData.default_keys,
+      overridden_keys: keymap,
+    });
+  }
+  // Overwrite the localStorage.
+  localStorage.overridden_keybinds = JSON.stringify(stored);
+}
+
+// UTILITIES.
+function cancelProcedure() {
+  const keys = currentlyEditingBindMapper.overridden_keys ?? currentlyEditingBindMapper.default_keys; // Obtain the keymap to display.
+  document.querySelector(`#${currentlyEditingBindMapper.remapUI.elementID}`).innerText = formatLabel(keys)
+  currentlyEditingBindMapper = null; // RESET EDITING.
+}
+
+function codeToLabel(code) {
+  if (code.startsWith("Key")) return code.slice(3);           // "KeyQ" → "Q"
+  if (code.startsWith("Digit")) return code.slice(5);         // "Digit1" → "1"
+  if (code.startsWith("Arrow")) return code.replace("Arrow", ""); // "ArrowUp" → "Up"
+
+  const special = {
+    Space: "SPACE",
+    ShiftLeft: "SHIFT",
+    ShiftRight: "SHIFT",
+    ControlLeft: "CTRL",
+    ControlRight: "CTRL",
+    AltLeft: "ALT",
+    AltRight: "ALT",
+    Escape: "ESC",
+    Enter: "ENTER",
+    Tab: "TAB",
+    Backspace: "BACKSPACE"
+  };
+
+  return special[code] || code;
+}
+
+function formatLabel(keymap) {
+  if (!Array.isArray(keymap)) return null;
+  return keymap.map(codeToLabel).join(" + ");
 }

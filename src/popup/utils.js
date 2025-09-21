@@ -429,33 +429,12 @@ function syncAcrossViews(fnName, args) {
   }
 }
 
-function codeToLabel(code) {
-  if (code.startsWith("Key")) return code.slice(3);           // "KeyQ" → "Q"
-  if (code.startsWith("Digit")) return code.slice(5);         // "Digit1" → "1"
-  if (code.startsWith("Arrow")) return code.replace("Arrow", ""); // "ArrowUp" → "Up"
-
-  const special = {
-    Space: "SPACE",
-    ShiftLeft: "SHIFT",
-    ShiftRight: "SHIFT",
-    ControlLeft: "CTRL",
-    ControlRight: "CTRL",
-    AltLeft: "ALT",
-    AltRight: "ALT",
-    Escape: "ESC",
-    Enter: "ENTER",
-    Tab: "TAB",
-    Backspace: "BACKSPACE"
-  };
-
-  return special[code] || code;
-}
-
 function arraysEqual(a, b) {
-  if (!a || !b) return false;
   if (!Array.isArray(a) || !Array.isArray(b)) return false;
   if (a.length !== b.length) return false;
-  return a.every(k => b.includes(k));
+  const sortedA = [...a].sort();
+  const sortedB = [...b].sort();
+  return sortedA.every((val, idx) => val === sortedB[idx]);
 }
 
 // keyReady: if SC-Player is ready to interact with its main content tab.
