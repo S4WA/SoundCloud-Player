@@ -1,12 +1,11 @@
-// DEFAULT SHORTCUTS
-// Rules: 
-// - command: null or a string(queue command name).
-// - default_keys & overridden_keys: 
-//   - default_keys:    has to exist with an array.
-//   - overridden_keys: null or an array.
-//     - Shift, Control, Meta, Alt should never hold which side it is, remove "Right"/"Left" in the text.
-// - remapUI: has to exist as JS Object with elementID and innerText(label).
-// - handler: null or a function.
+/**
+ * Each shortcut object:
+ * - command: string|null
+ * - default_keys: string[]
+ * - overridden_keys: string[]|null
+ * - remapUI: { elementID: string, label: string }
+ * - handler: function|null
+ */
 const shortcuts = [
   {
     command: "toggle",
@@ -121,11 +120,23 @@ const shortcuts = [
   }
 ];
 
+// INITIALIZATION
 function initKeyboardBinds() {
   // KEYDOWN EVENT HANDLER
   initKeybindsInLocalstorage();
   document.addEventListener('keydown', keybindEventHandler);
   insertShortcutTables();
+
+  // INSERT RESET-ALL BUTTON
+  insertResetAllButton();
+
+  // GLOBAL/BROWSER SHORTCUT HANDLING
+  document.querySelector('#eshortcuts').innerText = `To change the shortcut for opening popup, access '${isChrome() ? 'chrome://extensions/shortcuts' : 'about:addons'}' manually.`;
+  chrome.commands.getAll().then(obj => {
+    const filtered = obj.filter(item => item.name === "_execute_action");
+    // if user has changed the shortcut for '_execute_action' manually then also change innerText.
+    if (filtered.length == 1) document.querySelector("#_exec_act_popup").innerText = filtered[0]["shortcut"];
+  });
 }
 
 // VOLUME CHANGE HANDLER -> ANIMATE AND SHOW VOL SLIDER
@@ -223,20 +234,95 @@ function insertShortcutTables() {
   for (const item of shortcuts) {
     const { default_keys, overridden_keys, remapUI } = item;
 
-    const keys = (overridden_keys ?? default_keys).map(codeToLabel).join(" + ");
+    const keys = formatLabel(overridden_keys ?? default_keys);
     const row  = document.createElement("tr");
     const customized = overridden_keys != null; // When a keybind is customized then give a different label/DOM element.
 
-    row.innerHTML = `<td class='${customized ? "bold" : ""}'>${remapUI.label}</td><th id="${remapUI.elementID}">${keys}</th>`;
+    row.innerHTML = `<td class='${customized ? "bold" : ""}'>${remapUI.label}</td><th id="${remapUI.elementID}" class='clickable'>${keys}</th>`;
     table.appendChild(row);
+    insertResetButton(item);
 
+    // PREPARE REBINDING HANDLER.
     row.querySelector("th").addEventListener("click", () => {
       if (currentlyEditingBindMapper) return;
       currentlyEditingBindMapper = item;
       const focusedDOM = document.querySelector(`#${remapUI.elementID}`); // Targeted DOM to remap keymaps.
-      focusedDOM.innerText = "[   ]";
+      focusedDOM.innerText = "[...]";
     });
   }
+}
+
+function insertResetButton(binderData) {
+  if (!binderData) return;
+  const binderDOM  = document.querySelector(`#${binderData.remapUI.elementID}`);
+  const siblingDOM = binderDOM.previousElementSibling; // td, the one that holds remapUI.label
+
+  const customized = binderData.overridden_keys != null;
+  if (!customized) return;
+
+  const resetButton = Object.assign(document.createElement("span"), { innerText: `[ RESET ]`, className: 'clickable' });
+
+  resetButton.addEventListener("click", () => {
+    unregisterKeybind(binderData, binderDOM);
+    removeResetButton(binderData);
+    if (currentlyEditingBindMapper) currentlyEditingBindMapper = null; // Just in case if user tries to reset a keybind while editing.
+  });
+
+  siblingDOM.appendChild(document.createElement("br"))
+  siblingDOM.appendChild(resetButton);
+}
+
+function removeResetButton(binderData) {
+  if (!binderData) return;
+  const siblingDOMchildren = document.querySelector(`#${binderData.remapUI.elementID}`).previousElementSibling.children;
+
+  for (let i = siblingDOMchildren.length - 1; i >= 0; i--) {
+    siblingDOMchildren[i].remove();
+  }
+}
+
+function insertResetAllButton() {
+  const shortcuts          = document.querySelector("#shortcuts");
+  const shortcutsParent    = shortcuts.parentElement;
+  
+  const resetDialogBody    = document.createElement("div");
+  const resetEveryShortcut = Object.assign(document.createElement("span"), {
+    innerText: "[ RESET EVERY SHORTCUT ]",
+    className: "clickable",
+    onclick: () => {
+      const suretext     = document.createElement("span");
+      suretext.innerHTML = "ARE YOU SURE? ";
+
+      const yesnobody = document.createElement("div");
+      const yes       = document.createElement("span");
+      const no        = document.createElement("span"); 
+
+      yes.innerText = "[ YES ]";
+      yes.classList.add("clickable");
+      yes.onclick = () => {
+        unregisterKeybindAll();
+        yesnobody.remove();
+      }
+
+      no.innerText = "[ NO ]";
+      no.classList.add("clickable");
+      no.onclick = () => {
+        yesnobody.remove();
+      }
+
+      yesnobody.style.paddingTop = "0.35em";
+
+      yesnobody.appendChild(suretext);
+      yesnobody.appendChild(yes);
+      yesnobody.appendChild(no);
+      resetDialogBody.appendChild(yesnobody);
+    }
+  });
+
+  resetDialogBody.appendChild(resetEveryShortcut);
+  resetDialogBody.style.paddingTop    = "0.35em";
+  resetDialogBody.style.paddingBottom = "0.5em";
+  shortcutsParent.insertBefore(resetDialogBody, shortcuts);
 }
 
 // INITIALIZATION OF KEYBINDS.
@@ -255,7 +341,7 @@ function initKeybindsInLocalstorage() {
   }
 }
 
-// KEYBIND REGISTER
+// VERIFY KEYMAPS
 function verifyKeybind(keymap, nonSpecialKeysExist) {
   // THIS FUNCTION RETURNS BOOLEAN DATA TYPE.
   // - TRUE  = registered successfully.
@@ -301,16 +387,8 @@ function verifyKeybind(keymap, nonSpecialKeysExist) {
     if (binderData.overridden_keys) {
       // This is when user's trying to reset the keybind manually, thereby proceed the registration.
 
-      // Update variable and DOM element.
-      binderData.overridden_keys       = null;
-      binderDOM.innerText              = formatLabel(binderData.default_keys);
-      binderDOM.previousElementSibling.classList.remove("bold");
-      // Update localStorage.
-      localStorage.overridden_keybinds = JSON.stringify(
-        stored.filter(
-          obj => !arraysEqual(obj.default_keys, binderData.default_keys)
-        )
-      );
+      unregisterKeybind(binderData, binderDOM);
+      removeResetButton(binderData);
 
       // REFACTORING.
       currentlyEditingBindMapper = null;
@@ -330,12 +408,14 @@ function verifyKeybind(keymap, nonSpecialKeysExist) {
   return true;
 }
 
-// UPDATE VARIABLES, LOCALSTORAGE, DOM ELEMENT.
+// REGISTER KEYMAP: UPDATE VARIABLES, LOCALSTORAGE, DOM ELEMENT.
 function registerKeybind(binderData, binderDOM, keymap) {
   const stored = isJsonString(localStorage.overridden_keybinds);
   // UPDATE DOM ELEMENT.
   binderDOM.innerText = formatLabel(keymap);
   binderDOM.previousElementSibling.classList.add("bold");
+  insertResetButton(binderData);
+
   // UPDATE LOCALSTORAGE
   const updateExistingObject = stored.some(obj => arraysEqual(obj.default_keys, binderData.default_keys));
   // Avoid duplication in localStorage.
@@ -357,33 +437,44 @@ function registerKeybind(binderData, binderDOM, keymap) {
   localStorage.overridden_keybinds = JSON.stringify(stored);
 }
 
-// UTILITIES.
+function unregisterKeybind(binderData, binderDOM) {
+  const stored = isJsonString(localStorage.overridden_keybinds);
+
+  // Update variable and DOM element.
+  binderData.overridden_keys       = null;
+  binderDOM.innerText              = formatLabel(binderData.default_keys);
+  binderDOM.previousElementSibling.classList.remove("bold");
+  // Update localStorage.
+  localStorage.overridden_keybinds = JSON.stringify(
+    stored.filter(
+      obj => !arraysEqual(obj.default_keys, binderData.default_keys)
+    )
+  );
+}
+
+function unregisterKeybindAll() {
+  if (currentlyEditingBindMapper) currentlyEditingBindMapper = null; // Just in case if user tries to reset a keybind while editing.}
+  for (const item of shortcuts) {
+    if (!item.overridden_keys) continue;
+
+    unregisterKeybind(item, document.querySelector(`#${item.remapUI.elementID}`));
+    removeResetButton(item);
+  }
+}
+
 function cancelProcedure() {
+  // Revert DOM element and nullify 'currentlyEditingBindMapper'.
   const keys = currentlyEditingBindMapper.overridden_keys ?? currentlyEditingBindMapper.default_keys; // Obtain the keymap to display.
   document.querySelector(`#${currentlyEditingBindMapper.remapUI.elementID}`).innerText = formatLabel(keys)
   currentlyEditingBindMapper = null; // RESET EDITING.
 }
 
+// UTILITIES.
 function codeToLabel(code) {
-  if (code.startsWith("Key")) return code.slice(3);           // "KeyQ" → "Q"
-  if (code.startsWith("Digit")) return code.slice(5);         // "Digit1" → "1"
-  if (code.startsWith("Arrow")) return code.replace("Arrow", ""); // "ArrowUp" → "Up"
-
-  const special = {
-    Space: "SPACE",
-    ShiftLeft: "SHIFT",
-    ShiftRight: "SHIFT",
-    ControlLeft: "CTRL",
-    ControlRight: "CTRL",
-    AltLeft: "ALT",
-    AltRight: "ALT",
-    Escape: "ESC",
-    Enter: "ENTER",
-    Tab: "TAB",
-    Backspace: "BACKSPACE"
-  };
-
-  return special[code] || code;
+  if (code.startsWith("Key")) return code.slice(3).toUpperCase(); // "KeyQ" → "Q"
+  if (code.startsWith("Digit")) return code.slice(5).toUpperCase(); // "Digit1" → "1"
+  if (code.startsWith("Arrow")) return code.replace("Arrow", "").toUpperCase(); // "ArrowUp" → "Up"
+  return (code).toUpperCase();
 }
 
 function formatLabel(keymap) {

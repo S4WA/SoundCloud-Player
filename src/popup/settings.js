@@ -15,26 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
   insertAnnouncement();
   queue('request-data');
 
-  if (isPopout()) {
-    document.querySelector('#captureme').attr('href', 'embed.html?p=1');
-    document.querySelector('#captureme').innerText = "Capture Me";
-    document.querySelector('#captureguide').innerText = "(Guide)";
-    // No Duplicates
-    document.querySelector('#back').attr('href', 'popup.html?p=1');
-  }
+  // if (isPopout()) {
+  //   document.querySelector('#captureme').attr('href', 'embed.html?p=1');
+  //   document.querySelector('#captureme').innerText = "Capture Me";
+  //   document.querySelector('#captureguide').innerText = "(Guide)";
+  //   // No Duplicates
+  //   document.querySelector('#back').attr('href', 'popup.html?p=1');
+  // }
 
   document.querySelector('#video .dd-parent').addEventListener('click', function() {
     document.querySelector("#video .dd-child").innerHTML = '<iframe width="100%" src="https://www.youtube.com/embed/hIJyF2u3-RY" title="Quick Tutorial for SoundCloud Player 1.3.0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
     // inserting yt video embed
     // w/o doing so would ruin its performance (drops fps)
-  });
-
-  document.querySelector('#eshortcuts').innerText = `To change the shortcut for opening popup, access '${isChrome() ? 'chrome://extensions/shortcuts' : 'about:addons'}' manually.`;
-
-  chrome.commands.getAll().then(obj => {
-    const filtered = obj.filter(item => item.name === "_execute_action");
-    // if user has changed the shortcut for '_execute_action' manually then also change innerText.
-    if (filtered.length == 1) document.querySelector("#_exec_act_popup").innerText = filtered[0]["shortcut"];
   });
 });
 
@@ -384,7 +376,7 @@ function insertAnnouncement() {
   const messages = [
     {
       version: "1.5.0",
-      date: "Sep, 2025",
+      date: "Sep 22, 2025",
       changes: [
         {
           title: "Added",
