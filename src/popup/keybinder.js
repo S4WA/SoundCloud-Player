@@ -166,7 +166,6 @@ function showSlider() {
 };
 
 // KEYDOWN EVENT HANDLER
-const pressedKeys = new Set();
 function keybindEventHandler(event) { // e.g.) Keydown event
   // VERIFY.
   if (keyReady == false) return; // Ignore events if popup is not ready to interact with content script yet.
@@ -262,6 +261,8 @@ function insertResetButton(binderData) {
   const customized = binderData.overridden_keys != null;
   if (!customized) return;
 
+  if (siblingDOM.innerHTML.includes("[ RESET ]")) return;
+
   const resetButton = Object.assign(document.createElement("span"), { innerText: `[ RESET ]`, className: 'clickable' });
 
   resetButton.addEventListener("click", () => {
@@ -293,6 +294,9 @@ function insertResetAllButton() {
     innerText: "[ RESET EVERY SHORTCUT ]",
     className: "clickable",
     onclick: () => {
+      if (shortcutsParent.innerHTML.includes("ARE YOU SURE? ")) return;
+
+      // CREATING DOM ELEMENTS
       const suretext     = document.createElement("span");
       suretext.innerHTML = "ARE YOU SURE? ";
 
