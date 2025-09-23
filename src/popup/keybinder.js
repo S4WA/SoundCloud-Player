@@ -304,6 +304,7 @@ function insertResetAllButton() {
       const yes       = document.createElement("span");
       const no        = document.createElement("span"); 
 
+      // Set properties
       yes.innerText = "[ YES ]";
       yes.classList.add("clickable");
       yes.onclick = () => {
@@ -319,6 +320,7 @@ function insertResetAllButton() {
 
       yesnobody.style.paddingTop = "0.35em";
 
+      // Insertting/appending created DOM elements.
       yesnobody.appendChild(suretext);
       yesnobody.appendChild(yes);
       yesnobody.appendChild(no);
