@@ -131,12 +131,14 @@ function initKeyboardBinds() {
   insertResetAllButton();
 
   // GLOBAL/BROWSER SHORTCUT HANDLING
-  document.querySelector('#eshortcuts').innerText = `To change the shortcut for opening popup, access '${isChrome() ? 'chrome://extensions/shortcuts' : 'about:addons'}' manually.`;
-  chrome.commands.getAll().then(obj => {
-    const filtered = obj.filter(item => item.name === "_execute_action");
-    // if user has changed the shortcut for '_execute_action' manually then also change innerText.
-    if (filtered.length == 1) document.querySelector("#_exec_act_popup").innerText = filtered[0]["shortcut"];
-  });
+  if (loc('settings.html')) {
+    document.querySelector('#eshortcuts').innerText = `To change the shortcut for opening popup, access '${isChrome() ? 'chrome://extensions/shortcuts' : 'about:addons'}' manually.`;
+    chrome.commands.getAll().then(obj => {
+      const filtered = obj.filter(item => item.name === "_execute_action");
+      // if user has changed the shortcut for '_execute_action' manually then also change innerText.
+      if (filtered.length == 1) document.querySelector("#_exec_act_popup").innerText = filtered[0]["shortcut"];
+    });
+  }
 }
 
 // VOLUME CHANGE HANDLER -> ANIMATE AND SHOW VOL SLIDER
@@ -282,6 +284,7 @@ function removeResetButton(binderData) {
 }
 
 function insertResetAllButton() {
+  if (!loc('settings.html')) return;
   const shortcuts          = document.querySelector("#shortcuts");
   const shortcutsParent    = shortcuts.parentElement;
   

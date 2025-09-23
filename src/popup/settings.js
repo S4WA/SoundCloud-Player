@@ -375,6 +375,18 @@ function registerEvents() {
 function insertAnnouncement() {
   const messages = [
     {
+      version: "1.5.1",
+      date: "Sep 23, 2025",
+      changes: [
+        {
+          title: "Fixed",
+          items: [
+            "Minor bugs",
+          ]
+        }
+      ]
+    },
+    {
       version: "1.5.0",
       date: "Sep 22, 2025",
       changes: [
