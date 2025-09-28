@@ -323,6 +323,7 @@ function displayOverlay(binderData, binderDOM, formatLabel) {
   });
 
   doneButton.addEventListener("click", () => {
+    cancelProcedure();
     overlayObj.remove();
     overlayObj = null;
   });
