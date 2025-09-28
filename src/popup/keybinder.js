@@ -172,9 +172,6 @@ function showSlider() {
 
 // KEYDOWN EVENT HANDLER
 function keybindEventHandler(event) { // e.g.) Keydown event
-  // VERIFY.
-  if (keyReady == false) return; // Ignore events if popup is not ready to interact with content script yet.
-
   // FOCUSED ELEMENT VARIABLES.
   const active = document.activeElement;
   const activeTag = active?.tagName?.toLowerCase() ?? "";
@@ -202,6 +199,9 @@ function keybindEventHandler(event) { // e.g.) Keydown event
   }
 
   // EXECUTING SHORTCUTS, COMMANDS & HANDLERS.
+
+  // Verification.
+  if (keyReady == false) return; // Ignore events if popup is not ready to interact with content script yet.
 
   // Ignore keydown events when compact player's not enabled in settings.html
   const disabledInSettingsPage = loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings']);

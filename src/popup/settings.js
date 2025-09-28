@@ -376,14 +376,26 @@ function registerEvents() {
 function insertAnnouncement() {
   const messages = [
     {
+      version: "1.5.3",
+      date: "Sep 28, 2025",
+      changes: [
+        {
+          title: "Fixed",
+          items: [
+            "Bug: the keybinder wasn’t activated when the user was not on the SoundCloud tab."
+          ]
+        }
+      ]
+    },
+    {
       version: "1.5.2",
       date: "Sep 28, 2025",
       changes: [
         {
           title: "Fixed",
           items: [
-            "Bug: keybinder didn't work properly when compact player was close in settings page.",
-            "Bug: keybinder stopped working after resetting all of the settings.",
+            "Bug: the keybinder didn't work properly when compact player was close in settings page.",
+            "Bug: the keybinder stopped working after resetting all of the settings.",
           ]
         },
         {
