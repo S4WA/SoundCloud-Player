@@ -322,6 +322,11 @@ function displayOverlay(binderData, binderDOM, formatLabel) {
     overlayObj = null;
   });
 
+  doneButton.addEventListener("click", () => {
+    overlayObj.remove();
+    overlayObj = null;
+  });
+
   resetDialogButton.addEventListener("click", () => {
     unregisterKeybind(binderData, binderDOM);
     currentlyEditingBindMapper = null;
@@ -370,10 +375,12 @@ function insertResetAllButton() {
       document.getElementById("yesreseteveryshortcut").addEventListener("click", function () {
         unregisterKeybindAll();
         overlayObj.remove();
+        overlayObj = null;
       });
 
       document.getElementById("noreseteveryshortcut").addEventListener("click", function () {
         overlayObj.remove();
+        overlayObj = null;
       });
     }
   });

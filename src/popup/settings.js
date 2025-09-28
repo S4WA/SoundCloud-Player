@@ -341,7 +341,7 @@ function registerEvents() {
           </p>`,
           onRemove: () => {
             // When overlay is removed
-            cancelProcedure();
+            overlayObj.remove();
             overlayObj = null;
           }
         });
@@ -354,6 +354,7 @@ function registerEvents() {
 
         document.getElementById("noreseteveryshortcut").addEventListener("click", function () {
           overlayObj.remove();
+          overlayObj = null;
         });
       }
     }
@@ -383,6 +384,8 @@ function insertAnnouncement() {
           title: "Fixed",
           items: [
             "Bug: the keybinder wasn’t activated when the user was not on the SoundCloud tab."
+            "Bug: the keybinder wasn’t activated when the user was not on the SoundCloud tab.",
+            "Done button in overlay had no implementation but looks."
           ]
         }
       ]
