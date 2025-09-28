@@ -437,5 +437,63 @@ function arraysEqual(a, b) {
   return sortedA.every((val, idx) => val === sortedB[idx]);
 }
 
+function createOverlay({
+  id = 'js-overlay',
+  background   = 'rgba(0,0,0,0.6)',
+  zIndex       = 9999,
+  contentHTML  = '',
+  closeOnClick = true,
+  closeOnEsc   = true,
+  onRemove     = null
+} = {}) {
+  if (document.getElementById(id)) return document.getElementById(id);
+
+  const ov = document.createElement('div');
+  ov.id = id;
+  Object.assign(ov.style, {
+    position:       'fixed',
+    inset:          '0',
+    display:        'flex',
+    alignItems:     'center',
+    justifyContent: 'center',
+    background,
+    zIndex:         String(zIndex)
+  });
+
+  ov.innerHTML = `<div role="dialog" aria-modal="true" tabindex="-1">${contentHTML}</div>`;
+
+  const dialog = ov.firstElementChild;
+  Object.assign(dialog.style, {
+    width:        '250px',
+    maxHeight:    '90%',
+    overflowY:    'auto',
+    background:   '#fff',
+    padding:      '0.5em',
+    borderRadius: '2.5px',
+    boxSizing:    'border-box',
+    color:        '#000'
+  });
+
+  function remove() {
+    if (!ov.parentNode) return;
+    ov.parentNode.removeChild(ov);
+    document.removeEventListener('keydown', onKey);
+    if (typeof onRemove === 'function') onRemove();
+    ov.dispatchEvent(new CustomEvent('overlayRemoved'));
+  }
+
+  function onKey(e) {
+    if (closeOnEsc && e.key === 'Escape') remove();
+  }
+
+  ov.addEventListener('click', (e) => {
+    if (closeOnClick && e.target === ov) remove();
+  });
+
+  document.addEventListener('keydown', onKey);
+  document.body.appendChild(ov);
+
+  return { overlay: ov, dialog, remove };
+}
 // keyReady: if SC-Player is ready to interact with its main content tab.
 var keyReady = false;

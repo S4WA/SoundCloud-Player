@@ -329,31 +329,32 @@ function registerEvents() {
       event: "click",
       handler: () => {
         // This handler is from a removed function initResetButton().
-        const countElement = document.querySelector('#count');
-        let count = 1;
-        
-        if (countElement.textContent !== '') {
-          count = Number(countElement.textContent);
-          count++;
-        }
-        
-        if (count > 3) return;
-        countElement.textContent = count;
+        overlayObj = createOverlay({
+          contentHTML: `<p class='bold'>ARE YOU SURE?</p>
+          <p>
+          <table>
+            <tr>
+              <td id="noreseteveryshortcut" class="clickable">[NO]</td>
+              <td id='yesreseteveryshortcut'class='clickable'>[YES]</td>
+            </tr>
+          </table>
+          </p>`,
+          onRemove: () => {
+            // When overlay is removed
+            cancelProcedure();
+            overlayObj = null;
+          }
+        });
 
-        if (count === 3) {
-          const sureDiv = document.getElementById('sure');
-          const div = document.createElement('div');
-          div.innerHTML = `<br>ARE YOU SURE YOU WANT TO RESET EVERYTHING? There's no going back.<br><br>[<span id="yes" class="clickable">YES</span>] [<span id="no" class="clickable">NO</span>]`;
-          sureDiv.appendChild(div);
+        // Set properties
+        document.getElementById("yesreseteveryshortcut").addEventListener("click", function () {
+          localStorage.clear();
+          location.reload();
+        });
 
-          const yesNoSpans = document.querySelectorAll('#yes, #no');
-          yesNoSpans.forEach(span => {
-            span.addEventListener('click', (e) => {
-              if (e.target.id === 'yes') localStorage.clear();
-              location.reload();
-            });
-          });
-        }
+        document.getElementById("noreseteveryshortcut").addEventListener("click", function () {
+          overlayObj.remove();
+        });
       }
     }
   ];
@@ -374,6 +375,25 @@ function registerEvents() {
 
 function insertAnnouncement() {
   const messages = [
+    {
+      version: "1.5.2",
+      date: "Sep 28, 2025",
+      changes: [
+        {
+          title: "Fixed",
+          items: [
+            "Bug: keybinder didn't work properly when compact player was close in settings page.",
+            "Bug: keybinder stopped working after resetting all of the settings.",
+          ]
+        },
+        {
+          title: "Changed",
+          items: [
+            "Replaced cluttery UI for keybinder with overlay."
+          ]
+        }
+      ]
+    },
     {
       version: "1.5.1",
       date: "Sep 23, 2025",

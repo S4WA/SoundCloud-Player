@@ -92,6 +92,21 @@ table {
   text-align: left;
 }
 
+#js-overlay [role="dialog"] {
+  text-align: center;
+  align-items: center;
+}
+
+#js-overlay [role="dialog"] table {
+  width: 50%;
+  margin: 0 auto;
+}
+
+#js-overlay [role="dialog"] table tr {
+  background-color: #fff;
+  padding: 0.5em 0;
+}
+
 #eshortcuts {
   word-break: break-all;
 }

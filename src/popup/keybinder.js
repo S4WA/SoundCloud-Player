@@ -120,10 +120,15 @@ const shortcuts = [
   }
 ];
 
+// An Array object consists with default-keymaps that are unassigned (even pressed keys match they will ignored, thus shortcut handlers won't be executed).
+let unassigned = [];
+
 // INITIALIZATION
 function initKeyboardBinds() {
-  // KEYDOWN EVENT HANDLER
+  // EXECUTE INIT FUNCTIONS
   initKeybindsInLocalstorage();
+  initUnassignedBindsFromLocalStorage();
+  // KEYDOWN EVENT HANDLER
   document.addEventListener('keydown', keybindEventHandler);
   insertShortcutTables();
 
@@ -170,9 +175,6 @@ function keybindEventHandler(event) { // e.g.) Keydown event
   // VERIFY.
   if (keyReady == false) return; // Ignore events if popup is not ready to interact with content script yet.
 
-  const disabledInSettingsPage = loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings']);
-  if (disabledInSettingsPage) return; // ignore keydown events when compact player's not enabled in settings.html
-
   // FOCUSED ELEMENT VARIABLES.
   const active = document.activeElement;
   const activeTag = active?.tagName?.toLowerCase() ?? "";
@@ -200,10 +202,18 @@ function keybindEventHandler(event) { // e.g.) Keydown event
   }
 
   // EXECUTING SHORTCUTS, COMMANDS & HANDLERS.
+
+  // Ignore keydown events when compact player's not enabled in settings.html
+  const disabledInSettingsPage = loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings']);
+  if (disabledInSettingsPage) return;
+
   for (const item of shortcuts) {
     const { default_keys, overridden_keys, command, handler } = item;
 
     if (formElementIsFocused) continue;
+
+    // Ignroe if shortcuts are unassigned.
+    if (isUnassigned(item)) return;
 
     // Check if user customized keybind and provide the right keymaps.
     const keysToMatch = overridden_keys?.length ? overridden_keys : default_keys;
@@ -227,6 +237,7 @@ function keybindEventHandler(event) { // e.g.) Keydown event
 
 // HANDLING REMAPPING SYSTEM (in settings.html)
 let currentlyEditingBindMapper; // The element currently being focused to remap keybind (e.g. #mapper_toggle)
+let overlayObj; // The current overlay.
 function insertShortcutTables() {
   if (!loc('settings.html')) return;
 
@@ -241,47 +252,90 @@ function insertShortcutTables() {
 
     row.innerHTML = `<td class='${customized ? "bold" : ""}'>${remapUI.label}</td><th id="${remapUI.elementID}" class='clickable'>${keys}</th>`;
     table.appendChild(row);
-    insertResetButton(item);
+    if (isUnassigned(item)) {
+      document.getElementById(remapUI.elementID).previousElementSibling.appendChild(Object.assign(document.createElement("p"), {className: "bold", innerText: "(UNASSIGNED)", style: "margin: 0;"}));
+    }
 
     // PREPARE REBINDING HANDLER.
     row.querySelector("th").addEventListener("click", () => {
       if (currentlyEditingBindMapper) return;
       currentlyEditingBindMapper = item;
-      const focusedDOM = document.querySelector(`#${remapUI.elementID}`); // Targeted DOM to remap keymaps.
-      focusedDOM.innerText = "[...]";
+      const focusedDOM     = document.getElementById(remapUI.elementID); // Targeted DOM to remap keymaps.
+      const currentKeys = formatLabel(item.overridden_keys ?? item.default_keys);
+
+      // Create an overlay.
+      displayOverlay(item, focusedDOM, currentKeys);
     });
   }
 }
 
-function insertResetButton(binderData) {
-  if (!binderData) return;
-  const binderDOM  = document.querySelector(`#${binderData.remapUI.elementID}`);
-  const siblingDOM = binderDOM.previousElementSibling; // td, the one that holds remapUI.label
-
-  const customized = binderData.overridden_keys != null;
-  if (!customized) return;
-
-  if (siblingDOM.innerHTML.includes("[ RESET ]")) return;
-
-  const resetButton = Object.assign(document.createElement("span"), { innerText: `[ RESET ]`, className: 'clickable' });
-
-  resetButton.addEventListener("click", () => {
-    unregisterKeybind(binderData, binderDOM);
-    removeResetButton(binderData);
-    if (currentlyEditingBindMapper) currentlyEditingBindMapper = null; // Just in case if user tries to reset a keybind while editing.
+function displayOverlay(binderData, binderDOM, formatLabel) {
+  overlayObj = createOverlay({
+    contentHTML: `<p>PRESS ANY KEY TO OVERRIDE A SHORTCUT: <span class='bold'>${binderData.remapUI.label.toUpperCase()}</span></p>
+    <p>
+      Currently assigned as:
+      <span id='currentkeybindindialog' class='bold clickable'>${formatLabel}</span>
+    </p>
+    <p>
+    <table>
+      <tr>
+        <td id="dialogcancelbutton" class="clickable">[CANCEL]</td>
+        <td id='resetbuttonindialog'class='clickable'>[RESET]</td>
+        <td id="unassignbutton" class="clickable">[UNASSIGN]</td>
+        <td id="dialogcanceldone" class="clickable">[DONE]</td>
+      </tr>
+    </table>
+    </p>`,
+    onRemove: () => {
+      // When overlay is removed
+      cancelProcedure();
+      overlayObj = null;
+    }
   });
 
-  siblingDOM.appendChild(document.createElement("br"))
-  siblingDOM.appendChild(resetButton);
-}
+  // DOM Elements
+  const cancelButton      = overlayObj.overlay.querySelector("#dialogcancelbutton");
+  const doneButton        = overlayObj.overlay.querySelector("#dialogcanceldone");
+  const keybindDialogText = overlayObj.overlay.querySelector("#currentkeybindindialog");
+  const resetDialogButton = overlayObj.overlay.querySelector("#resetbuttonindialog");
+  const unassignButton    = overlayObj.overlay.querySelector("#unassignbutton");
 
-function removeResetButton(binderData) {
-  if (!binderData) return;
-  const siblingDOMchildren = document.querySelector(`#${binderData.remapUI.elementID}`).previousElementSibling.children;
-
-  for (let i = siblingDOMchildren.length - 1; i >= 0; i--) {
-    siblingDOMchildren[i].remove();
+  // Styling buttons
+  if (binderData.overridden_keys) {
+    resetDialogButton.classList.add('bold');
   }
+  if (isUnassigned(binderData)) {
+    unassignButton.innerText = "[ASSIGN]";
+    unassignButton.classList.add("bold");
+  }
+
+  // Add EventListeners
+  keybindDialogText.addEventListener("click", () => {
+    currentlyEditingBindMapper = binderData;
+    binderDOM.innerText = "[...]"; // here you go hardcoding again.
+    keybindDialogText.innerText = "[...]";
+  });
+
+  cancelButton.addEventListener("click", () => {
+    cancelProcedure();
+    overlayObj.remove();
+    overlayObj = null;
+  });
+
+  resetDialogButton.addEventListener("click", () => {
+    unregisterKeybind(binderData, binderDOM);
+    currentlyEditingBindMapper = null;
+  });
+
+  unassignButton.addEventListener("click", () => {
+    if (!isUnassigned(binderData)) {
+      unassignKeybind(binderData);
+      unassignButton.classList.add("bold");
+    } else {
+      assignKeybind(binderData);
+      unassignButton.classList.remove("bold");
+    }
+  });
 }
 
 function insertResetAllButton() {
@@ -295,36 +349,32 @@ function insertResetAllButton() {
     className: "clickable",
     onclick: () => {
       if (shortcutsParent.innerHTML.includes("ARE YOU SURE? ")) return;
-
-      // CREATING DOM ELEMENTS
-      const suretext     = document.createElement("span");
-      suretext.innerHTML = "ARE YOU SURE? ";
-
-      const yesnobody = document.createElement("div");
-      const yes       = document.createElement("span");
-      const no        = document.createElement("span"); 
+      overlayObj = createOverlay({
+        contentHTML: `<p class='bold'>ARE YOU SURE?</p>
+        <p>
+        <table>
+          <tr>
+            <td id="noreseteveryshortcut" class="clickable">[NO]</td>
+            <td id='yesreseteveryshortcut'class='clickable'>[YES]</td>
+          </tr>
+        </table>
+        </p>`,
+        onRemove: () => {
+          // When overlay is removed
+          cancelProcedure();
+          overlayObj = null;
+        }
+      });
 
       // Set properties
-      yes.innerText = "[ YES ]";
-      yes.classList.add("clickable");
-      yes.onclick = () => {
+      document.getElementById("yesreseteveryshortcut").addEventListener("click", function () {
         unregisterKeybindAll();
-        yesnobody.remove();
-      }
+        overlayObj.remove();
+      });
 
-      no.innerText = "[ NO ]";
-      no.classList.add("clickable");
-      no.onclick = () => {
-        yesnobody.remove();
-      }
-
-      yesnobody.style.paddingTop = "0.35em";
-
-      // Insertting/appending created DOM elements.
-      yesnobody.appendChild(suretext);
-      yesnobody.appendChild(yes);
-      yesnobody.appendChild(no);
-      resetDialogBody.appendChild(yesnobody);
+      document.getElementById("noreseteveryshortcut").addEventListener("click", function () {
+        overlayObj.remove();
+      });
     }
   });
 
@@ -337,17 +387,28 @@ function insertResetAllButton() {
 // INITIALIZATION OF KEYBINDS.
 // UPDATE OVERRIDDEN_KEYS IN EACH KEYBIND FROM LOCALSTORAGE.
 function initKeybindsInLocalstorage() {
-  let stored;
-  try {
-    stored = JSON.parse(localStorage.getItem("overridden_keybinds") || "[]");
-  } catch {
+  let stored = isJsonString(localStorage.getItem("overridden_keybinds"));
+  if (!stored) {
     stored = [];
     localStorage.setItem("overridden_keybinds", "[]");
   }
   for (const s of stored) {
+    // Obtain a shortcut that matches default keymap.
     const match = shortcuts.find(v => arraysEqual(s.default_keys, v.default_keys));
-    if (match) match.overridden_keys = s.overridden_keys;
+    if (match) {
+      match.overridden_keys = s.overridden_keys;
+    }
   }
+}
+
+function initUnassignedBindsFromLocalStorage() {
+  let stored = isJsonString(localStorage['unassigned_keybinds']);
+  if (!stored) {
+    stored = []
+    localStorage.setItem('unassigned_keybinds', JSON.stringify(stored));
+  }
+
+  unassigned = stored;
 }
 
 // VERIFY KEYMAPS
@@ -357,24 +418,36 @@ function verifyKeybind(keymap, nonSpecialKeysExist) {
   // - FALSE = failed.
   // NOTE: I forgot why I did this. Seems pointless for now.
 
-  if (!keymap) return false;              // Null check
-  if (!nonSpecialKeysExist) return false; // Ignore when keydown event only holds special keys like "Shift".
+  if (!keymap) {
+    // Null check
+    console.log("verifyKeybind: return false @ null check")
+    return false;
+  }
+  if (!nonSpecialKeysExist){
+     // Ignore when keydown event only holds special keys like "Shift".
+    console.log("verifyKeybind: return false @ special-keys check");
+    return false;
+ }
+
+ console.log(`verifyKeybind:${keymap}`)
 
   // Obtain localStorage and parse as a JS Object.
   const stored = isJsonString(localStorage.overridden_keybinds);
   if (!stored) {
     cancelProcedure();
+    console.log("verifyKeybind: return false @ localStorage check");
     return false; // If there's no localStorage, return. This exist just in case.
   }
 
   // VARIABLES;
   const binderData = currentlyEditingBindMapper // an object containing all data of one keybind (command, default_keys, overridden_keys, remapUI, handler).
-  const binderDOM  = document.querySelector(`#${binderData.remapUI.elementID}`);
+  const binderDOM  = document.getElementById(binderData.remapUI.elementID);
 
 
   // IF PRESSED KEYS ARE JUST "ESCAPE" KEY THEN RETURN.
   if (Array.isArray(keymap) && keymap.length === 1 && keymap[0] === "Escape") {
     cancelProcedure();
+    console.log("verifyKeybind: return false @ Escape key check");
     return false;
   }
 
@@ -387,6 +460,7 @@ function verifyKeybind(keymap, nonSpecialKeysExist) {
     // If there's duplication (conflict) in both default_keys or existing customized keys.
     if (arraysEqual(keymap, otherKeys)) {
       cancelProcedure();
+      console.log("verifyKeybind: return false @ conflict check");
       return false;
     }
   }
@@ -397,14 +471,15 @@ function verifyKeybind(keymap, nonSpecialKeysExist) {
       // This is when user's trying to reset the keybind manually, thereby proceed the registration.
 
       unregisterKeybind(binderData, binderDOM);
-      removeResetButton(binderData);
 
       // REFACTORING.
       currentlyEditingBindMapper = null;
+      console.log("verifyKeybind: return true @ reset to default");
       return true;
     }
     // This contrarily is when user is trying to bind the same keymap as the default, thereby drop the process.
     cancelProcedure();
+    console.log("verifyKeybind: return false @ bind same as default");
     return false;
   }
 
@@ -414,6 +489,7 @@ function verifyKeybind(keymap, nonSpecialKeysExist) {
 
   // REFACTORING VARIABLE & RETURN TRUE.
   currentlyEditingBindMapper = null;
+  console.log("verifyKeybind: return true @ successful registration");
   return true;
 }
 
@@ -421,9 +497,13 @@ function verifyKeybind(keymap, nonSpecialKeysExist) {
 function registerKeybind(binderData, binderDOM, keymap) {
   const stored = isJsonString(localStorage.overridden_keybinds);
   // UPDATE DOM ELEMENT.
-  binderDOM.innerText = formatLabel(keymap);
-  binderDOM.previousElementSibling.classList.add("bold");
-  insertResetButton(binderData);
+  const formatMap     = formatLabel(keymap);
+  binderDOM.innerText = formatMap;
+  binderDOM.previousElementSibling.classList.add("bold"); // Highlight because it's customed.
+  if (overlayObj?.overlay.querySelector("#currentkeybindindialog")) {
+    overlayObj.overlay.querySelector("#currentkeybindindialog").innerText = formatMap;
+    overlayObj.overlay.querySelector("#resetbuttonindialog").classList.add('bold');
+  }
 
   // UPDATE LOCALSTORAGE
   const updateExistingObject = stored.some(obj => arraysEqual(obj.default_keys, binderData.default_keys));
@@ -450,9 +530,14 @@ function unregisterKeybind(binderData, binderDOM) {
   const stored = isJsonString(localStorage.overridden_keybinds);
 
   // Update variable and DOM element.
-  binderData.overridden_keys       = null;
-  binderDOM.innerText              = formatLabel(binderData.default_keys);
+  const formatMap = formatLabel(binderData.default_keys);
+  binderData.overridden_keys = null;
+  binderDOM.innerText        = formatMap;
   binderDOM.previousElementSibling.classList.remove("bold");
+  if (overlayObj?.overlay.querySelector("#currentkeybindindialog")) {
+    overlayObj.overlay.querySelector("#currentkeybindindialog").innerText = formatMap;
+    overlayObj.overlay.querySelector("#resetbuttonindialog").classList.remove('bold');
+  }
   // Update localStorage.
   localStorage.overridden_keybinds = JSON.stringify(
     stored.filter(
@@ -466,15 +551,61 @@ function unregisterKeybindAll() {
   for (const item of shortcuts) {
     if (!item.overridden_keys) continue;
 
-    unregisterKeybind(item, document.querySelector(`#${item.remapUI.elementID}`));
-    removeResetButton(item);
+    unregisterKeybind(item, document.getElementById(item.remapUI.elementID));
   }
 }
 
+function unassignKeybind(binderData) {
+  if (isUnassigned(binderData)) return;
+  const binderDOM = document.getElementById(binderData.remapUI.elementID);
+
+  // Updating the variable.
+  unassigned.push([...binderData.default_keys]);
+  // Overwriting the localStorage.
+  localStorage.setItem('unassigned_keybinds', JSON.stringify(unassigned));
+
+  if (overlayObj?.overlay.querySelector("#currentkeybindindialog")) {
+    const el = overlayObj.overlay.querySelector("#unassignbutton");
+    el.innerText = "[ASSIGN]"
+    el.classList.add("bold");
+  }
+  binderDOM.previousElementSibling.appendChild(Object.assign(document.createElement("p"), {className: "bold", innerText: "(UNASSIGNED)", style: "margin: 0;"}));
+}
+
+function assignKeybind(binderData) {
+  if (!isUnassigned(binderData)) return;
+  const binderDOM = document.getElementById(binderData.remapUI.elementID);
+
+  // Create another Array without the target and overwrite the variable with it.
+  const keymap = binderData.default_keys;
+  unassigned = unassigned.filter(target => !arraysEqual(target, binderData.default_keys));
+  // Overwriting the localStorage.
+  localStorage.setItem('unassigned_keybinds', JSON.stringify(unassigned));
+
+  if (overlayObj?.overlay.querySelector("#currentkeybindindialog")) {
+    const el = overlayObj.overlay.querySelector("#unassignbutton");
+    el.innerText = "[UNASSIGN]"
+    el.classList.remove("bold");
+  }
+  binderDOM.previousElementSibling.querySelector("p").remove();
+}
+
+function isUnassigned(binderData) {
+  if (!binderData) return;
+  return unassigned.some(target => arraysEqual(target, binderData.default_keys));
+}
+
 function cancelProcedure() {
+  if (!currentlyEditingBindMapper) return;
   // Revert DOM element and nullify 'currentlyEditingBindMapper'.
   const keys = currentlyEditingBindMapper.overridden_keys ?? currentlyEditingBindMapper.default_keys; // Obtain the keymap to display.
-  document.querySelector(`#${currentlyEditingBindMapper.remapUI.elementID}`).innerText = formatLabel(keys)
+  const formatMap = formatLabel(keys);
+  document.getElementById(currentlyEditingBindMapper.remapUI.elementID).innerText = formatMap;
+  if (overlayObj?.overlay.querySelector("#currentkeybindindialog")) {
+    const keybindDialogText = overlayObj.overlay.querySelector("#currentkeybindindialog");
+    keybindDialogText.innerText = formatMap;
+    keybindDialogText.classList.add('editing');
+  }
   currentlyEditingBindMapper = null; // RESET EDITING.
 }
 
