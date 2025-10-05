@@ -309,6 +309,7 @@ async function updateDescription() {
   const descriptionChild  = document.querySelector("#description .dd-child");
   const descriptionParent = document.querySelector("#description .dd-parent");
 
+  if (!description) return;
   const isEmpty = description.length < 1;
 
   console.log(descriptionBody)
