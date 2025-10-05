@@ -131,6 +131,33 @@ function openURL(link) {
   chrome.tabs.create({ url: link });
 }
 
+function normalizeLink(link) {
+  if (/^https?:\/\//i.test(link)) {
+    return link;
+  }
+  return "https://" + link.replace(/^www\./i, "www.");
+}
+
+function splitTextAndLinks(input) {
+  const urlPattern = /\b((?:https?:\/\/|www\.)[^\s]+)/gi;
+  let parts = [];
+  let lastIndex = 0;
+
+  input.replace(urlPattern, (match, offset) => {
+    if (lastIndex < offset) {
+      parts.push({ type: "text", value: input.slice(lastIndex, offset) });
+    }
+    parts.push({ type: "link", value: match });
+    lastIndex = offset + match.length;
+  });
+
+  if (lastIndex < input.length) {
+    parts.push({ type: "text", value: input.slice(lastIndex) });
+  }
+
+  return parts;
+}
+
 function copyToClipboard(text) {
   var input = document.createElement('input');
   input.style.position = 'fixed';
@@ -495,5 +522,57 @@ function createOverlay({
 
   return { overlay: ov, dialog, remove };
 }
+
+// apply animations to every dropdown dom element
+function initDropdown() {
+  // CHILDREN
+  const dropdowns = document.querySelectorAll('.dropdown');
+  dropdowns.forEach((dropdown) => {
+    const isClosed = dropdown.hasAttribute('closed') ? dropdown.getAttribute('closed') === 'true' : true;
+    if (isClosed) {
+      const child = dropdown.querySelector('.dd-child');
+      if (child) child.style.display = 'none';
+    }
+    if (!dropdown.hasAttribute('closed')) {
+      dropdown.setAttribute('closed', 'true');
+    }
+  });
+
+  // PARENTS
+  const parents = document.querySelectorAll('.dropdown > .dd-parent');
+  parents.forEach((parent) => {
+    // Add a class.
+    parent.classList.add('clickable');
+
+    // Insert an arrow icon. Insert before the textnode or after, depending on class each has.
+    const iconElement = Object.assign(document.createElement("span"), { className: "icon" });
+    if (parent.classList.contains('iconinsertafter')) {
+      parent.appendChild(iconElement);
+    } else {
+      parent.insertBefore(iconElement, parent.firstChild);
+    }
+
+    // Add EventListener.
+    parent.addEventListener('click', () => {
+      const dropdown = parent.parentElement;
+      const value = dropdown.getAttribute('closed') === 'true';
+      dropdown.setAttribute('closed', !value);
+      
+      const child = dropdown.querySelector('.dd-child');
+      if (!child) return;
+
+      if (localStorage.getItem('dropdown-animation') === 'true') {
+        if (value) {
+          slideDown(child);
+        } else {
+          slideUp(child);
+        }
+      } else {
+        child.style.display = value ? 'block' : 'none';
+      }
+    });
+  });
+}
+
 // keyReady: if SC-Player is ready to interact with its main content tab.
 var keyReady = false;

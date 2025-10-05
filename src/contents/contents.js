@@ -8,20 +8,6 @@ window.onload = (async() => {
   })();
 
   console.log("Hi.");
-
-  // Check if extension is reloaded
-  setInterval(async() => {
-    try {
-      let shit = await chrome.runtime.getManifest();
-    } catch {
-      // if so -> reload content.js but it can only reload in once
-      if (reloading == false) {
-        location.reload();
-        reloading = true;
-        console.info('reloading...');
-      }
-    }
-  }, 10000);
 });
 
 async function update() {

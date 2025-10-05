@@ -199,7 +199,6 @@ function keybindEventHandler(event) { // e.g.) Keydown event
   }
 
   // EXECUTING SHORTCUTS, COMMANDS & HANDLERS.
-
   // Verification.
   if (keyReady == false) return; // Ignore events if popup is not ready to interact with content script yet.
 

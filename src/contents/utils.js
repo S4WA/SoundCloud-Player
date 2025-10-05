@@ -130,15 +130,26 @@ function setTime(percent) {
 
 function input(keyCode, name, shiftKey) {
   document.body.focus();
-  document.dispatchEvent(
-    new KeyboardEvent('keydown', {
-      key: name,
-      keyCode: keyCode, 
-      code: name,
-      which: keyCode,
-      shiftKey: shiftKey ?? false,
-    })
-  );
+
+  const downEvent = new KeyboardEvent('keydown', {
+    key: name,
+    keyCode: keyCode,
+    code: name,
+    which: keyCode,
+    shiftKey: shiftKey ?? false,
+    bubbles: true,
+  });
+  document.dispatchEvent(downEvent);
+
+  const upEvent = new KeyboardEvent('keyup', {
+    key: name,
+    keyCode: keyCode,
+    code: name,
+    which: keyCode,
+    shiftKey: shiftKey ?? false,
+    bubbles: true,
+  });
+  document.dispatchEvent(upEvent);
 }
 
 // added attr() in order to avoid replacing every attr function from jquery to vanilla js's setAttribute().

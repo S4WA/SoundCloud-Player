@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector("#controller-body").style["display"] = "none";
   }
 
-  initDropdown();
   initSettings();
   initTemplates();
   initInputs();
@@ -28,53 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // inserting yt video embed
     // w/o doing so would ruin its performance (drops fps)
   });
+
+  // Apply no spellcheck.
+  document.querySelectorAll('textarea, input').forEach((box) => {
+    box.setAttribute('spellcheck', 'false');
+  });
 });
-
-// apply animations to every dropdown dom element
-function initDropdown() {
-  // Children
-  const dropdowns = document.querySelectorAll('.dropdown');
-  dropdowns.forEach((dropdown) => {
-    const isClosed = dropdown.hasAttribute('closed') ? dropdown.getAttribute('closed') === 'true' : true;
-    if (isClosed) {
-      const child = dropdown.querySelector('.dd-child');
-      if (child) child.style.display = 'none';
-    }
-    if (!dropdown.hasAttribute('closed')) {
-      dropdown.setAttribute('closed', 'true');
-    }
-  });
-
-  // Parents
-  const parents = document.querySelectorAll('.dropdown > .dd-parent');
-  parents.forEach((parent) => {
-    parent.classList.add('clickable');
-    parent.addEventListener('click', () => {
-      const dropdown = parent.parentElement;
-      const value = dropdown.getAttribute('closed') === 'true';
-      dropdown.setAttribute('closed', !value);
-      
-      const child = dropdown.querySelector('.dd-child');
-      if (!child) return;
-
-      if (localStorage.getItem('dropdown-animation') === 'true') {
-        if (value) {
-          slideDown(child);
-        } else {
-          slideUp(child);
-        }
-      } else {
-        child.style.display = value ? 'block' : 'none';
-      }
-    });
-  });
-
-  // Elements
-  const boxes = document.querySelectorAll('.dropdown .dd-child textarea, .dropdown .dd-child input');
-  boxes.forEach((boxes) => {
-    boxes.setAttribute('spellcheck', 'false');
-  });
-}
 
 function checkMarqueesDurations() {
   document.querySelector('#duration').value = localStorage.getItem('duration');
@@ -377,6 +335,25 @@ function registerEvents() {
 function insertAnnouncement() {
   const messages = [
     {
+      version: "1.5.4",
+      date: "Oct 5, 2025",
+      changes: [
+        {
+          title: "Added",
+          items: [
+            "Description of track (experimental)",
+            "When the extension is installed/updated, SoundCloud tabs will be automatically reloaded from now on.",
+          ]
+        },
+        {
+          title: "Changed",
+          items: [
+            "A few internal things."
+          ]
+        }
+      ]
+    },
+    {
       version: "1.5.3",
       date: "Sep 28, 2025",
       changes: [
@@ -437,31 +414,6 @@ function insertAnnouncement() {
           title: "Changed",
           items: [
             "The old default theme will remain as the 'Legacy' theme, as we introduced new default theme."
-          ]
-        }
-      ]
-    },
-    {
-      version: "1.4.2",
-      date: "Aug 3, 2025",
-      changes: [
-        {
-          title: "Fixed",
-          items: [
-            "Critical display bugs."
-          ]
-        },
-        {
-          title: "Updated",
-          items: [
-            "A few internal things have changed. The extensions as a whole should work smoother.",
-            "Options for displays are subcategorized in smaller chunks now.",
-          ]
-        },
-        {
-          title: "Added",
-          items: [
-            "Option for remembering window size in popout."
           ]
         }
       ]

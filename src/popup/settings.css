@@ -10,18 +10,6 @@ textarea {
   width: 245px;
 }
 
-.dropdown > .dd-parent > .icon {
-  background-size: 80% 80%;
-}
-
-.dropdown[closed='true'] > .dd-parent > .icon {
-	background-image: url('../assets/dropdown/caret-right.svg');
-}
-
-.dropdown[closed='false'] > .dd-parent > .icon {
-	background-image: url('../assets/dropdown/caret-down.svg');
-}
-
 .options-table th, .options-table td {
   text-align: left;
   padding: 5px 5px;
@@ -143,14 +131,6 @@ li:last-child {
 }
 
 /* Dark Mode */
-body[dark='true'] .dropdown[closed='true'] > .dd-parent > .icon {
-  background-image: url('../assets/dropdown/caret-right_dark.svg');
-}
-
-body[dark='true'] .dropdown[closed='false'] > .dd-parent > .icon {
-  background-image: url('../assets/dropdown/caret-down_dark.svg');
-}
-
 body[dark='true'] #exit {
   background-size: 80% 80%;
   background-image: url('../assets/chevron-left_dark.svg');
@@ -166,11 +146,6 @@ body[dark=false] #controller-body {
 
 #controller-body hr {
   margin-top: 15px;
-}
-
-/* Misc */
-.bold {
-  font-weight: bold;
 }
 
 select, select option, input, textarea {

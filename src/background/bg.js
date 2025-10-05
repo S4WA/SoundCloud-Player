@@ -57,3 +57,14 @@ async function queue(command) {
     }
   });
 } 
+
+// INject on install.
+chrome.runtime.onInstalled.addListener(async (details) => {
+  if (details.reason === "install" || details.reason === "update") {
+    const tabs = await chrome.tabs.query({ url: "*://soundcloud.com/*" });
+    for (const tab of tabs) {
+      if (!tab.id) continue;
+      chrome.tabs.reload(tab.id);
+    }
+  }
+});

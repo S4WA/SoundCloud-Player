@@ -3,7 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const prefix = "[SoundCloud Player]";
     for (const m of ["log", "warn", "error", "info", "debug"]) {
       const orig = console[m];
-      console[m] = orig.bind(console, prefix);
+      console[m] = function(...args) {
+        if (typeof args[0] === "string") {
+          args[0] = `${prefix} ${args[0]}`;
+        } else {
+          args.unshift(prefix);
+        }
+        return orig.apply(console, args);
+      };
     }
   })();
 
@@ -30,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }).then(() => {
     initKeyboardBinds();
+    initDropdown();
   });
 });
 
@@ -43,7 +51,7 @@ const settings = {
   'bsky': '%title% by %artist% %url%',
   'copy': '%title% by %artist% %url%',
   'font': 'Arial',
-  'font-size': '12px',
+  'font-size': '13px',
   'theme': 'default',
   'duration': 5000,
   'pause': 5000,

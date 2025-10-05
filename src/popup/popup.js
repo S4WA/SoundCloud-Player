@@ -303,6 +303,97 @@ function shareLink(social) {
   return links[social].replace( '%text%', fixedEncoder(text) );
 }
 
+async function updateDescription() {
+  let   description       = await getDescription();
+  const descriptionBody   = document.querySelector("#description")
+  const descriptionChild  = document.querySelector("#description .dd-child");
+  const descriptionParent = document.querySelector("#description .dd-parent");
+
+  const isEmpty = description.length < 1;
+
+  console.log(descriptionBody)
+
+  // If the description is empty, return and invis.
+  if (isEmpty) {
+    descriptionBody.style.display = 'none';
+    if (debug) console.log("%cNo description.", "color:white; background-color:red; padding:2px 4px; border-radius:4px;")
+    return;
+  } else {
+    descriptionBody.style.display = 'block';
+    if (debug) {
+      console.log("%cObtained description:", "color:white; background-color:purple; padding:2px 4px; border-radius:4px;", description);
+    }
+  }
+  description = description.split("\n");
+
+  // Clear description
+  descriptionChild.innerHTML = ""
+
+  // For-loop each line in the description.
+  for (let i = 0; i < description.length; i++) {
+    const line = description[i];
+    const wordsAndLinks    = splitTextAndLinks(line)
+    const paragraphElement = document.createElement("p");
+
+    if (wordsAndLinks.length > 0) {
+      // Pretty devious work here. Erasing margins if the array is not empty.
+      // Contrally, if it's an empty line, let margins as is, creating a visible blank line.
+      // - Which it will follow with original description the track has.
+      // - Without doing so, there will be no blank lines in the description. 
+
+      // margin-top:    if it's the first line, add margin, anything else = 0.
+      // margin-bottom: if it's the last line, add margin, anything else = 0.
+      Object.assign(paragraphElement.style, {
+        marginTop: i === 0 ? '12px' : 0,
+        marginBottom: i === description.length-1 ? "12px" : 0,
+        wordBreak: "break-word",
+      });
+    }
+
+    // For-loop words and links in one line.
+    for (let textObject of wordsAndLinks) {
+      const isLink  = textObject.type === 'link';
+      const content = textObject.value;
+      let wordElement; // DOM element (span or a).
+
+      if (isLink) {
+        // If it's a link, insert a tag.
+        const polishedLink = normalizeLink(content);
+
+        // href != "#", because I want to show the actual link and not a link with "chrome-extension://" scheme.
+        wordElement = Object.assign(document.createElement("a"), { innerText: content, className: "exception", href: polishedLink }); 
+        wordElement.addEventListener("click", (event) => {
+          openURL(polishedLink); // normalize link in case if it doesn't have scheme.
+          event.preventDefault();
+        });
+      } else {
+        // If not span.
+        wordElement = Object.assign(document.createElement("span"), { innerText: content });
+      }
+      // Append each word to a paragraph.
+      paragraphElement.appendChild(wordElement);
+    }
+    // Append each paragraph to div element.
+    descriptionChild.appendChild(paragraphElement);
+  }
+}
+
+async function getDescription() {
+  if (!json || !json.link) return null;
+  const url = `https://soundcloud.com/oembed?format=json&url=${json.link}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result?.description;
+  } catch (error) {
+    return error.message;
+  }
+}
+
 // Variables
 var dark = false, or = false, checkTimer = null, share_with_time = false, sliderEditing = false, 
   links = {

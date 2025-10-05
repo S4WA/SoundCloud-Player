@@ -14,7 +14,7 @@ body .element.left {
   float: left;
 }
 
-body[dark='true'] input, body[dark='true'] span {
+body[dark='true'] textarea, body[dark='true'] input {
   background-color: var(--bg-color);
   color: white;
 }
@@ -185,6 +185,14 @@ body[dark='true'] #social .clipboard {
 }
 
 /* Others */
+#description {
+  display: none;
+  /* invisible in default, because it takes a bit of time to fetch data and figure out if a track does have description or not.
+   * if there's no description then script will try to hide it, but before that it's better to hide it in the first place, so that
+   * there's no cranky cranky.
+   */
+}
+
 .icon {
   background-size: cover;
 }
@@ -285,6 +293,10 @@ body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='tru
 #controller-body[mode='modern'] .container {
   width: calc(250px - 8px - 8px);
   padding-top: 0.5em;
+}
+
+#controller-body[mode='modern'] #share {
+  width: calc(250px - 8px - 8px);
 }
 
 /* PROGRESS BAR COMPONENTS */
