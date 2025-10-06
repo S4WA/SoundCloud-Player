@@ -243,7 +243,7 @@ function keybindEventHandler(event) { // e.g.) Keydown event
   if (isKeydownEvent) {
     if (command) { // Some of the shortcuts doesn't have command but has handler. (e.g. 'Open SC Tab').
       queue(command).then((val) => {
-        console.log("keydownEVENT: ", command);
+        // console.log("keydownEVENT: ", command);
         if (handler) handler(val);
       });
     } else if (handler) {
@@ -256,7 +256,7 @@ function keybindEventHandler(event) { // e.g.) Keydown event
     if (upBind) {
       // NOTE: As of now, there's no need to null check for 'command' variable because the array (upShortcuts) is not complex yet. 
       queue(upBind.command).then((val) => {
-        console.log("KeyupEVENT: ", command);
+        // console.log("KeyupEVENT: ", command);
       });
     } else {
       // Return, because other wise it's going to cancel keyup events even if keymap is not matching.
