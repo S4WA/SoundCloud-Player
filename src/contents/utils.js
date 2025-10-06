@@ -88,14 +88,6 @@ function volumeUp() {
   input(38, 'ArrowUp', true);
 }
 
-function seekBack() {
-  input(37, 'ArrowLeft');
-}
-
-function seekForward() {
-  input(39, 'ArrowRight');
-}
-
 function isFollowing() {
   // why not TRUE OR FALSE?
   // if it's returning 'self' then popup.js can tell that the current track is uploaded by the user themself.
@@ -129,8 +121,14 @@ function setTime(percent) {
 }
 
 function input(keyCode, name, shiftKey) {
-  document.body.focus();
+  dispatchKeydown(keyCode, name, shiftKey);
+  setTimeout(() => {
+    dispatchKeyup(keyCode, name, shiftKey)
+  }, 100);
+}
 
+function dispatchKeydown(keyCode, name, shiftKey) {
+  document.body.focus();
   const downEvent = new KeyboardEvent('keydown', {
     key: name,
     keyCode: keyCode,
@@ -139,8 +137,11 @@ function input(keyCode, name, shiftKey) {
     shiftKey: shiftKey ?? false,
     bubbles: true,
   });
-  document.dispatchEvent(downEvent);
+  return document.dispatchEvent(downEvent);
+}
 
+function dispatchKeyup(keyCode, name, shiftKey) {
+  document.body.focus();
   const upEvent = new KeyboardEvent('keyup', {
     key: name,
     keyCode: keyCode,
@@ -149,7 +150,7 @@ function input(keyCode, name, shiftKey) {
     shiftKey: shiftKey ?? false,
     bubbles: true,
   });
-  document.dispatchEvent(upEvent);
+  return document.dispatchEvent(upEvent);
 }
 
 // added attr() in order to avoid replacing every attr function from jquery to vanilla js's setAttribute().

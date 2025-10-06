@@ -160,13 +160,25 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       sendResponse(response);
       break;
     }
-    case 'seekb':
-    case 'seekf': { // seek backward/forward , but also needs to update progressbar.
-      if (request.type == 'seekb') {
-        seekBack();
-      } else if (request.type == 'seekf') {
-        seekForward();
+    case 'seekb-down':
+    case 'seekb-up':
+    case 'seekf-down':
+    case 'seekf-up': { // seek backward/forward , but also needs to update progressbar.
+      const requestType  = request.type.toLowerCase();
+
+      const isDownOnly   = requestType.includes('down');
+      const isForward    = requestType.startsWith('seekf');
+      const inputKeycode = isForward ? 39 : 37;
+      const inputKeyname = isForward ? 'ArrowRight' : 'ArrowLeft';
+
+      if (isDownOnly) {
+        // Dispatch Keydown Event
+        dispatchKeydown(inputKeycode, inputKeyname);
+      } else {
+        // Dispatch Keyup Event
+        dispatchKeyup(inputKeycode, inputKeyname);
       }
+
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();
       json['progress'] = getProgress();

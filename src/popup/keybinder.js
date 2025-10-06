@@ -91,7 +91,7 @@ const shortcuts = [
     }
   },
   {
-    command: "seekf",
+    command: "seekf-down",
     default_keys: [ "ArrowRight" ],
     overridden_keys: null,
     remapUI: {
@@ -100,7 +100,7 @@ const shortcuts = [
     }
   },
   {
-    command: "seekb",
+    command: "seekb-down",
     default_keys: [ "ArrowLeft" ],
     overridden_keys: null,
     remapUI: {
@@ -120,6 +120,19 @@ const shortcuts = [
   }
 ];
 
+// These only queues up when the specific keymap goes physically up.
+// There's no need for remapUI, since this is a hidden function. (Which its existence is very questionable to begin with, but had to implement. Otherwise issue #46)
+const upShortcuts = [
+  {
+    command: "seekf-up",
+    default_keys: [ "ArrowRight" ]
+  },
+  {
+    command: "seekb-up",
+    default_keys: [ "ArrowLeft" ]
+  }
+]
+
 // An Array object consists with default-keymaps that are unassigned (even pressed keys match they will ignored, thus shortcut handlers won't be executed).
 let unassigned = [];
 
@@ -130,6 +143,7 @@ function initKeyboardBinds() {
   initUnassignedBindsFromLocalStorage();
   // KEYDOWN EVENT HANDLER
   document.addEventListener('keydown', keybindEventHandler);
+  document.addEventListener('keyup', keybindEventHandler);
   insertShortcutTables();
 
   // INSERT RESET-ALL BUTTON
@@ -170,14 +184,7 @@ function showSlider() {
   }, 500);
 };
 
-// KEYDOWN EVENT HANDLER
-function keybindEventHandler(event) { // e.g.) Keydown event
-  // FOCUSED ELEMENT VARIABLES.
-  const active = document.activeElement;
-  const activeTag = active?.tagName?.toLowerCase() ?? "";
-  const formElementIsFocused = ["input", "select", "option", "textarea"].includes(activeTag) || active?.isContentEditable;
-
-  // PRESSED KEYS VARIABLES.
+function pressedKeySet(event) {
   const pressedKeys = new Set(); // Using Set can avoid redundancy.
   const mainKey = event.code;
   const nonSpecialKeysExist = !["ShiftLeft","ShiftRight","ControlLeft","ControlRight","AltLeft","AltRight","MetaLeft","MetaRight"].includes(mainKey);
@@ -189,30 +196,85 @@ function keybindEventHandler(event) { // e.g.) Keydown event
     pressedKeys.add(mainKey);
   }
 
-  // REMAPPING KEYS HANDLING.
+  return {pressedKeys, mainKey, nonSpecialKeysExist};
+}
+
+// KEYDOWN/UP EVENTS HANDLER
+// Responsible for
+// - Keybind registration
+// - Shortcut handling (When keydown and keyup)
+function keybindEventHandler(event) { // e.g.) Keydown event
+  const isKeydownEvent = event.type === 'keydown';
+  const { pressedKeys, mainKey, nonSpecialKeysExist } = pressedKeySet(event);
+
+  // KEYBIND REGISTRATION (Keybind Remap Handler).
   if (currentlyEditingBindMapper) {
-    // Converting Set to Array.
+    // - Converting Set to Array.
     const keymap = Array.from(pressedKeys);
     verifyKeybind(keymap, nonSpecialKeysExist);
     event.preventDefault();
     return;
   }
 
-  // EXECUTING SHORTCUTS, COMMANDS & HANDLERS.
-  // Verification.
+  // SHORTCUT HANDLING (Executing commands & handlers).
+  // - Verification.
   if (keyReady == false) return; // Ignore events if popup is not ready to interact with content script yet.
 
-  // Ignore keydown events when compact player's not enabled in settings.html
+  // - Ignore keydown events when compact player's not enabled in settings.html
   const disabledInSettingsPage = loc('settings.html') && localStorage['compact_in_settings'] != null && !Bool(localStorage['compact_in_settings']);
   if (disabledInSettingsPage) return;
 
-  for (const item of shortcuts) {
-    const { default_keys, overridden_keys, command, handler } = item;
+  // FOCUSED ELEMENT VARIABLES.
+  const active = document.activeElement;
+  const activeTag = active?.tagName?.toLowerCase() ?? "";
+  const formElementIsFocused = ["input", "select", "option", "textarea"].includes(activeTag) || active?.isContentEditable;
 
-    if (formElementIsFocused) continue;
+  // - Ignore if user's focusing on a form.
+  if (formElementIsFocused) return;
+
+  // FINDING MATCHES.
+  const binderData = findShortcutFromKeymap(pressedKeys);
+  // - Null check & return.
+  if (!binderData) return;
+  // VARIABLES FOR EACH SHORTCUT'S DATUM.
+  const { default_keys, overridden_keys, command, handler } = binderData;
+
+  // EXECUTING COMMAND AND HANDLERS.
+  if (isKeydownEvent) {
+    if (command) { // Some of the shortcuts doesn't have command but has handler. (e.g. 'Open SC Tab').
+      queue(command).then((val) => {
+        console.log("keydownEVENT: ", command);
+        if (handler) handler(val);
+      });
+    } else if (handler) {
+      handler();
+    }
+  } else {
+    // This part is for keyup events.
+    // The script reaches here only when there's a keydown shortcut to exist and at the same time, the opposite shortcut co-exists (? XD)
+    const upBind = findUpShortcutFromBinderData(binderData);
+    if (upBind) {
+      // NOTE: As of now, there's no need to null check for 'command' variable because the array (upShortcuts) is not complex yet. 
+      queue(upBind.command).then((val) => {
+        console.log("KeyupEVENT: ", command);
+      });
+    } else {
+      // Return, because other wise it's going to cancel keyup events even if keymap is not matching.
+      // (since we're mixing keydown event and keyup event with the same handler (this function).)
+      return;
+    }
+  }
+  // Canceling the keydown event.
+  event.preventDefault();
+}
+
+// Function to find a shortcut for keyDOWN from certain keymap by doing for-loop
+function findShortcutFromKeymap(pressedKeys) {
+  for (const binderData of shortcuts) {
+    const { default_keys, overridden_keys, command, handler } = binderData;
 
     // Ignroe if shortcuts are unassigned.
-    if (isUnassigned(item)) return;
+    if (isUnassigned(binderData)) return null;
 
     // Check if user customized keybind and provide the right keymaps.
     const keysToMatch = overridden_keys?.length ? overridden_keys : default_keys;
@@ -220,18 +282,23 @@ function keybindEventHandler(event) { // e.g.) Keydown event
     const match = keysToMatch.every(k => pressedKeys.has(k)) && keysToMatch.length === pressedKeys.size;
     if (!match) continue;
 
-    // Executing command and handlers.
-    if (command) { // Some of the shortcuts doesn't have command but has handler. (e.g. 'Open SC Tab').
-      queue(command).then((val) => {
-        if (handler) handler(val);
-      });
-    } else if (handler) {
-      handler();
-    }
-    // Canceling the keydown event.
-    event.preventDefault();
-    break;
+    return binderData;
   }
+  return null;
+}
+
+// Find shortcut for keyUP event from binderData.
+function findUpShortcutFromBinderData(binderData) {
+  if (!binderData) return null;
+  if (isUnassigned(binderData)) return null;
+
+  for (const item of upShortcuts) {
+    const { default_keys, command } = item;
+
+    if (!arraysEqual(default_keys, binderData.default_keys)) continue;
+    return item;
+  }
+  return null;
 }
 
 // HANDLING REMAPPING SYSTEM (in settings.html)

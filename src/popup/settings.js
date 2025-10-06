@@ -339,6 +339,12 @@ function insertAnnouncement() {
       date: "Oct 5, 2025",
       changes: [
         {
+          title: "Fixed",
+          items: [
+            "Seek forward/backward shortcuts should properly jump in a big chunk if you hold the keys, on the contray, it should be in a small chunk with tap presses."
+          ]
+        },
+        {
           title: "Added",
           items: [
             "Description of track (experimental)",

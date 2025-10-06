@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-  (function() {
-    const prefix = "[SoundCloud Player]";
-    for (const m of ["log", "warn", "error", "info", "debug"]) {
-      const orig = console[m];
-      console[m] = function(...args) {
-        if (typeof args[0] === "string") {
-          args[0] = `${prefix} ${args[0]}`;
-        } else {
-          args.unshift(prefix);
-        }
-        return orig.apply(console, args);
-      };
-    }
-  })();
+  // (function() {
+  //   const prefix = "[SoundCloud Player]";
+  //   for (const m of ["log", "warn", "error", "info", "debug"]) {
+  //     const orig = console[m];
+  //     console[m] = function(...args) {
+  //       if (typeof args[0] === "string") {
+  //         args[0] = `${prefix} ${args[0]}`;
+  //       } else {
+  //         args.unshift(prefix);
+  //       }
+  //       return orig.apply(console, args);
+  //     };
+  //   }
+  // })();
 
   document.title = 'SoundCloud Player';
   new Promise((resolve, reject) => {
