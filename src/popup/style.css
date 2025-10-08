@@ -70,6 +70,10 @@ input[type='checkbox'] {
   font-weight: bold;
 }
 
+.italic {
+  font-style: italic;
+}
+
 /* Utils */
 .floating .left, .floating .right {
   display: inline-block;

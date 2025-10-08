@@ -139,20 +139,20 @@ function normalizeLink(link) {
 }
 
 function splitTextAndLinks(input) {
-  const urlPattern = /\b((?:https?:\/\/|www\.)[^\s]+)/gi;
+  const urlPattern = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9.-]+\.[a-z]{2,}(?:\/[^\s]*)?/i;
   let parts = [];
   let lastIndex = 0;
 
   input.replace(urlPattern, (match, offset) => {
     if (lastIndex < offset) {
-      parts.push({ type: "text", value: input.slice(lastIndex, offset) });
+      parts.push({ isLink: false, value: input.slice(lastIndex, offset) });
     }
-    parts.push({ type: "link", value: match });
+    parts.push({ isLink: true, value: match });
     lastIndex = offset + match.length;
   });
 
   if (lastIndex < input.length) {
-    parts.push({ type: "text", value: input.slice(lastIndex) });
+    parts.push({ isLink: false, value: input.slice(lastIndex) });
   }
 
   return parts;
@@ -397,8 +397,6 @@ function isJsonString(str) {
 }
 
 function toggleSlide(element) {
-  const dropdownEnabled = settings['dropdown-animation'];
-  
   const isVisible = getComputedStyle(element).display !== 'none';
   isVisible ? slideUp(element) : slideDown(element);
 }
@@ -406,7 +404,10 @@ function toggleSlide(element) {
 
 function slideUp(element) {
   const dropdownEnabled = settings['dropdown-animation'];
-  if (!dropdownEnabled) description.style.display = 'none';
+  if (!dropdownEnabled) {
+    element.style.display = 'none';
+    return;
+  }
 
   element.style.overflow = 'hidden';
   element.style.height = element.offsetHeight + 'px';
@@ -427,7 +428,10 @@ function slideUp(element) {
 
 function slideDown(element) {
   const dropdownEnabled = settings['dropdown-animation'];
-  if (!dropdownEnabled) description.style.display = 'block';
+  if (!dropdownEnabled) {
+    element.style.display = 'block';
+    return;
+  }
 
   element.style.display = 'block';
   element.style.overflow = 'hidden';

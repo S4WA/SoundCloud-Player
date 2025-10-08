@@ -281,8 +281,7 @@ async function registerEvents() {
       event: "click",
       handler: async () => {
         // Check if the description is empty or not.
-        const updateDesc = await updateDescription();
-        if (!updateDesc) return; // if so, don't do any of the action below.
+        await updateDescription();
 
         // Hide #share if it's still there.
         const shareBody = document.querySelector('#share');
@@ -318,24 +317,17 @@ function shareLink(social) {
   return links[social].replace( '%text%', fixedEncoder(text) );
 }
 
-let lastTitle = null, descIsEmpty = false, wasVisible = false;
+let lastTitle = null, descIsEmpty = false;
 async function updateDescription() {
   /* 
    * CHECK IF IT'S FETCHED ALREADY OR NOT TO AVOID REDUNDANCY.
-   *
-   * if it's null -> go thru everything. (false)
-   * if not null:
-   * - AND it's the same title, skip the processes. (true)
-   * - BUT it's not the same title, go thru everything. (false)
-   * 
    * ---
-   * 
    * But even it can skip the processes, it also needs to remember that the description is empty (? XD)
    * if it knows that the description is empty, return false.
    * (so that the click eventhandler for #description_icon doesn't have to slide dowwn/up itself)
    * 
    */
-  const skipProcess = lastTitle != null ? (lastTitle === json['title'] ? true : false) : false;
+  const skipProcess = lastTitle === json['title'];
   if (skipProcess) {
     if (descIsEmpty) return false;
     return true;
@@ -357,6 +349,10 @@ async function updateDescription() {
   if (isEmpty) {
     if (debug) console.log("%cNo description.", "color:white; background-color:red; padding:2px 4px; border-radius:4px;")
     descriptionChild.innerHTML = ""; // Erase just in case to avoid keeping the description from previous track played.
+    descriptionChild.appendChild(Object.assign(document.createElement("p"), {
+      innerText: "No description.",
+      className: "italic gray",
+    }));
     return false;
   } else {
     if (debug) {
@@ -392,7 +388,7 @@ async function updateDescription() {
 
     // For-loop words and links in one line.
     for (let textObject of wordsAndLinks) {
-      const isLink  = textObject.type === 'link';
+      const isLink  = textObject.isLink;
       const content = textObject.value;
       let wordElement; // DOM element (span or a).
 

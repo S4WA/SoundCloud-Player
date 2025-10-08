@@ -31,7 +31,7 @@ async function update(val) {
       }
     },
     { 
-      key: "title", selector: ".title", handler: async () => {
+      key: "title", selector: ".title", handler: () => {
         document.querySelectorAll(".title").forEach(function(el) {
           el.innerText = replaceText(localStorage.getItem('trackdisplay'), val);
           el.attr('href', val['link']);
@@ -40,47 +40,10 @@ async function update(val) {
         setShareLink(val);
 
         // when title changes in popup.html, run updateDescription().
-        if (updateDescription) {
+        if (typeof updateDescription === 'function') {
           // Because it's redundant. User have to click the button to fetch description of a track, but without this line this will fetch automatically regardless of user's choice, and possibly making the extension laggy. (... though i'm just assuming things here.)
-          // TODO: There's a flaw here; when next track comes then regardless of its visibility, it will fetch once user chooses to show and even hides afterwards. BECAUSE HOW IT CHECKS IS WRONG!!!!!!! But I have to eat dinner.
-          if (lastTitle == null) return;
-
-          const description = document.querySelector("#description");
-          const supposedVisibility = await updateDescription();
-          if (!supposedVisibility) {
-            wasVisible = (getComputedStyle(description).display !== 'none');
-
-            // If description is empty, hide itself.
-            description.style.display = 'none';
-          } else {
-
-            // if (wasVisible) slideDown(description);
-
-            /* NOTE:
-             * This line above will enable the description itself to open again when the next track has description.
-             * 
-             * SEQUENTIAL EXPLANATION:
-             * 1. Track A: has description and user optioned it to be visible.
-             * 2. Track B: when track changes and the next track has no description, 
-             *             then as it's written above, it will automatically hide itself.
-             * 3. Track C: has description unlike Track B, so the #description will reopen itself.
-             * 
-             * LOGIC BEHIND:
-             * Why did I implement this? 
-             * - Because if the user opted to show the description in the first place, 
-             *   it should remain it to be open until the user chooses to close it.
-             *
-             * THE FLAW:
-             * - It's problematic/weird/controversial/questionable 
-             *   because users usually listen to songs until it ends, 
-             *   and by the end of a song, they might forget about that they made that choice.
-             * - Then, all of the sudden, it reopens when the condition mentioned above meets.
-             * - And that's the flaw.
-             *   Because users might think that it's a bug or weird thing to do.
-             */
-
-            // TODO: I'm mixing/complicating things. It's better to have italicized text that says 'No description' or something, so that there's gonna be something to display on even if the description is empty, so that such an awkward situation mentioned above won't happen.
-          }
+          if (lastTitle == null || getComputedStyle(document.querySelector("#description")).display === 'none') return;
+          updateDescription();
         }
       }
     },
