@@ -1,3 +1,18 @@
+function insertObserver() { // issue #47, but goofy because popup should have a listner as well. instead of it it's just having a mutationobserver here.
+  const targetNode = document.querySelector('.playControl');
+
+  const observer = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'title') {
+              const isPaused = targetNode.getAttribute('title') === 'Pause current';
+              json['playing'] = !isPaused;
+          }
+      }
+  });
+
+  observer.observe(targetNode, { attributes: true });
+}
+
 function focus() {
   document.querySelector(".playbackSoundBadge__titleLink.sc-truncate").click();
 }
@@ -122,9 +137,7 @@ function setTime(percent) {
 
 function input(keyCode, name, shiftKey) {
   dispatchKeydown(keyCode, name, shiftKey);
-  setTimeout(() => {
-    dispatchKeyup(keyCode, name, shiftKey)
-  }, 100);
+  dispatchKeyup(keyCode, name, shiftKey);
 }
 
 function dispatchKeydown(keyCode, name, shiftKey) {

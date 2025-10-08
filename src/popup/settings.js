@@ -339,22 +339,30 @@ function insertAnnouncement() {
       date: "Oct 5, 2025",
       changes: [
         {
-          title: "Fixed",
-          items: [
-            "Seek forward/backward shortcuts should properly jump in a big chunk if you hold the keys, on the contray, it should be in a small chunk with tap presses."
-          ]
-        },
-        {
           title: "Added",
           items: [
             "Description of track (experimental)",
-            "When the extension is installed/updated, SoundCloud tabs will be automatically reloaded from now on.",
+            "New shortcut set: number key 0-9 to seek to position.",
+            "Extension now forces a reload of SoundCloud tabs automatically after install or update.",
           ]
         },
         {
           title: "Changed",
           items: [
-            "A few internal things."
+            "Minor internal adjustments and refactoring."
+          ]
+        },
+        {
+          title: "Fixed",
+          items: [
+            "Holding the seek forward/backward shortcut keys now jumps in large chunks, while single taps move in smaller chunks.",
+            "Play/pause button state now stays synchronized with the page.",
+          ]
+        },
+        {
+          title: "Removed",
+          items: [
+            "Visual clutter in compact and legacy theme (texts next to share icon and settings button)"
           ]
         }
       ]

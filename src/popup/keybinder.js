@@ -91,7 +91,8 @@ const shortcuts = [
     }
   },
   {
-    command: "seekf-down",
+    command: "seek",
+    value: { isDown: true, isForward: true },
     default_keys: [ "ArrowRight" ],
     overridden_keys: null,
     remapUI: {
@@ -100,7 +101,8 @@ const shortcuts = [
     }
   },
   {
-    command: "seekb-down",
+    command: "seek",
+    value: { isDown: true, isForward: false },
     default_keys: [ "ArrowLeft" ],
     overridden_keys: null,
     remapUI: {
@@ -117,18 +119,33 @@ const shortcuts = [
       label: "Open SoundCloud Tab",
     },
     handler: openSCTab,
-  }
+  },
+  // Jump shortcuts (0-9) are non-configurable, therefore doesn't need to hold a remapUI.
+  // WHy? Because stacking up 10 new table rows just for those are just ugly. So that's why I decided them to be non-configurable.
+  { command: 'jump', value: '0', default_keys: ['Digit0'] },
+  { command: 'jump', value: '1', default_keys: ['Digit1'] },
+  { command: 'jump', value: '2', default_keys: ['Digit2'] },
+  { command: 'jump', value: '3', default_keys: ['Digit3'] },
+  { command: 'jump', value: '4', default_keys: ['Digit4'] },
+  { command: 'jump', value: '5', default_keys: ['Digit5'] },
+  { command: 'jump', value: '6', default_keys: ['Digit6'] },
+  { command: 'jump', value: '7', default_keys: ['Digit7'] },
+  { command: 'jump', value: '8', default_keys: ['Digit8'] },
+  { command: 'jump', value: '9', default_keys: ['Digit9'] },
 ];
 
-// These only queues up when the specific keymap goes physically up.
-// There's no need for remapUI, since this is a hidden function. (Which its existence is very questionable to begin with, but had to implement. Otherwise issue #46)
+// COUNTERPARTS of THE VARIABLE 'shortcuts'
+// These will be executed only when a specific keymap goes physically up. (issue #46)
+// There's no need for remapUI, since this is a hidden function.
 const upShortcuts = [
   {
-    command: "seekf-up",
+    command: "seek",
+    value: { isDown: false, isForward: true },
     default_keys: [ "ArrowRight" ]
   },
   {
-    command: "seekb-up",
+    value: { isDown: false, isForward: false },
+    command: "seek",
     default_keys: [ "ArrowLeft" ]
   }
 ]
@@ -237,12 +254,12 @@ function keybindEventHandler(event) { // e.g.) Keydown event
   // - Null check & return.
   if (!binderData) return;
   // VARIABLES FOR EACH SHORTCUT'S DATUM.
-  const { default_keys, overridden_keys, command, handler } = binderData;
+  const { default_keys, overridden_keys, command, value, handler } = binderData;
 
   // EXECUTING COMMAND AND HANDLERS.
   if (isKeydownEvent) {
     if (command) { // Some of the shortcuts doesn't have command but has handler. (e.g. 'Open SC Tab').
-      queue(command).then((val) => {
+      queue(command, value).then((val) => {
         // console.log("keydownEVENT: ", command);
         if (handler) handler(val);
       });
@@ -250,17 +267,21 @@ function keybindEventHandler(event) { // e.g.) Keydown event
       handler();
     }
   } else {
-    // This part is for keyup events.
-    // The script reaches here only when there's a keydown shortcut to exist and at the same time, the opposite shortcut co-exists (? XD)
+    // KEYUP EVENT HANDLER PART
+    
+    // Find a counterpart based on triggered shortcut keymap (aka binderData, whether it's overridden or default)
     const upBind = findUpShortcutFromBinderData(binderData);
+
     if (upBind) {
       // NOTE: As of now, there's no need to null check for 'command' variable because the array (upShortcuts) is not complex yet. 
-      queue(upBind.command).then((val) => {
+      queue(upBind.command, upBind.value).then((val) => {
         // console.log("KeyupEVENT: ", command);
       });
     } else {
-      // Return, because other wise it's going to cancel keyup events even if keymap is not matching.
+      // Return, because otherwise it's going to cancel keyup events even if keymap is not matching.
       // (since we're mixing keydown event and keyup event with the same handler (this function).)
+
+      // TODO: not sure if I need this line below, because I haven't checked this yet but assumed that I needed to so.
       return;
     }
   }
@@ -312,6 +333,8 @@ function insertShortcutTables() {
   for (const item of shortcuts) {
     const { default_keys, overridden_keys, remapUI } = item;
 
+    if (!remapUI) continue;
+
     const keys = formatLabel(overridden_keys ?? default_keys);
     const row  = document.createElement("tr");
     const customized = overridden_keys != null; // When a keybind is customized then give a different label/DOM element.
@@ -329,10 +352,21 @@ function insertShortcutTables() {
       const focusedDOM     = document.getElementById(remapUI.elementID); // Targeted DOM to remap keymaps.
       const currentKeys = formatLabel(item.overridden_keys ?? item.default_keys);
 
-      // Create an overlay.
+      // Create an overlay when a row is clicked.
       displayOverlay(item, focusedDOM, currentKeys);
     });
   }
+
+  table.appendChild(Object.assign(document.createElement('tr'), {
+    innerHTML: `
+      <td>
+        Seek to position
+      </td>
+      <th>
+        0-9
+      </th>
+      `
+  }));
 }
 
 function displayOverlay(binderData, binderDOM, formatLabel) {

@@ -28,10 +28,6 @@ body[dark='true'] textarea, body[dark='true'] input {
   float: right;
 }
 
-#second .right, #second .left {
-  padding-bottom: 3.5px;
-}
-
 #current-volume {
   /*width: 3em;*/
   display: none;
@@ -193,6 +189,16 @@ body[dark='true'] #social .clipboard {
    */
 }
 
+#description p:first-child {
+  margin-top: 0;
+}
+
+#description_icon {
+  transform: translateY(-0.0vh); /* weird but wtv. it's a magic spell */
+  background-image: url('../assets/info.svg');
+  width: 21px;
+}
+
 .icon {
   background-size: cover;
 }
@@ -210,7 +216,7 @@ body[dark='true'] #social .clipboard {
   background-image: url('../assets/popout.svg');
 }
 
-body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down, body[dark='true'] #volume-icon, body[dark='true'] #hyphen {
+body[dark='true'] #settings_icon, body[dark='true'] #popout_icon, body[dark='true'] #up, body[dark='true'] #down, body[dark='true'] #volume-icon, body[dark='true'] #hyphen, body[dark='true'] #description_icon {
   background-color: transparent;
   filter: invert(1);
 }

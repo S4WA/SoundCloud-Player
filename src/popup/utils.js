@@ -396,8 +396,18 @@ function isJsonString(str) {
   return o;
 }
 
+function toggleSlide(element) {
+  const dropdownEnabled = settings['dropdown-animation'];
+  
+  const isVisible = getComputedStyle(element).display !== 'none';
+  isVisible ? slideUp(element) : slideDown(element);
+}
+
 
 function slideUp(element) {
+  const dropdownEnabled = settings['dropdown-animation'];
+  if (!dropdownEnabled) description.style.display = 'none';
+
   element.style.overflow = 'hidden';
   element.style.height = element.offsetHeight + 'px';
   element.style.transition = 'height 0.3s ease-out';
@@ -416,6 +426,9 @@ function slideUp(element) {
 }
 
 function slideDown(element) {
+  const dropdownEnabled = settings['dropdown-animation'];
+  if (!dropdownEnabled) description.style.display = 'block';
+
   element.style.display = 'block';
   element.style.overflow = 'hidden';
   element.style.height = '0px';

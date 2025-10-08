@@ -7,6 +7,9 @@ window.onload = (async() => {
     }
   })();
 
+  insertObserver();
+  // TODO: the issue with this, as well as the extension itself is that the method of the communicating between the popup and contents script is not seemless. Very opposite of it thus it's visually awkward.
+
   console.log("Hi.");
 });
 
@@ -160,24 +163,45 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       sendResponse(response);
       break;
     }
-    case 'seekb-down':
-    case 'seekb-up':
-    case 'seekf-down':
-    case 'seekf-up': { // seek backward/forward , but also needs to update progressbar.
-      const requestType  = request.type.toLowerCase();
+    case 'seek': { // seek backward/forward , but also needs to update progressbar.
+      if (!request.value || request.value.isDown == null || request.value.isForward == null) return false;
 
-      const isDownOnly   = requestType.includes('down');
-      const isForward    = requestType.startsWith('seekf');
+      const isDown       = request.value.isDown; // If key's down or up
+      const isForward    = request.value.isForward;
       const inputKeycode = isForward ? 39 : 37;
       const inputKeyname = isForward ? 'ArrowRight' : 'ArrowLeft';
 
-      if (isDownOnly) {
+      // Simulate keyboard events.
+      if (isDown) {
         // Dispatch Keydown Event
         dispatchKeydown(inputKeycode, inputKeyname);
       } else {
         // Dispatch Keyup Event
         dispatchKeyup(inputKeycode, inputKeyname);
       }
+
+      json['time']['current'] = getCurrentTime();
+      json['time']['end'] = getEndTime();
+      json['progress'] = getProgress();
+
+      response = { 'response': { 'time': json['time'], 'progress': json['progress'] } };
+      sendResponse(response);
+      break;
+    }
+    case 'jump': {
+      /* For example: 
+       * { type: 'jump', value: '0' };
+       * 
+       * value: which number key pressed.
+       */
+      const givenNumber = request.value;
+      if (!givenNumber) return false;
+
+      const inputKeycode = 48 + Number(givenNumber);
+      const inputKeyname = request.type;
+
+      // Dispatch keydown event
+      input(inputKeycode, inputKeyname);
 
       json['time']['current'] = getCurrentTime();
       json['time']['end'] = getEndTime();

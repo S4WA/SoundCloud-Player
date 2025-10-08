@@ -58,7 +58,7 @@ async function queue(command) {
   });
 } 
 
-// INject on install.
+// Reload page on install/update.
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install" || details.reason === "update") {
     const tabs = await chrome.tabs.query({ url: "*://soundcloud.com/*" });

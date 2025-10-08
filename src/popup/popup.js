@@ -39,23 +39,10 @@ async function checkElements() {
   toggleElements(arg);
 
   // if simple-label is enabled, all of .innerText will be emptied.
-  if (settings['simple-label'] && getThemeName() != 'default') {
+  if (settings['simple-label']) {
     document.querySelector("#store").innerText = "SC PLYR";
     // $('#share_btn,#settings,#thelink > div.right > div:nth-child(1) > span').contents().each(function() { if (this.nodeType === Node.TEXT_NODE) this.remove(); });
-    removeTextNodes();
   }
-}
-
-// remove text nodes
-function removeTextNodes() {
-  const elements = document.querySelectorAll('#share_btn, #settings, .thelink > .right > div:nth-child(1) > span');
-  elements.forEach(element => {
-    Array.from(element.childNodes).forEach(node => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        node.remove();
-      }
-    });
-  });
 }
 
 // they are hidden when there's no sc-tab.
@@ -188,6 +175,7 @@ async function toggleElements(visibility) {
   }
 }
 
+// Events and its handlers only for popup.html
 async function registerEvents() {
   const arr = [
     {
@@ -223,12 +211,17 @@ async function registerEvents() {
       selector: "#share_btn",
       event: "click",
       handler: () => {
-        const share = document.querySelector('#share'), isVisible = (share.style['display'] !== 'none' && share.style['display'] !== '');
-        if (settings["dropdown-animation"]) {
-          isVisible ? slideUp(share) : slideDown(share);
-        } else {
-          share.style.display = isVisible ? 'none' : 'block';
+        // #Share and #Description can't be displayed together. It's either one of them.
+        const description = document.querySelector('#description');
+        const isDescriptionVisible = getComputedStyle(description).display !== 'none';
+
+        if (isDescriptionVisible) {
+          description.style.display = 'none';
         }
+
+        // Change #share's visiblity.
+        const share = document.querySelector('#share'), isVisible = (share.style['display'] !== 'none' && share.style['display'] !== '');
+        toggleSlide(share);
       }
     },
     {
@@ -282,6 +275,28 @@ async function registerEvents() {
 
         if (showSlider) showSlider();
       }
+    },
+    {
+      selector: "#description_icon",
+      event: "click",
+      handler: async () => {
+        // Check if the description is empty or not.
+        const updateDesc = await updateDescription();
+        if (!updateDesc) return; // if so, don't do any of the action below.
+
+        // Hide #share if it's still there.
+        const shareBody = document.querySelector('#share');
+        const isShareBodyVisible = getComputedStyle(shareBody).display !== 'none';
+
+        if (isShareBodyVisible) {
+          shareBody.style.display = 'none';
+        }
+
+        // Change visibility of #description
+        const description = document.querySelector("#description");
+        const isDescriptionVisible = getComputedStyle(description).display !== 'none';
+        toggleSlide(description);
+      }
     }
   ];
 
@@ -303,31 +318,55 @@ function shareLink(social) {
   return links[social].replace( '%text%', fixedEncoder(text) );
 }
 
+let lastTitle = null, descIsEmpty = false, wasVisible = false;
 async function updateDescription() {
+  /* 
+   * CHECK IF IT'S FETCHED ALREADY OR NOT TO AVOID REDUNDANCY.
+   *
+   * if it's null -> go thru everything. (false)
+   * if not null:
+   * - AND it's the same title, skip the processes. (true)
+   * - BUT it's not the same title, go thru everything. (false)
+   * 
+   * ---
+   * 
+   * But even it can skip the processes, it also needs to remember that the description is empty (? XD)
+   * if it knows that the description is empty, return false.
+   * (so that the click eventhandler for #description_icon doesn't have to slide dowwn/up itself)
+   * 
+   */
+  const skipProcess = lastTitle != null ? (lastTitle === json['title'] ? true : false) : false;
+  if (skipProcess) {
+    if (descIsEmpty) return false;
+    return true;
+  }
+  lastTitle = json['title'];
+  // console.log(lastTitle);
+
+  // FETCH ITS DESCRIPTION
   let   description       = await getDescription();
   const descriptionBody   = document.querySelector("#description")
-  const descriptionChild  = document.querySelector("#description .dd-child");
-  const descriptionParent = document.querySelector("#description .dd-parent");
+  const descriptionChild  = document.querySelector("#description > div");
+  const descriptionPtag   = document.querySelector("#description p:first-child")
 
-  if (!description) return;
-  const isEmpty = description.length < 1;
 
-  console.log(descriptionBody)
-
-  // If the description is empty, return and invis.
+  // If the description is empty, return.
+  const isEmpty = !description || description === '';
+  descIsEmpty = isEmpty;
+  // console.log('desc is empty:', isEmpty);
   if (isEmpty) {
-    descriptionBody.style.display = 'none';
     if (debug) console.log("%cNo description.", "color:white; background-color:red; padding:2px 4px; border-radius:4px;")
-    return;
+    descriptionChild.innerHTML = ""; // Erase just in case to avoid keeping the description from previous track played.
+    return false;
   } else {
-    descriptionBody.style.display = 'block';
     if (debug) {
       console.log("%cObtained description:", "color:white; background-color:purple; padding:2px 4px; border-radius:4px;", description);
     }
   }
+  // If it's not empty, overwrite the variable as an array.
   description = description.split("\n");
 
-  // Clear description
+  // Clear description DOM element
   descriptionChild.innerHTML = ""
 
   // For-loop each line in the description.
@@ -377,6 +416,7 @@ async function updateDescription() {
     // Append each paragraph to div element.
     descriptionChild.appendChild(paragraphElement);
   }
+  return true;
 }
 
 async function getDescription() {
