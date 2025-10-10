@@ -329,7 +329,8 @@ async function updateDescription() {
    */
   const skipProcess = lastTitle === json['title'];
   if (skipProcess) {
-    if (descIsEmpty) return false;
+    // if (descIsEmpty) return false;
+    // NOTE: I don't need this here anymore.
     return true;
   }
   lastTitle = json['title'];
@@ -350,7 +351,7 @@ async function updateDescription() {
     if (debug) console.log("%cNo description.", "color:white; background-color:red; padding:2px 4px; border-radius:4px;")
     descriptionChild.innerHTML = ""; // Erase just in case to avoid keeping the description from previous track played.
     descriptionChild.appendChild(Object.assign(document.createElement("p"), {
-      innerText: "No description.",
+      innerText: "No description provided.",
       className: "italic gray",
     }));
     return false;
