@@ -4,7 +4,15 @@
 ### Added
 - Description of track (experimental).
 - When the extension is installed/updated, SoundCloud tabs will be automatically reloaded from now on.
+- Seek to position by pressing number keys but it's non-configurable.
 
+## Fixed
+- Seek forward/backward shortcuts should properly jump in a big chunk if you hold the keys, on the contray, it should be in a small chunk with tap presses. (#46)
+- Sync toggle button (#47, but also #21)
+
+Changed:
+- Removed most of the part of simple-labeling (#44)
+- A few internal things
 ---
 
 ## Version 1.5.3 — Sep 28, 2025
